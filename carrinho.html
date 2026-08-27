@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARYN - Carrinho</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <style>
+        .pagina {
+            max-width: 1100px;
+            margin: 50px auto;
+            padding: 0 25px;
+        }
+
+        .cabecalho-pagina {
+            margin-bottom: 30px;
+        }
+
+        .cabecalho-pagina small {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .cabecalho-pagina h2 {
+            margin: 8px 0;
+            font-size: 32px;
+        }
+
+        .carrinho-layout {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .itens-carrinho,
+        .resumo,
+        .cliente {
+            background: #fff;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.08);
+        }
+
+        .item {
+            display: grid;
+            grid-template-columns: 110px 1fr auto;
+            gap: 20px;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .item:last-child {
+            border-bottom: 0;
+        }
+
+        .item img {
+            width: 110px;
+            height: 130px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: #f5f5f5;
+        }
+
+        .item h3 {
+            margin: 5px 0;
+        }
+
+        .item p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .quantidade {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .quantidade button {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #ddd;
+            background: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .preco {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .remover {
+            border: 0;
+            background: transparent;
+            color: #999;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .remover:hover {
+            color: #d00;
+        }
+
+        .resumo h3 {
+            margin-top: 0;
+            font-size: 22px;
+        }
+
+        .linha-resumo {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+        }
+
+        .total {
+            border-top: 1px solid #ddd;
+            padding-top: 18px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .finalizar {
+            width: 100%;
+            border: 0;
+            padding: 15px;
+            border-radius: 8px;
+            background: #111;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .finalizar:hover {
+            opacity: .85;
+        }
+
+        .continuar {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #111;
+            text-decoration: none;
+        }
+
+        .vazio {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .vazio i {
+            font-size: 55px;
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 800px) {
+            .carrinho-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .item {
+                grid-template-columns: 85px 1fr;
+            }
+
+            .item img {
+                width: 85px;
+                height: 105px;
+            }
+
+            .item .lado-direito {
+                grid-column: 2;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        <h1><span>A</span>RYN</h1>
+        <p>Vista sua essência</p>
+    </div>
+
+    <nav>
+        <a href="index.html">
+            <i class="fa-solid fa-house"></i>
+            Home
+        </a>
+
+        <a href="masculino.html">
+            <i class="fa-solid fa-person"></i>
+            Masculino
+        </a>
+
+        <a href="feminino.html">
+            <i class="fa-solid fa-person-dress"></i>
+            Feminino
+        </a>
+    </nav>
+
+    <nav>
+        <a href="index.html">
+            <i class="fa-solid fa-store"></i>
+            Loja
+        </a>
+
+        <a href="carrinho.html" class="active">
+            <i class="fa-solid fa-cart-shopping"></i>
+            Carrinho
+        </a>
+
+        <a href="usuario.html">
+            <i class="fa-solid fa-user"></i>
+            Usuários
+        </a>
+    </nav>
+</header>
+
+<main class="pagina">
+
+    <div class="cabecalho-pagina">
+        <small>ARYN</small>
+        <h2>Meu Carrinho</h2>
+        <p>Confira os produtos escolhidos antes de finalizar sua compra.</p>
+    </div>
+
+    <div class="carrinho-layout">
+
+        <section class="itens-carrinho">
+
+            <div class="item">
+                <img src="assets/mockup.png" alt="Camiseta Dry ARYN PRO">
+
+                <div>
+                    <span>CAMISETAS</span>
+                    <h3>Camiseta Dry ARYN PRO</h3>
+                    <p>R$ 129,90 cada</p>
+
+                    <div class="quantidade">
+                        <button onclick="alterarQuantidade(-1, 1)">−</button>
+                        <span id="qtd1">1</span>
+                        <button onclick="alterarQuantidade(1, 1)">+</button>
+                    </div>
+
+                    <button class="remover" onclick="removerItem(this)">
+                        <i class="fa-solid fa-trash"></i> Remover
+                    </button>
+                </div>
+
+                <div class="lado-direito">
+                    <span class="preco" id="preco1">R$ 129,90</span>
+                </div>
+            </div>
+
+            <div class="item">
+                <img src="assets/MOCKUP_CAMISETA_AZUL_ESCURO_M.png" alt="Camiseta ARYN">
+
+                <div>
+                    <span>CAMISETAS</span>
+                    <h3>Camiseta ARYN</h3>
+                    <p>R$ 180,90 cada</p>
+
+                    <div class="quantidade">
+                        <button onclick="alterarQuantidade(-1, 2)">−</button>
+                        <span id="qtd2">1</span>
+                        <button onclick="alterarQuantidade(1, 2)">+</button>
+                    </div>
+
+                    <button class="remover" onclick="removerItem(this)">
+                        <i class="fa-solid fa-trash"></i> Remover
+                    </button>
+                </div>
+
+                <div class="lado-direito">
+                    <span class="preco" id="preco2">R$ 180,90</span>
+                </div>
+            </div>
+
+        </section>
+
+        <aside class="resumo">
+            <h3>Resumo da compra</h3>
+
+            <div class="linha-resumo">
+                <span>Subtotal</span>
+                <span id="subtotal">R$ 310,80</span>
+            </div>
+
+            <div class="linha-resumo">
+                <span>Frete</span>
+                <span>Grátis</span>
+            </div>
+
+            <div class="linha-resumo total">
+                <span>Total</span>
+                <span id="total">R$ 310,80</span>
+            </div>
+
+            <button class="finalizar" onclick="finalizarCompra()">
+                Finalizar compra
+            </button>
+
+            <a href="index.html" class="continuar">
+                Continuar comprando
+            </a>
+        </aside>
+
+    </div>
+</main>
+
+<script>
+    const produtos = {
+        1: { preco: 129.90, qtd: 1 },
+        2: { preco: 180.90, qtd: 1 }
+    };
+
+    function alterarQuantidade(id, valor) {
+        produtos[id].qtd += valor;
+
+        if (produtos[id].qtd < 1) {
+            produtos[id].qtd = 1;
+        }
+
+        document.getElementById("qtd" + id).textContent = produtos[id].qtd;
+
+        atualizarResumo();
+    }
+
+    function atualizarResumo() {
+        let subtotal = 0;
+
+        for (const id in produtos) {
+            subtotal += produtos[id].preco * produtos[id].qtd;
+
+            const precoElemento = document.getElementById("preco" + id);
+
+            if (precoElemento) {
+                precoElemento.textContent =
+                    "R$ " + (produtos[id].preco * produtos[id].qtd)
+                    .toFixed(2)
+                    .replace(".", ",");
+            }
+        }
+
+        const valor = "R$ " + subtotal.toFixed(2).replace(".", ",");
+
+        document.getElementById("subtotal").textContent = valor;
+        document.getElementById("total").textContent = valor;
+    }
+
+    function removerItem(botao) {
+        const item = botao.closest(".item");
+
+        item.remove();
+
+        atualizarResumo();
+    }
+
+    function finalizarCompra() {
+        alert("Compra encaminhada para finalização!");
+    }
+</script>
+
+</body>
+</html>
