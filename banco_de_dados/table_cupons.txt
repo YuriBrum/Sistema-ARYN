@@ -1,0 +1,37 @@
+CREATE TABLE cupons (
+    id_cupom INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    codigo VARCHAR(50) NOT NULL,
+
+    tipo_desconto ENUM(
+        'PERCENTUAL',
+        'VALOR_FIXO'
+    ) NOT NULL,
+
+    valor_desconto DECIMAL(10,2) NOT NULL,
+
+    valor_minimo DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+
+    limite_uso INT UNSIGNED NULL,
+
+    quantidade_utilizada INT UNSIGNED NOT NULL DEFAULT 0,
+
+    inicio_validade DATETIME NOT NULL,
+
+    fim_validade DATETIME NOT NULL,
+
+    ativo BOOLEAN NOT NULL DEFAULT TRUE,
+
+    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    UNIQUE KEY uk_cupom_codigo (codigo),
+
+    CONSTRAINT chk_cupom_valor
+        CHECK (valor_desconto > 0),
+
+    CONSTRAINT chk_cupom_datas
+        CHECK (fim_validade > inicio_validade)
+);

@@ -1,0 +1,29 @@
+CREATE TABLE movimentacoes_estoque (
+    id_movimentacao INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_variacao INT UNSIGNED NOT NULL,
+    tipo ENUM(
+        'ENTRADA',
+        'SAIDA',
+        'AJUSTE',
+        'DEVOLUCAO'
+    ) NOT NULL,
+    quantidade INT UNSIGNED NOT NULL,
+    estoque_anterior INT UNSIGNED NOT NULL,
+    estoque_posterior INT UNSIGNED NOT NULL,
+    motivo VARCHAR(255),
+    id_pedido INT UNSIGNED NULL,
+    id_usuario INT UNSIGNED NULL,
+    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_movimentacao_variacao
+        FOREIGN KEY (id_variacao)
+        REFERENCES variacoes_produto(id_variacao),
+
+    CONSTRAINT fk_movimentacao_pedido
+        FOREIGN KEY (id_pedido)
+        REFERENCES pedidos(id_pedido),
+
+    CONSTRAINT fk_movimentacao_usuario
+        FOREIGN KEY (id_usuario)
+        REFERENCES usuarios(id_usuario)
+);
