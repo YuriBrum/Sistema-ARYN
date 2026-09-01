@@ -1,0 +1,28 @@
+CREATE TABLE variacoes_produto (
+    id_variacao INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_produto INT UNSIGNED NOT NULL,
+    id_tamanho INT UNSIGNED NOT NULL,
+    id_cor INT UNSIGNED NOT NULL,
+    sku VARCHAR(50) NOT NULL UNIQUE,
+    estoque INT UNSIGNED NOT NULL DEFAULT 0,
+    preco DECIMAL(10,2),
+    status BOOLEAN NOT NULL DEFAULT TRUE,
+    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_variacoes_produto
+        FOREIGN KEY (id_produto)
+        REFERENCES produtos(id_produto),
+
+    CONSTRAINT fk_variacoes_tamanho
+        FOREIGN KEY (id_tamanho)
+        REFERENCES tamanhos(id_tamanho),
+
+    CONSTRAINT fk_variacoes_cor
+        FOREIGN KEY (id_cor)
+        REFERENCES cores(id_cor),
+
+    CONSTRAINT uk_produto_tamanho_cor
+        UNIQUE (id_produto, id_tamanho, id_cor)
+);

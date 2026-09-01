@@ -1,0 +1,26 @@
+CREATE TABLE cupons_pedido (
+    id_cupom_pedido INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    id_cupom INT UNSIGNED NOT NULL,
+
+    id_pedido INT UNSIGNED NOT NULL,
+
+    codigo_cupom VARCHAR(50) NOT NULL,
+
+    valor_desconto DECIMAL(10,2) NOT NULL,
+
+    utilizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_cupons_pedido_cupom
+        FOREIGN KEY (id_cupom)
+        REFERENCES cupons(id_cupom),
+
+    CONSTRAINT fk_cupons_pedido_pedido
+        FOREIGN KEY (id_pedido)
+        REFERENCES pedidos(id_pedido),
+
+    UNIQUE KEY uk_cupom_pedido (
+        id_cupom,
+        id_pedido
+    )
+);
