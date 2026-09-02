@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARYN - Carrinho</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="/assets/styles/carrinho.css">
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/carrinho.js"></script>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        <h1><span>A</span>RYN</h1>
+        <p>Vista sua essência</p>
+    </div>
+
+    <nav>
+        <a href="../index.html">
+            <i class="fa-solid fa-house"></i>
+            Home
+        </a>
+
+        <a href="masculino.html">
+            <i class="fa-solid fa-person"></i>
+            Masculino
+        </a>
+
+        <a href="feminino.html">
+            <i class="fa-solid fa-person-dress"></i>
+            Feminino
+        </a>
+    </nav>
+
+    <nav>
+        <a href="../index.html">
+            <i class="fa-solid fa-store"></i>
+            Loja
+        </a>
+
+        <a href="carrinho.html" class="active">
+            <i class="fa-solid fa-cart-shopping"></i>
+            Carrinho
+        </a>
+
+        <a href="usuarios.html">
+            <i class="fa-solid fa-user"></i>
+            Usuários
+        </a>
+    </nav>
+</header>
+
+<main class="pagina">
+
+    <div class="cabecalho-pagina">
+        <small>ARYN</small>
+        <h2>Meu Carrinho</h2>
+        <p>Confira os produtos escolhidos antes de finalizar sua compra.</p>
+        <p id="infoArmazenamento" style="margin-top:8px;font-size:12px;color:#888;"></p>
+    </div>
+
+    <div class="carrinho-layout">
+
+        <section class="itens-carrinho">
+
+            <div class="item">
+                <img src="/assets/img/mockup.png" alt="Camiseta Dry ARYN PRO">
+
+                <div>
+                    <span>CAMISETAS</span>
+                    <h3>Camiseta Dry ARYN PRO</h3>
+                    <p>R$ 129,90 cada</p>
+
+                    <div class="quantidade">
+                        <button onclick="alterarQuantidade(1, -1)">−</button>
+                        <span id="qtd1">1</span>
+                        <button onclick="alterarQuantidade(1, 1)">+</button>
+                    </div>
+
+                    <button class="remover" onclick="removerItem(this)">
+                        <i class="fa-solid fa-trash"></i> Remover
+                    </button>
+                </div>
+
+                <div class="lado-direito">
+                    <span class="preco" id="preco1">R$ 129,90</span>
+                </div>
+            </div>
+
+            <div class="item">
+                <img src="/assets/img/MOCKUP_CAMISETA_AZUL_ESCURO_M.png" alt="Camiseta ARYN">
+
+                <div>
+                    <span>CAMISETAS</span>
+                    <h3>Camiseta ARYN</h3>
+                    <p>R$ 180,90 cada</p>
+
+                    <div class="quantidade">
+                        <button onclick="alterarQuantidade(2, -1)">−</button>
+                        <span id="qtd2">1</span>
+                        <button onclick="alterarQuantidade(2, 1)">+</button>
+                    </div>
+
+                    <button class="remover" onclick="removerItem(this)">
+                        <i class="fa-solid fa-trash"></i> Remover
+                    </button>
+                </div>
+
+                <div class="lado-direito">
+                    <span class="preco" id="preco2">R$ 180,90</span>
+                </div>
+            </div>
+
+        </section>
+
+        <aside class="resumo">
+            <h3>Resumo da compra</h3>
+
+            <div class="linha-resumo">
+                <span>Subtotal</span>
+                <span id="subtotal">R$ 310,80</span>
+            </div>
+
+            <div class="linha-resumo">
+                <span>Frete</span>
+                <span>Grátis</span>
+            </div>
+
+            <div class="linha-resumo total">
+                <span>Total</span>
+                <span id="total">R$ 310,80</span>
+            </div>
+
+            <button class="finalizar" onclick="finalizarCompra()">
+                Finalizar compra
+            </button>
+
+            <a href="../index.html" class="continuar">
+                Continuar comprando
+            </a>
+        </aside>
+
+    </div>
+</main>
+
+<script>
+    // Produtos fixos da demo - em produção viriam do catálogo
+    const produtos = {
+        1: { id: 1, nome: 'Camiseta Dry ARYN PRO', preco: 129.90, qtd: 1 },
+        2: { id: 2, nome: 'Camiseta ARYN', preco: 180.90, qtd: 1 }
+    };
+
+    // Hidrata qtd a partir do armazenamento (guest = localStorage, logado = banco simulado)
+    function hidratarCarrinho() {
+        const salvo = carregarCarrinho();
+        if (salvo.length) {
+            // reseta para o salvo
+            Object.keys(produtos).forEach(k => delete produtos[k]);
+            salvo.forEach(p => { produtos[p.id] = p; });
+            // recria DOM se necessário - aqui só atualiza qtds existentes
+            salvo.forEach(p => {
+                const el = document.getElementById('qtd' + p.id);
+                if (el) el.textContent = p.qtd;
+            });
+        }
+        atualizarResumo();
+        const info = document.getElementById('infoArmazenamento');
+        if (info) info.textContent = 'Salvo em: ' + ondeCarrinhoEstaSalvo() + (isLoggedIn() ? ' [' + getUsuarioLogado() + ']' : ' (visitante)');
+    }
+
+    async function persistir() {
+        const lista = Object.values(produtos);
+        await salvarCarrinho(lista);
+        const info = document.getElementById('infoArmazenamento');
+        if (info) info.textContent = 'Salvo em: ' + ondeCarrinhoEstaSalvo() + (isLoggedIn() ? ' [' + getUsuarioLogado() + ']' : ' (visitante)');
+    }
+
+    async function alterarQuantidade(id, valor) {
+        if (!produtos[id]) return;
+        produtos[id].qtd += valor;
+        if (produtos[id].qtd < 1) produtos[id].qtd = 1;
+        document.getElementById("qtd" + id).textContent = produtos[id].qtd;
+        atualizarResumo();
+        await persistir();
+    }
+
+    function atualizarResumo() {
+        let subtotal = 0;
+        for (const id in produtos) {
+            subtotal += produtos[id].preco * produtos[id].qtd;
+            const precoElemento = document.getElementById("preco" + id);
+            if (precoElemento) {
+                precoElemento.textContent = "R$ " + (produtos[id].preco * produtos[id].qtd).toFixed(2).replace(".", ",");
+            }
+        }
+        const valor = "R$ " + subtotal.toFixed(2).replace(".", ",");
+        const s = document.getElementById("subtotal"); if (s) s.textContent = valor;
+        const t = document.getElementById("total"); if (t) t.textContent = valor;
+    }
+
+    async function removerItem(botao) {
+        const item = botao.closest(".item");
+        // descobre id pelo qtd id dentro do item
+        const qtdSpan = item.querySelector('[id^="qtd"]');
+        let id = null;
+        if (qtdSpan) id = qtdSpan.id.replace('qtd','');
+        if (id && produtos[id]) {
+            delete produtos[id];
+            await persistir();
+        }
+        item.remove();
+        atualizarResumo();
+    }
+
+    function finalizarCompra() {
+        if (isLoggedIn()) {
+            alert("Compra finalizada! Pedido salvo no BANCO para " + getUsuarioLogado());
+        } else {
+            alert("Compra como VISITANTE! Carrinho salvo no localStorage. Faça login para salvar no banco e não perder.");
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', hidratarCarrinho);
+</script>
+
+</body>
+</html>

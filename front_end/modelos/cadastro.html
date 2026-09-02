@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARYN - Cadastro</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/styles/login.css">
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/carrinho.js"></script>
+    <script>if (typeof bloquearSeLogado === 'function') bloquearSeLogado();</script>
+
+    <style>
+        .login-wrapper { max-width: 520px; margin: 0 auto; }
+        .login-card .formulario { grid-template-columns: 1fr 1fr; gap: 16px; }
+        .login-card .campo.completo { grid-column: 1 / -1; }
+        @media (max-width: 600px) { .login-card .formulario { grid-template-columns: 1fr; } .login-card .campo.completo { grid-column: auto; } }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        <h1><span>A</span>RYN</h1>
+        <p>Vista sua essência</p>
+    </div>
+
+    <nav>
+        <a href="../index.html"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="masculino.html"><i class="fa-solid fa-person"></i> Masculino</a>
+        <a href="feminino.html"><i class="fa-solid fa-person-dress"></i> Feminino</a>
+    </nav>
+
+    <nav>
+        <a href="../index.html"><i class="fa-solid fa-store"></i> Loja</a>
+        <a href="carrinho.html"><i class="fa-solid fa-cart-shopping"></i> Carrinho</a>
+        <a href="cadastro.html" class="active"><i class="fa-solid fa-user-plus"></i> Cadastro</a>
+    </nav>
+</header>
+
+<main class="pagina">
+    <div class="cabecalho-pagina" style="text-align: center;">
+        <small>ARYN</small>
+        <h2>Crie sua conta</h2>
+        <p>Cadastre e-mail ou telefone para começar a comprar.</p>
+    </div>
+
+    <div class="login-wrapper">
+        <div class="login-card">
+            <h3>Cadastro</h3>
+            <p class="subtitulo">Leva menos de 1 minuto. Carrinho de visitante será migrado.</p>
+
+            <div id="erro" class="erro-msg"></div>
+
+            <form class="formulario" onsubmit="fazerCadastro(event)" novalidate>
+                <div class="campo">
+                    <label for="nome">Nome</label>
+                    <input type="text" id="nome" placeholder="Seu nome" required>
+                </div>
+
+                <div class="campo">
+                    <label for="usuario">E-mail ou telefone</label>
+                    <input type="text" id="usuario" placeholder="cliente@aryn.com ou (11) 99999-9999" autocomplete="username" required>
+                </div>
+
+                <div class="campo">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" placeholder="Mín. 4 caracteres" autocomplete="new-password" required>
+                </div>
+
+                <div class="campo">
+                    <label for="confirmar">Confirmar senha</label>
+                    <input type="password" id="confirmar" placeholder="Repita a senha" required>
+                </div>
+
+                <div class="campo completo">
+                    <label style="display:flex;gap:6px;align-items:center;font-weight:normal;">
+                        <input type="checkbox" id="termos" required> Aceito os termos de uso
+                    </label>
+                </div>
+
+                <div class="campo completo">
+                    <button type="submit" class="btn-login"><i class="fa-solid fa-user-plus"></i> Criar conta</button>
+                </div>
+            </form>
+
+            <div class="divisor">ou</div>
+            <p class="criar-conta">Já tem conta? <a href="login.html">Entrar</a> · <a href="../index.html">Continuar como visitante</a></p>
+        </div>
+    </div>
+</main>
+
+<script>
+    function validarEmailOuTelefone(v){
+        v=v.trim(); if(!v) return false;
+        if(v.includes('@')) return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+        const d=v.replace(/\D/g,''); return d.length>=10 && d.length<=11;
+    }
+    function mostrarErro(m){ const el=document.getElementById('erro'); el.textContent=m; el.classList.add('visivel'); }
+    function limparErro(){ const el=document.getElementById('erro'); el.textContent=''; el.classList.remove('visivel'); }
+
+    function fazerCadastro(event){
+        event.preventDefault(); limparErro();
+        const nome=document.getElementById('nome').value.trim();
+        const usuario=document.getElementById('usuario').value.trim();
+        const senha=document.getElementById('senha').value;
+        const confirmar=document.getElementById('confirmar').value;
+        const termos=document.getElementById('termos').checked;
+
+        if(!nome || !usuario || !senha || !confirmar){ mostrarErro('Preencha todos os campos.'); return; }
+        if(!validarEmailOuTelefone(usuario)){ mostrarErro('E-mail ou telefone inválido (telefone precisa 10-11 dígitos).'); return; }
+        if(senha.length<4){ mostrarErro('Senha deve ter pelo menos 4 caracteres.'); return; }
+        if(senha!==confirmar){ mostrarErro('Senhas não conferem.'); return; }
+        if(!termos){ mostrarErro('Aceite os termos.'); return; }
+
+        // Simula criação no banco e já loga
+        login(usuario);
+        localStorage.setItem('aryn_nome', nome);
+        alert('Cadastro realizado! Logado como ' + usuario + '. Carrinho agora no BANCO.');
+        window.location.href = 'usuarios.html';
+    }
+</script>
+
+</body>
+</html>

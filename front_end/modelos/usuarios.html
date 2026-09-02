@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARYN - Usuário</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+        <link rel="stylesheet" href="/assets/styles/usuario.css">
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/carrinho.js"></script>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        <h1><span>A</span>RYN</h1>
+        <p>Vista sua essência</p>
+    </div>
+
+    <nav>
+        <a href="../index.html">
+            <i class="fa-solid fa-house"></i>
+            Home
+        </a>
+
+        <a href="masculino.html">
+            <i class="fa-solid fa-person"></i>
+            Masculino
+        </a>
+
+        <a href="feminino.html">
+            <i class="fa-solid fa-person-dress"></i>
+            Feminino
+        </a>
+    </nav>
+
+    <nav>
+        <a href="../index.html">
+            <i class="fa-solid fa-store"></i>
+            Loja
+        </a>
+
+        <a href="carrinho.html">
+            <i class="fa-solid fa-cart-shopping"></i>
+            Carrinho
+        </a>
+
+        <a href="usuarios.html" class="active">
+            <i class="fa-solid fa-user"></i>
+            Usuários
+        </a>
+    </nav>
+</header>
+
+<main class="pagina">
+
+    <div class="cabecalho-pagina">
+        <small>ARYN</small>
+        <h2>Minha Conta</h2>
+        <p>Gerencie seus dados e acompanhe seus pedidos.</p>
+    </div>
+
+    <div class="usuario-layout">
+
+        <aside class="perfil">
+            <div class="avatar">
+                <i class="fa-solid fa-user"></i>
+            </div>
+
+            <h3>Cliente ARYN</h3>
+            <p>cliente@aryn.com</p>
+
+            <div class="menu-conta">
+                <a href="#dados" class="selecionado">
+                    <i class="fa-solid fa-user"></i>
+                    Meus dados
+                </a>
+
+                <a href="#pedidos">
+                    <i class="fa-solid fa-box"></i>
+                    Meus pedidos
+                </a>
+
+                <a href="carrinho.html">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Meu carrinho
+                </a>
+
+                <a href="#" onclick="sair(event)">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Sair
+                </a>
+            </div>
+        </aside>
+
+        <section>
+
+            <div class="dados" id="dados">
+                <h3>Meus dados</h3>
+
+                <form class="formulario" onsubmit="salvarDados(event)">
+
+                    <div class="campo">
+                        <label for="nome">Nome</label>
+                        <input type="text" id="nome" value="Cliente ARYN">
+                    </div>
+
+                    <div class="campo">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" value="cliente@aryn.com">
+                    </div>
+
+                    <div class="campo">
+                        <label for="telefone">Telefone</label>
+                        <input type="tel" id="telefone" value="(00) 00000-0000">
+                    </div>
+
+                    <div class="campo">
+                        <label for="cpf">CPF</label>
+                        <input type="text" id="cpf" value="000.000.000-00">
+                    </div>
+
+                    <div class="campo completo">
+                        <label for="endereco">Endereço</label>
+                        <input type="text" id="endereco" value="Rua Exemplo, 100">
+                    </div>
+
+                    <div class="campo">
+                        <label for="cidade">Cidade</label>
+                        <input type="text" id="cidade" value="Sua cidade">
+                    </div>
+
+                    <div class="campo">
+                        <label for="cep">CEP</label>
+                        <input type="text" id="cep" value="00000-000">
+                    </div>
+
+                    <div class="campo">
+                        <label for="senha">Nova senha</label>
+                        <input type="password" id="senha" placeholder="Digite uma nova senha">
+                    </div>
+
+                    <div class="campo">
+                        <label for="confirmar">Confirmar senha</label>
+                        <input type="password" id="confirmar" placeholder="Confirme a nova senha">
+                    </div>
+
+                    <div class="campo completo">
+                        <button type="submit" class="salvar">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            Salvar alterações
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="pedidos" id="pedidos" style="margin-top: 25px;">
+                <h3>Meus pedidos</h3>
+
+                <div class="pedido">
+                    <div>
+                        <h4>Pedido #0001</h4>
+                        <p>Camiseta Dry ARYN PRO</p>
+                        <p>R$ 129,90</p>
+                    </div>
+                    <span class="status">Em preparação</span>
+                </div>
+
+                <div class="pedido">
+                    <div>
+                        <h4>Pedido #0002</h4>
+                        <p>Camiseta ARYN</p>
+                        <p>R$ 180,90</p>
+                    </div>
+                    <span class="status">Entregue</span>
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+</main>
+
+<script>
+    function salvarDados(event) {
+        event.preventDefault();
+
+        const senha = document.getElementById("senha").value;
+        const confirmar = document.getElementById("confirmar").value;
+
+        if (senha !== confirmar) {
+            alert("As senhas não são iguais.");
+            return;
+        }
+
+        alert("Dados salvos com sucesso!");
+    }
+
+    function sair(event) {
+        event.preventDefault();
+        const confirmar = confirm("Deseja realmente sair da sua conta?");
+        if (confirmar) {
+            if (typeof logout === 'function') logout();
+            // opcional: mantém carrinho do banco, apenas desloga
+            window.location.href = "login.html";
+        }
+    }
+    // Exibe usuário logado se houver
+    window.addEventListener('DOMContentLoaded', () => {
+        if (typeof isLoggedIn === 'function' && isLoggedIn()) {
+            const u = getUsuarioLogado();
+            const h3 = document.querySelector('.perfil h3');
+            const p = document.querySelector('.perfil p');
+            if (h3) h3.textContent = u;
+            if (p) p.textContent = u;
+        }
+    });
+</script>
+
+</body>
+</html>
