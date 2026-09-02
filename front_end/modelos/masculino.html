@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARYN - Masculina</title>
+
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <h1><span>A</span>RYN</h1>
+        <p>Vista sua essência</p>
+    </div>
+
+    <nav>
+        <a href="../index.html">
+            <i class="fa-solid fa-house"></i>
+            Home
+        </a>
+    
+        <a href="masculino.html" class="active">
+            <i class="fa-solid fa-person"></i>
+            Masculino
+        </a>
+    
+        <a href="feminino.html">
+            <i class="fa-solid fa-person-dress"></i>
+            Feminino
+        </a>
+    </nav>
+
+    <nav>
+        <a href="../index.html">
+            <i class="fa-solid fa-store"></i>
+              Loja</a>
+        <a href="carrinho.html">
+            <i class="fa-solid fa-cart-shopping"></i>
+              Carrinho</a>
+        <a href="usuarios.html">
+            <i class="fa-solid fa-user"></i>
+              Usuários</a>
+    </nav>
+</header>
+
+<main>
+    <small>Coleção esportiva</small>
+    <h2>Moda Masculina</h2>
+
+    <section class="produtos">
+
+        <div class="card">
+            <div class="carrossel"> <!-- isso faz as fotos ficarem em movimento continuo -->
+                <img src="/assets/img/mockup.png" class="imagem ativa">
+                <img src="/assets/img/MOCKUP_CAMISETA_AZUL_ESCURO_M.png" class="imagem">
+                <img src="/assets/img/MOCKUP_CAMISETA_BRANCA_M.png" class="imagem">
+                <img src="/assets/img/MOCKUP_CAMISETA_VERMELHA_M.png" class="imagem">
+            </div>
+            <div class="info">
+                <span>CAMISETAS</span>
+                <h3>Camiseta Dry ARYN PRO</h3>
+                <h4>R$ 129,90</h4>
+                <p>24 em estoque</p>
+                <div class="acoes">
+                    <button class="favorito">❤ 0</button>
+                    <button class="carrinho">+ Carrinho</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="carrossel">  <!-- isso faz as fotos ficarem em movimento continuo -->
+                <img src="/assets/img/MOCKUP_CALÇA_H1.png" class="imagem ativa">
+                <img src="/assets/img/MOCKUP_CALÇA_H2.png" class="imagem">
+                <img src="/assets/img/MOCKUP_CALÇA_M1.png" class="imagem">
+                <img src="/assets/img/MOCKUP_CALÇA_M2.png" class="imagem">
+            </div>
+            <div class="info">
+                <span>CALÇAS</span>
+                <h3>Calça Esportiva ARYN</h3>
+                <h4>R$ 180,90</h4>
+                <p>38 em estoque</p>
+                <div class="acoes">
+                    <button class="favorito">❤ 0</button>
+                    <button class="carrinho">+ Carrinho</button>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</main>
+
+<script>
+document.querySelectorAll('.carrossel').forEach(carrossel => {
+    const imagens = carrossel.querySelectorAll('.imagem');
+    let atual = 0;
+
+    if (imagens.length > 1) {
+        setInterval(() => {
+            imagens[atual].classList.remove('ativa');
+            atual = (atual + 1) % imagens.length;
+            imagens[atual].classList.add('ativa');
+        }, 2500);
+    }
+});
+</script>
+
+<script src="/assets/js/auth.js"></script>
+<script src="/assets/js/carrinho.js"></script>
+<script src="../script.js"></script>
+
+</body>
+</html>
