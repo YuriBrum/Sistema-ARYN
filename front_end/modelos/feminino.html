@@ -3,11 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARYN - Masculina</title>
-
-<link rel="stylesheet" href="style.css">
+<title>ARYN - Feminina</title>
+<link rel="stylesheet" href="../style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-
 </head>
 <body>
 
@@ -18,7 +16,7 @@
     </div>
 
     <nav>
-        <a href="index.html">
+        <a href="../index.html">
             <i class="fa-solid fa-house"></i>
             Home
         </a>
@@ -28,37 +26,31 @@
             Masculino
         </a>
     
-        <a href="feminino.html">
+        <a href="feminino.html" class="active">
             <i class="fa-solid fa-person-dress"></i>
             Feminino
         </a>
     </nav>
 
     <nav>
-        <a href="#" class="active">
-            <i class="fa-solid fa-store"></i>
-             Loja</a>
-        <a href="#">
-            <i class="fa-solid fa-cart-shopping"></i>
-             Carrinho</a>
-        <a href="#">
-            <i class="fa-solid fa-user"></i>
-             Usuários</a>
+        <a href="../index.html"><i class="fa-solid fa-store"></i> Loja</a>
+        <a href="carrinho.html"><i class="fa-solid fa-cart-shopping"></i> Carrinho</a>
+        <a href="usuarios.html"><i class="fa-solid fa-user"></i> Usuários</a>
     </nav>
 </header>
 
 <main>
     <small>Coleção esportiva</small>
-    <h2>Moda Masculina</h2>
+    <h2>Moda Feminina</h2>
 
     <section class="produtos">
 
         <div class="card">
-            <div class="carrossel"> <!-- isso faz as fotos ficarem em movimento continuo -->
-                <img src="assets/mockup.png" class="imagem ativa">
-                <img src="assets/MOCKUP_CAMISETA_AZUL_ESCURO_M.png" class="imagem">
-                <img src="assets/MOCKUP_CAMISETA_BRANCA_M.png" class="imagem">
-                <img src="assets/MOCKUP_CAMISETA_VERMELHA_M.png" class="imagem">
+            <div class="carrossel">  <!-- isso faz as fotos ficarem em movimento continuo -->
+                <img src="/assets/img/mockup.png" class="imagem ativa">
+                <img src="/assets/img/MOCKUP_CAMISETA_AZUL_ESCURO_M.png" class="imagem">
+                <img src="/assets/img/MOCKUP_CAMISETA_BRANCA_M.png" class="imagem">
+                <img src="/assets/img/MOCKUP_CAMISETA_VERMELHA_M.png" class="imagem">
             </div>
             <div class="info">
                 <span>CAMISETAS</span>
@@ -74,10 +66,10 @@
 
         <div class="card">
             <div class="carrossel">  <!-- isso faz as fotos ficarem em movimento continuo -->
-                <img src="assets/MOCKUP_CALÇA_H1.png" class="imagem ativa">
-                <img src="assets/MOCKUP_CALÇA_H2.png" class="imagem">
-                <img src="assets/MOCKUP_CALÇA_M1.png" class="imagem">
-                <img src="assets/MOCKUP_CALÇA_M2.png" class="imagem">
+                <img src="/assets/img/MOCKUP_CALÇA_H1.png" class="imagem ativa">
+                <img src="/assets/img/MOCKUP_CALÇA_H2.png" class="imagem">
+                <img src="/assets/img/MOCKUP_CALÇA_M1.png" class="imagem">
+                <img src="/assets/img/MOCKUP_CALÇA_M2.png" class="imagem">
             </div>
             <div class="info">
                 <span>CALÇAS</span>
@@ -109,7 +101,9 @@ document.querySelectorAll('.carrossel').forEach(carrossel => {
 });
 </script>
 
-<script src="script.js"></script>
+<script src="/assets/js/auth.js"></script>
+<script src="/assets/js/carrinho.js"></script>
+<script src="../script.js"></script>
 
 </body>
 </html>

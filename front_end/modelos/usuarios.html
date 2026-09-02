@@ -5,177 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ARYN - Usuário</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
-    <style>
-        .pagina {
-            max-width: 1100px;
-            margin: 50px auto;
-            padding: 0 25px;
-        }
-
-        .cabecalho-pagina {
-            margin-bottom: 30px;
-        }
-
-        .cabecalho-pagina small {
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .cabecalho-pagina h2 {
-            margin: 8px 0;
-            font-size: 32px;
-        }
-
-        .usuario-layout {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 25px;
-            align-items: start;
-        }
-
-        .perfil,
-        .dados,
-        .pedidos {
-            background: #fff;
-            border-radius: 14px;
-            padding: 25px;
-            box-shadow: 0 5px 20px rgba(0,0,0,.08);
-        }
-
-        .perfil {
-            text-align: center;
-        }
-
-        .avatar {
-            width: 95px;
-            height: 95px;
-            margin: 0 auto 15px;
-            border-radius: 50%;
-            background: #eee;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 40px;
-        }
-
-        .perfil h3 {
-            margin: 8px 0;
-        }
-
-        .perfil p {
-            color: #777;
-        }
-
-        .menu-conta {
-            margin-top: 25px;
-        }
-
-        .menu-conta a {
-            display: block;
-            text-align: left;
-            padding: 12px;
-            margin: 5px 0;
-            border-radius: 7px;
-            text-decoration: none;
-            color: #222;
-        }
-
-        .menu-conta a:hover,
-        .menu-conta .selecionado {
-            background: #f0f0f0;
-        }
-
-        .dados h3,
-        .pedidos h3 {
-            margin-top: 0;
-            font-size: 22px;
-        }
-
-        .formulario {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-        }
-
-        .campo {
-            display: flex;
-            flex-direction: column;
-            gap: 7px;
-        }
-
-        .campo.completo {
-            grid-column: 1 / -1;
-        }
-
-        .campo label {
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .campo input {
-            padding: 13px;
-            border: 1px solid #ddd;
-            border-radius: 7px;
-            font-size: 15px;
-        }
-
-        .salvar {
-            margin-top: 22px;
-            border: 0;
-            padding: 13px 25px;
-            background: #111;
-            color: white;
-            border-radius: 7px;
-            cursor: pointer;
-        }
-
-        .pedido {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 15px;
-            padding: 17px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .pedido:last-child {
-            border-bottom: 0;
-        }
-
-        .pedido h4 {
-            margin: 0 0 6px;
-        }
-
-        .pedido p {
-            margin: 4px 0;
-            color: #666;
-        }
-
-        .status {
-            align-self: center;
-            padding: 7px 12px;
-            border-radius: 20px;
-            background: #eee;
-            font-size: 13px;
-        }
-
-        @media (max-width: 800px) {
-            .usuario-layout {
-                grid-template-columns: 1fr;
-            }
-
-            .formulario {
-                grid-template-columns: 1fr;
-            }
-
-            .campo.completo {
-                grid-column: auto;
-            }
-        }
-    </style>
+        <link rel="stylesheet" href="/assets/styles/usuario.css">
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/carrinho.js"></script>
 </head>
 
 <body>
@@ -187,7 +23,7 @@
     </div>
 
     <nav>
-        <a href="index.html">
+        <a href="../index.html">
             <i class="fa-solid fa-house"></i>
             Home
         </a>
@@ -204,7 +40,7 @@
     </nav>
 
     <nav>
-        <a href="index.html">
+        <a href="../index.html">
             <i class="fa-solid fa-store"></i>
             Loja
         </a>
@@ -214,7 +50,7 @@
             Carrinho
         </a>
 
-        <a href="usuario.html" class="active">
+        <a href="usuarios.html" class="active">
             <i class="fa-solid fa-user"></i>
             Usuários
         </a>
@@ -369,13 +205,23 @@
 
     function sair(event) {
         event.preventDefault();
-
         const confirmar = confirm("Deseja realmente sair da sua conta?");
-
         if (confirmar) {
-            window.location.href = "index.html";
+            if (typeof logout === 'function') logout();
+            // opcional: mantém carrinho do banco, apenas desloga
+            window.location.href = "login.html";
         }
     }
+    // Exibe usuário logado se houver
+    window.addEventListener('DOMContentLoaded', () => {
+        if (typeof isLoggedIn === 'function' && isLoggedIn()) {
+            const u = getUsuarioLogado();
+            const h3 = document.querySelector('.perfil h3');
+            const p = document.querySelector('.perfil p');
+            if (h3) h3.textContent = u;
+            if (p) p.textContent = u;
+        }
+    });
 </script>
 
 </body>
