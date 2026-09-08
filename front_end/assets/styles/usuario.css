@@ -27,11 +27,13 @@
 
 .perfil,
 .dados,
-.pedidos {
+.pedidos,
+.aviso-visitante {
     background: #fff;
     border-radius: 14px;
     padding: 25px;
     box-shadow: 0 5px 20px rgba(0,0,0,.08);
+    color: #111;
 }
 
 .perfil {
@@ -148,6 +150,39 @@
     border-radius: 20px;
     background: #eee;
     font-size: 13px;
+}
+
+.aviso-visitante {
+    background: #fff;
+    border-radius: 14px;
+    padding: 55px 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,.08);
+    text-align: center;
+}
+
+.aviso-visitante i {
+    font-size: 55px;
+    color: #aaa;
+    margin-bottom: 15px;
+}
+
+.aviso-visitante h3 {
+    margin: 0 0 8px;
+    font-size: 22px;
+}
+
+.aviso-visitante p {
+    margin: 0 0 20px;
+    color: #666;
+}
+
+.aviso-visitante a {
+    display: inline-block;
+    padding: 13px 25px;
+    background: #111;
+    color: #fff;
+    border-radius: 7px;
+    text-decoration: none;
 }
 
 @media (max-width: 800px) {
