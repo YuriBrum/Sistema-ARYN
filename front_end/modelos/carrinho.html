@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ARYN - Carrinho</title>
 
-    <link rel="stylesheet" href="front_end/style.css">
+    <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     
-    <link rel="stylesheet" href="front_end/assets/styles/carrinho.css">
-    <script src="/assets/js/autentificacao.js"></script>
-    <script src="/assets/js/carrinho.js"></script>
+    <link rel="stylesheet" href="../assets/styles/carrinho.css">
+    <script src="../assets/js/autentificao.js"></script>
+    <script src="../assets/js/carrinho.js"></script>
 </head>
 
 <body>
@@ -23,7 +23,7 @@
     </div>
 
     <nav>
-        <a href="../index.html">
+        <a href="../../index.html">
             <i class="fa-solid fa-house"></i>
             Home
         </a>
@@ -40,7 +40,7 @@
     </nav>
 
     <nav>
-        <a href="../index.html">
+        <a href="../../index.html">
             <i class="fa-solid fa-store"></i>
             Loja
         </a>
@@ -48,6 +48,11 @@
         <a href="carrinho.html" class="active">
             <i class="fa-solid fa-cart-shopping"></i>
             Carrinho
+        </a>
+
+        <a href="curtidas.html">
+            <i class="fa-solid fa-heart"></i>
+            Curtidas
         </a>
 
         <a href="usuarios.html">
@@ -63,59 +68,14 @@
         <small>ARYN</small>
         <h2>Meu Carrinho</h2>
         <p>Confira os produtos escolhidos antes de finalizar sua compra.</p>
-        <p id="infoArmazenamento" style="margin-top:8px;font-size:12px;color:#888;"></p>
     </div>
 
     <div class="carrinho-layout">
 
         <section class="itens-carrinho">
 
-            <div class="item">
-                <img src="/assets/img/mockup.png" alt="Camiseta Dry ARYN PRO">
-
-                <div>
-                    <span>CAMISETAS</span>
-                    <h3>Camiseta Dry ARYN PRO</h3>
-                    <p>R$ 129,90 cada</p>
-
-                    <div class="quantidade">
-                        <button onclick="alterarQuantidade(1, -1)">−</button>
-                        <span id="qtd1">1</span>
-                        <button onclick="alterarQuantidade(1, 1)">+</button>
-                    </div>
-
-                    <button class="remover" onclick="removerItem(this)">
-                        <i class="fa-solid fa-trash"></i> Remover
-                    </button>
-                </div>
-
-                <div class="lado-direito">
-                    <span class="preco" id="preco1">R$ 129,90</span>
-                </div>
-            </div>
-
-            <div class="item">
-                <img src="/assets/img/MOCKUP_CAMISETA_AZUL_ESCURO_M.png" alt="Camiseta ARYN">
-
-                <div>
-                    <span>CAMISETAS</span>
-                    <h3>Camiseta ARYN</h3>
-                    <p>R$ 180,90 cada</p>
-
-                    <div class="quantidade">
-                        <button onclick="alterarQuantidade(2, -1)">−</button>
-                        <span id="qtd2">1</span>
-                        <button onclick="alterarQuantidade(2, 1)">+</button>
-                    </div>
-
-                    <button class="remover" onclick="removerItem(this)">
-                        <i class="fa-solid fa-trash"></i> Remover
-                    </button>
-                </div>
-
-                <div class="lado-direito">
-                    <span class="preco" id="preco2">R$ 180,90</span>
-                </div>
+            <div id="itens-lista">
+                <!-- Itens do carrinho são gerados dinamicamente -->
             </div>
 
         </section>
@@ -125,7 +85,7 @@
 
             <div class="linha-resumo">
                 <span>Subtotal</span>
-                <span id="subtotal">R$ 310,80</span>
+                <span id="subtotal">R$ 0,00</span>
             </div>
 
             <div class="linha-resumo">
@@ -133,16 +93,16 @@
                 <span>Grátis</span>
             </div>
 
-            <div class="linha-resumo total">
+            <div class="total-finalizar">
                 <span>Total</span>
-                <span id="total">R$ 310,80</span>
+                <strong id="totalFinalizar">R$ 0,00</strong>
             </div>
 
             <button class="finalizar" onclick="finalizarCompra()">
                 Finalizar compra
             </button>
 
-            <a href="../index.html" class="continuar">
+            <a href="../../index.html" class="continuar">
                 Continuar comprando
             </a>
         </aside>
@@ -150,84 +110,321 @@
     </div>
 </main>
 
+<div class="modal-overlay" id="modalFinalizar" style="display:none;">
+    <div class="modal-finalizar">
+        <button type="button" class="modal-fechar" onclick="fecharModal()">&times;</button>
+        <h3>Finalizar compra</h3>
+        <p class="modal-sub">Preencha o endereço de entrega e escolha a forma de pagamento.</p>
+
+        <form id="formFinalizar" onsubmit="confirmarCompra(event)">
+            <div class="campo-modal">
+                <label for="checkEndereco">Endereço</label>
+                <input type="text" id="checkEndereco" placeholder="Rua Exemplo, 100" required>
+            </div>
+
+            <div class="campo-modal">
+                <label for="checkComplemento">Complemento</label>
+                <input type="text" id="checkComplemento" placeholder="Apartamento, bloco, referência...">
+            </div>
+
+            <div class="campo-modal">
+                <label for="checkCep">CEP</label>
+                <input type="text" id="checkCep" placeholder="00000-000" maxlength="9" required>
+            </div>
+
+            <div class="pagamento-opcoes">
+                <label class="opcao-pagamento">
+                    <input type="radio" name="pagamento" value="PIX" checked>
+                    <i class="fa-solid fa-qrcode"></i>
+                    <span>PIX</span>
+                </label>
+                <label class="opcao-pagamento">
+                    <input type="radio" name="pagamento" value="Cartão">
+                    <i class="fa-solid fa-credit-card"></i>
+                    <span>Cartão</span>
+                </label>
+            </div>
+
+            <div id="areaPix" class="area-pagamento">
+                <small>Chave PIX gerada (copie e pague)</small>
+                <div class="chave-pix" id="chavePix"></div>
+                <button type="button" class="btn-copiar" onclick="copiarChavePix()">
+                    <i class="fa-solid fa-copy"></i> Copiar chave
+                </button>
+            </div>
+
+            <div id="areaCartao" class="area-pagamento" style="display:none;">
+                <div class="campo-modal">
+                    <label for="checkNumero">Número do cartão</label>
+                    <input type="text" id="checkNumero" placeholder="0000 0000 0000 0000" maxlength="19">
+                </div>
+                <div class="campo-modal">
+                    <label for="checkNomeCartao">Nome no cartão</label>
+                    <input type="text" id="checkNomeCartao" placeholder="Como está impresso no cartão">
+                </div>
+                <div class="colunas-form">
+                    <div class="campo-modal">
+                        <label for="checkValidade">Validade</label>
+                        <input type="text" id="checkValidade" placeholder="MM/AA" maxlength="5">
+                    </div>
+                    <div class="campo-modal">
+                        <label for="checkCvv">CVV</label>
+                        <input type="text" id="checkCvv" placeholder="123" maxlength="4">
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-total">
+                <span>Total a pagar</span>
+                <strong id="modalTotal">R$ 0,00</strong>
+            </div>
+
+            <button type="submit" class="btn-pagar">Confirmar pagamento</button>
+            <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+        </form>
+    </div>
+</div>
+
 <script>
-    // Produtos fixos da demo - em produção viriam do catálogo
-    const produtos = {
-        1: { id: 1, nome: 'Camiseta Dry ARYN PRO', preco: 129.90, qtd: 1 },
-        2: { id: 2, nome: 'Camiseta ARYN', preco: 180.90, qtd: 1 }
-    };
+    const IMG_PADRAO = "../assets/images/mockup.png";
 
-    // Hidrata qtd a partir do armazenamento (guest = localStorage, logado = banco simulado)
-    function hidratarCarrinho() {
-        const salvo = carregarCarrinho();
-        if (salvo.length) {
-            // reseta para o salvo
-            Object.keys(produtos).forEach(k => delete produtos[k]);
-            salvo.forEach(p => { produtos[p.id] = p; });
-            // recria DOM se necessário - aqui só atualiza qtds existentes
-            salvo.forEach(p => {
-                const el = document.getElementById('qtd' + p.id);
-                if (el) el.textContent = p.qtd;
-            });
-        }
-        atualizarResumo();
-        const info = document.getElementById('infoArmazenamento');
-        if (info) info.textContent = 'Salvo em: ' + ondeCarrinhoEstaSalvo() + (isLoggedIn() ? ' [' + getUsuarioLogado() + ']' : ' (visitante)');
+    function formatarPreco(valor) {
+        valor = parseFloat(valor) || 0;
+        return "R$ " + valor.toFixed(2).replace(".", ",");
     }
 
-    async function persistir() {
-        const lista = Object.values(produtos);
-        await salvarCarrinho(lista);
-        const info = document.getElementById('infoArmazenamento');
-        if (info) info.textContent = 'Salvo em: ' + ondeCarrinhoEstaSalvo() + (isLoggedIn() ? ' [' + getUsuarioLogado() + ']' : ' (visitante)');
+    // Normaliza itens vindos do localStorage (podem ter preco/qtd como texto)
+    function limparItem(p) {
+        p.preco = parseFloat(p.preco) || 0;
+        p.qtd = parseInt(p.qtd, 10) || 1;
+        if (p.qtd < 1) p.qtd = 1;
+        if (!p.nome) p.nome = "Produto ARYN";
+        if (!p.img) p.img = IMG_PADRAO;
+        return p;
     }
 
-    async function alterarQuantidade(id, valor) {
-        if (!produtos[id]) return;
-        produtos[id].qtd += valor;
-        if (produtos[id].qtd < 1) produtos[id].qtd = 1;
-        document.getElementById("qtd" + id).textContent = produtos[id].qtd;
-        atualizarResumo();
-        await persistir();
-    }
+    // Renderiza os itens do carrinho na tela
+    function renderizarCarrinho() {
+        try {
+            let lista = carregarCarrinho();
+            lista = (lista && lista.length ? lista : []).map(limparItem);
+            const container = document.getElementById("itens-lista");
+            const resumo = document.querySelector(".resumo");
 
-    function atualizarResumo() {
-        let subtotal = 0;
-        for (const id in produtos) {
-            subtotal += produtos[id].preco * produtos[id].qtd;
-            const precoElemento = document.getElementById("preco" + id);
-            if (precoElemento) {
-                precoElemento.textContent = "R$ " + (produtos[id].preco * produtos[id].qtd).toFixed(2).replace(".", ",");
+            if (!container) return;
+
+            if (!lista.length) {
+                container.innerHTML =
+                    '<div class="vazio">' +
+                        '<i class="fa-solid fa-cart-shopping"></i>' +
+                        "<h3>Seu carrinho está vazio</h3>" +
+                        "<p>Adicione um produto para começar a comprar.</p>" +
+                        '<a href="../../index.html" class="continuar" style="margin-top:15px;">Ver produtos</a>' +
+                    "</div>";
+                if (resumo) resumo.style.display = "none";
+                atualizarResumo(lista);
+                return;
+            }
+
+            container.innerHTML = lista.map(p => {
+                const img = p.img || IMG_PADRAO;
+                return (
+                    '<div class="item" data-id="' + p.id + '">' +
+                        "<img src=\"" + img + "\" alt=\"" + p.nome + "\">" +
+                        "<div>" +
+                            "<span>PRODUTO</span>" +
+                            "<h3>" + p.nome + "</h3>" +
+                            "<p>" + formatarPreco(p.preco) + " cada</p>" +
+                            '<div class="quantidade">' +
+                                '<button class="qtd-menos" data-id="' + p.id + '">−</button>' +
+                                '<span class="qtd-valor">' + p.qtd + "</span>" +
+                                '<button class="qtd-mais" data-id="' + p.id + '">+</button>' +
+                            "</div>" +
+                            '<button class="remover" data-id="' + p.id + '">' +
+                                '<i class="fa-solid fa-trash"></i> Remover' +
+                            "</button>" +
+                        "</div>" +
+                        '<div class="lado-direito">' +
+                            '<span class="preco">' + formatarPreco(p.preco * p.qtd) + "</span>" +
+                        "</div>" +
+                    "</div>"
+                );
+            }).join("");
+
+            if (resumo) resumo.style.display = "";
+            atualizarResumo(lista);
+        } catch (erro) {
+            console.error("Erro ao renderizar carrinho:", erro);
+            const container = document.getElementById("itens-lista");
+            if (container) {
+                container.innerHTML =
+                    '<div class="vazio">' +
+                        "<h3>Ocorreu um erro ao carregar o carrinho</h3>" +
+                    "</div>";
             }
         }
-        const valor = "R$ " + subtotal.toFixed(2).replace(".", ",");
-        const s = document.getElementById("subtotal"); if (s) s.textContent = valor;
-        const t = document.getElementById("total"); if (t) t.textContent = valor;
     }
 
-    async function removerItem(botao) {
-        const item = botao.closest(".item");
-        // descobre id pelo qtd id dentro do item
-        const qtdSpan = item.querySelector('[id^="qtd"]');
-        let id = null;
-        if (qtdSpan) id = qtdSpan.id.replace('qtd','');
-        if (id && produtos[id]) {
-            delete produtos[id];
-            await persistir();
+    // Recalcula subtotal e total
+    function atualizarResumo(lista) {
+        let subtotal = 0;
+        lista.forEach(p => { subtotal += (parseFloat(p.preco) || 0) * (parseInt(p.qtd, 10) || 1); });
+
+        const valor = formatarPreco(subtotal);
+        const s = document.getElementById("subtotal"); if (s) s.textContent = valor;
+        const t = document.getElementById("totalFinalizar"); if (t) t.textContent = valor;
+    }
+
+    // Fica ouvindo os botões de quantidade e remover dos itens renderizados
+    document.getElementById("itens-lista").addEventListener("click", async (e) => {
+        const botao = e.target.closest("button");
+        if (!botao) return;
+
+        const id = botao.dataset.id;
+        if (!id) return;
+
+        let carrinho = carregarCarrinho();
+        const item = carrinho.find(p => String(p.id) === String(id));
+        if (!item) return;
+
+        if (botao.classList.contains("qtd-mais")) {
+            item.qtd += 1;
+        } else if (botao.classList.contains("qtd-menos")) {
+            item.qtd -= 1;
+            if (item.qtd < 1) item.qtd = 1;
+        } else if (botao.classList.contains("remover")) {
+            carrinho = carrinho.filter(p => String(p.id) !== String(id));
         }
-        item.remove();
-        atualizarResumo();
+
+        await salvarCarrinho(carrinho);
+        renderizarCarrinho();
+    });
+
+    function calcularTotal() {
+        let total = 0;
+        carregarCarrinho().forEach(p => {
+            total += (parseFloat(p.preco) || 0) * (parseInt(p.qtd, 10) || 1);
+        });
+        return total;
+    }
+
+    function gerarChavePix() {
+        const hexChars = '0123456789ABCDEF';
+        const bytes = [];
+        if (window.crypto && crypto.getRandomValues) {
+            const arr = new Uint8Array(32);
+            crypto.getRandomValues(arr);
+            arr.forEach(b => bytes.push(hexChars[b % 16]));
+        } else {
+            for (let i = 0; i < 32; i++) bytes.push(hexChars[Math.floor(Math.random() * 16)]);
+        }
+        return bytes.join('').match(/.{1,4}/g).join('-');
+    }
+
+    function copiarChavePix() {
+        const chave = document.getElementById("chavePix").textContent;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(chave).then(() => {
+                alert("Chave PIX copiada: " + chave);
+            });
+        } else {
+            alert("Chave PIX: " + chave);
+        }
+    }
+
+    function alternarPagamento() {
+        const pix = document.querySelector('input[name="pagamento"][value="PIX"]').checked;
+        document.getElementById("areaPix").style.display = pix ? "" : "none";
+        document.getElementById("areaCartao").style.display = pix ? "none" : "";
+    }
+
+    function formatarNumeroCartao(el) {
+        el.value = el.value.replace(/\D/g, '').slice(0, 16).replace(/(\d{4})(?=\d)/g, '$1 ');
+    }
+
+    function formatarValidade(el) {
+        el.value = el.value.replace(/\D/g, '').slice(0, 4).replace(/(\d{2})(?=\d)/, '$1/');
     }
 
     function finalizarCompra() {
-        if (isLoggedIn()) {
-            alert("Compra finalizada! Pedido salvo no BANCO para " + getUsuarioLogado());
-        } else {
-            alert("Compra como VISITANTE! Carrinho salvo no localStorage. Faça login para salvar no banco e não perder.");
+        const lista = carregarCarrinho();
+        if (!lista || !lista.length) {
+            alert("Seu carrinho está vazio.");
+            return;
         }
+        const totalEl = document.getElementById("modalTotal");
+        if (totalEl) totalEl.textContent = formatarPreco(calcularTotal());
+
+        document.getElementById("chavePix").textContent = gerarChavePix();
+        document.querySelector('input[name="pagamento"][value="PIX"]').checked = true;
+        alternarPagamento();
+        ["checkNumero", "checkNomeCartao", "checkValidade", "checkCvv"].forEach(id => {
+            document.getElementById(id).value = "";
+        });
+
+        const modal = document.getElementById("modalFinalizar");
+        if (modal) modal.style.display = "flex";
     }
 
-    window.addEventListener('DOMContentLoaded', hidratarCarrinho);
+    document.querySelectorAll('input[name="pagamento"]').forEach(radio => {
+        radio.addEventListener("change", alternarPagamento);
+    });
+
+    document.getElementById("checkNumero").addEventListener("input", e => formatarNumeroCartao(e.target));
+    document.getElementById("checkValidade").addEventListener("input", e => formatarValidade(e.target));
+    document.getElementById("checkCvv").addEventListener("input", e => {
+        e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+    });
+
+    function fecharModal() {
+        const modal = document.getElementById("modalFinalizar");
+        if (modal) modal.style.display = "none";
+    }
+
+    function confirmarCompra(event) {
+        event.preventDefault();
+
+        const endereco = document.getElementById("checkEndereco").value.trim();
+        const complemento = document.getElementById("checkComplemento").value.trim();
+        const cep = document.getElementById("checkCep").value.trim();
+        const pagamento = document.querySelector('input[name="pagamento"]:checked').value;
+        const total = formatarPreco(calcularTotal());
+
+        if (!endereco || !cep) {
+            alert("Preencha endereço e CEP.");
+            return;
+        }
+
+        let detalhePagamento = pagamento;
+        if (pagamento === "PIX") {
+            detalhePagamento = "PIX (chave: " + document.getElementById("chavePix").textContent + ")";
+        } else {
+            const numero = document.getElementById("checkNumero").value.replace(/\D/g, "");
+            const nomeCartao = document.getElementById("checkNomeCartao").value.trim();
+            const validade = document.getElementById("checkValidade").value.trim();
+            const cvv = document.getElementById("checkCvv").value.trim();
+            if (numero.length < 12 || !nomeCartao || !validade || !cvv) {
+                alert("Preencha os dados do cartão corretamente.");
+                return;
+            }
+            detalhePagamento = "Cartão **** " + numero.slice(-4) + " (" + nomeCartao + ")";
+        }
+
+        salvarCarrinho([]).then(() => {
+            fecharModal();
+            renderizarCarrinho();
+            alert(
+                "Pedido confirmado!\n\n" +
+                "Entrega: " + endereco +
+                (complemento ? " - " + complemento : "") +
+                "\nCEP: " + cep +
+                "\nPagamento: " + detalhePagamento +
+                "\nTotal: " + total
+            );
+        });
+    }
+
+    window.addEventListener("DOMContentLoaded", renderizarCarrinho);
 </script>
 
 </body>

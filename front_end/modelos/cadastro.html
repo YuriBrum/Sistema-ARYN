@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ARYN - Cadastro</title>
 
-    <link rel="stylesheet" href="front_end/style.css">
+    <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <link rel="stylesheet" href="/assets/styles/login.css">
-    <script src="/assets/js/autentificacao.js"></script>
-    <script src="/assets/js/carrinho.js"></script>
+    <link rel="stylesheet" href="../assets/styles/login.css">
+    <script src="../assets/js/autentificao.js"></script>
+    <script src="../assets/js/carrinho.js"></script>
     <script>if (typeof bloquearSeLogado === 'function') bloquearSeLogado();</script>
 
     <style>
@@ -29,15 +29,16 @@
     </div>
 
     <nav>
-        <a href="../index.html"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="../../index.html"><i class="fa-solid fa-house"></i> Home</a>
         <a href="masculino.html"><i class="fa-solid fa-person"></i> Masculino</a>
         <a href="feminino.html"><i class="fa-solid fa-person-dress"></i> Feminino</a>
     </nav>
 
     <nav>
-        <a href="../index.html"><i class="fa-solid fa-store"></i> Loja</a>
+        <a href="../../index.html"><i class="fa-solid fa-store"></i> Loja</a>
         <a href="carrinho.html"><i class="fa-solid fa-cart-shopping"></i> Carrinho</a>
-        <a href="cadastro.html" class="active"><i class="fa-solid fa-user-plus"></i> Cadastro</a>
+        <a href="curtidas.html"><i class="fa-solid fa-heart"></i> Curtidas</a>
+        <a href="usuarios.html"><i class="fa-solid fa-user"></i> Usuários</a>
     </nav>
 </header>
 
@@ -45,7 +46,7 @@
     <div class="cabecalho-pagina" style="text-align: center;">
         <small>ARYN</small>
         <h2>Crie sua conta</h2>
-        <p>Cadastre e-mail ou telefone para começar a comprar.</p>
+        <p>Cadastre seu e-mail para começar a comprar.</p>
     </div>
 
     <div class="login-wrapper">
@@ -62,8 +63,8 @@
                 </div>
 
                 <div class="campo">
-                    <label for="usuario">E-mail ou telefone</label>
-                    <input type="text" id="usuario" placeholder="cliente@aryn.com ou (11) 99999-9999" autocomplete="username" required>
+                    <label for="usuario">E-mail</label>
+                    <input type="email" id="usuario" placeholder="ex: cliente@hotmail.com" autocomplete="username" required>
                 </div>
 
                 <div class="campo">
@@ -88,16 +89,15 @@
             </form>
 
             <div class="divisor">ou</div>
-            <p class="criar-conta">Já tem conta? <a href="login.html">Entrar</a> · <a href="../index.html">Continuar como visitante</a></p>
+            <p class="criar-conta">Já tem conta? <a href="login.html">Entrar</a> · <a href="../../index.html">Continuar como visitante</a></p>
         </div>
     </div>
 </main>
 
 <script>
-    function validarEmailOuTelefone(v){
+    function validarEmail(v){
         v=v.trim(); if(!v) return false;
-        if(v.includes('@')) return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-        const d=v.replace(/\D/g,''); return d.length>=10 && d.length<=11;
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
     }
     function mostrarErro(m){ const el=document.getElementById('erro'); el.textContent=m; el.classList.add('visivel'); }
     function limparErro(){ const el=document.getElementById('erro'); el.textContent=''; el.classList.remove('visivel'); }
@@ -105,21 +105,24 @@
     function fazerCadastro(event){
         event.preventDefault(); limparErro();
         const nome=document.getElementById('nome').value.trim();
-        const usuario=document.getElementById('usuario').value.trim();
+        const email=document.getElementById('usuario').value.trim();
         const senha=document.getElementById('senha').value;
         const confirmar=document.getElementById('confirmar').value;
         const termos=document.getElementById('termos').checked;
 
-        if(!nome || !usuario || !senha || !confirmar){ mostrarErro('Preencha todos os campos.'); return; }
-        if(!validarEmailOuTelefone(usuario)){ mostrarErro('E-mail ou telefone inválido (telefone precisa 10-11 dígitos).'); return; }
+        if(!nome || !email || !senha || !confirmar){ mostrarErro('Preencha todos os campos.'); return; }
+        if(!validarEmail(email)){ mostrarErro('Digite um e-mail válido (ex: usuario@hotmail.com).'); return; }
         if(senha.length<4){ mostrarErro('Senha deve ter pelo menos 4 caracteres.'); return; }
         if(senha!==confirmar){ mostrarErro('Senhas não conferem.'); return; }
         if(!termos){ mostrarErro('Aceite os termos.'); return; }
 
         // Simula criação no banco e já loga
-        login(usuario);
+        const emailFinal = email.toLowerCase();
+        const dadosUsuario = { nome: nome, email: emailFinal, criadoEm: new Date().toISOString() };
+        localStorage.setItem('aryn_dados_' + emailFinal, JSON.stringify(dadosUsuario));
+        login(emailFinal);
         localStorage.setItem('aryn_nome', nome);
-        alert('Cadastro realizado! Logado como ' + usuario + '. Carrinho agora no BANCO.');
+        alert('Cadastro realizado com sucesso! Enviamos uma mensagem de confirmação para o seu e-mail (' + emailFinal + ').');
         window.location.href = 'usuarios.html';
     }
 </script>

@@ -7,9 +7,9 @@
 
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <link rel="stylesheet" href="front_end/assets/styles/login.css">
-    <script src="/assets/js/autentificacao.js"></script>
-    <script src="/assets/js/carrinho.js"></script>
+    <link rel="stylesheet" href="../assets/styles/login.css">
+    <script src="../assets/js/autentificao.js"></script>
+    <script src="../assets/js/carrinho.js"></script>
     <script>if (typeof bloquearSeLogado === 'function') bloquearSeLogado();</script>
 
     <style>
@@ -134,6 +134,30 @@
             margin-right: 6px;
         }
 
+        .btn-criar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            border: 0;
+            padding: 14px;
+            background: #d91d1d;
+            color: #fff;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            box-sizing: border-box;
+            transition: opacity .2s, background .2s;
+        }
+
+        .btn-criar:hover {
+            opacity: .85;
+            background: #b01313;
+        }
+
         .divisor {
             display: flex;
             align-items: center;
@@ -192,7 +216,7 @@
     </div>
 
     <nav>
-        <a href="../index.html">
+        <a href="../../index.html">
             <i class="fa-solid fa-house"></i>
             Home
         </a>
@@ -209,7 +233,7 @@
     </nav>
 
     <nav>
-        <a href="../index.html">
+        <a href="../../index.html">
             <i class="fa-solid fa-store"></i>
             Loja
         </a>
@@ -219,9 +243,14 @@
             Carrinho
         </a>
 
-        <a href="login.html" class="active">
+        <a href="curtidas.html">
+            <i class="fa-solid fa-heart"></i>
+            Curtidas
+        </a>
+
+        <a href="usuarios.html">
             <i class="fa-solid fa-user"></i>
-            Entrar
+            Usuários
         </a>
     </nav>
 </header>
@@ -230,24 +259,31 @@
 
     <div class="cabecalho-pagina" style="text-align: center;">
         <small>ARYN</small>
-        <h2>Bem-vindo de volta</h2>
-        <p>Entre com seu e-mail ou telefone para continuar.</p>
+        <h2>Bem-vindo</h2>
+        <p>Cadastre-se ou entre para continuar.</p>
     </div>
 
     <div class="login-wrapper">
         <div class="login-card">
 
-            <h3>Entrar na sua conta</h3>
-            <p class="subtitulo">Acesse seus pedidos, favoritos e dados.</p>
+            <h3>Crie sua conta</h3>
+            <p class="subtitulo">Primeiro, cadastre-se com seu e-mail. Se já tem conta, entre abaixo.</p>
+
+            <a href="cadastro.html" class="btn-criar">
+                <i class="fa-solid fa-user-plus"></i>
+                Cadastrar
+            </a>
+
+            <div class="divisor">ou entre na sua conta</div>
 
             <div id="erro" class="erro-msg"></div>
 
             <form class="formulario" onsubmit="fazerLogin(event)" novalidate>
 
                 <div class="campo">
-                    <label for="usuario">E-mail ou telefone</label>
-                    <input type="text" id="usuario" name="usuario"
-                           placeholder="ex: cliente@aryn.com ou (11) 99999-9999"
+                    <label for="usuario">E-mail</label>
+                    <input type="email" id="usuario" name="usuario"
+                           placeholder="ex: cliente@hotmail.com"
                            autocomplete="username" required>
                 </div>
 
@@ -276,10 +312,8 @@
 
             </form>
 
-            <div class="divisor">ou</div>
-
             <p class="criar-conta">
-                Não tem conta? <a href="cadastro.html">Criar conta</a> · <a href="../index.html">Continuar como visitante</a>
+                <a href="../../index.html">Continuar como visitante</a>
             </p>
 
         </div>
@@ -287,7 +321,7 @@
 
 </main>
 
-<script src="/assets/js/login.js"></script>
+<script src="../assets/js/login.js"></script>
 
 </body>
 </html>

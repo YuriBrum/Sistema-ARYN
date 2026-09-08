@@ -1,0 +1,592 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#171717;
+    color:white;
+}
+
+header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:25px 70px;
+
+    border-bottom:1px solid #3b1a1a;
+}
+
+.logo h1{
+    letter-spacing:8px;
+}
+
+.logo span{
+    color:#d91d1d;
+}
+
+.logo p{
+    color:#b11d1d;
+    font-size:12px;
+    letter-spacing:4px;
+}
+
+nav{
+
+    display:flex;
+    gap:15px;
+
+}
+
+nav a{
+
+    color:#ccc;
+    text-decoration:none;
+
+    padding:12px 20px;
+
+    border-radius:30px;
+
+    transition:.3s;
+
+}
+
+nav a.active{
+
+    background:#d91d1d;
+    color:white;
+
+}
+
+nav a:hover{
+
+    background:#d91d1d;
+
+}
+
+main{
+
+    width:80%;
+    margin:50px auto;
+
+}
+
+small{
+
+    color:#c42626;
+    letter-spacing:5px;
+    text-transform:uppercase;
+
+}
+
+h2{
+
+    font-size:60px;
+    font-weight:300;
+
+    margin:20px 0 50px;
+
+}
+
+.produtos{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:30px;
+
+}
+
+.card{
+
+    background:#1e1e1e;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    border:1px solid #2f2f2f;
+
+}
+
+.card img{
+    
+    width:100%;
+    height:440px;
+    
+
+    object-fit:cover;
+
+}
+
+.info{
+
+    padding:20px;
+
+}
+
+.info span{
+
+    color:#d91d1d;
+
+    font-size:12px;
+
+    letter-spacing:3px;
+
+}
+
+.info h3{
+
+    margin:10px 0;
+
+}
+
+.info h4{
+
+    font-size:35px;
+
+    font-weight:300;
+
+    margin:15px 0;
+
+}
+
+.info p{
+
+    color:#888;
+
+}
+
+.acoes{
+
+    display:flex;
+    justify-content:space-between;
+
+    margin-top:20px;
+
+}
+
+button{
+
+    border:none;
+    cursor:pointer;
+
+}
+
+.favorito{
+
+    background:#222;
+    color:white;
+
+    width:60px;
+    height:40px;
+
+    border-radius:20px;
+
+}
+
+.carrinho{
+
+    flex:1;
+    margin-left:25px;
+
+    background:rgb(238, 15, 15);
+    color:black;
+
+    border-radius:25px;
+
+    font-size:18px;
+
+}
+
+/* isso é pra fazer as fotos ficarem em movimento */
+
+.carrossel {
+    width: 100%;
+    height: 480px;
+    position: relative;
+    overflow: hidden;
+}
+
+.carrossel .imagem {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.carrossel .imagem.ativa {
+    opacity: 1;
+    transition: opacity 0.9s ease;
+}
+
+/* isso é a tela do carrinho */
+        .pagina {
+            max-width: 1100px;
+            margin: 50px auto;
+            padding: 0 25px;
+        }
+
+        .cabecalho-pagina {
+            margin-bottom: 30px;
+        }
+
+        .cabecalho-pagina small {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .cabecalho-pagina h2 {
+            margin: 8px 0;
+            font-size: 32px;
+        }
+
+        .usuario-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .perfil,
+        .dados,
+        .pedidos {
+            background: #fff;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.08);
+        }
+
+        .perfil {
+            text-align: center;
+        }
+
+        .avatar {
+            width: 95px;
+            height: 95px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: #eee;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+        }
+
+        .perfil h3 {
+            margin: 8px 0;
+        }
+
+        .perfil p {
+            color: #777;
+        }
+
+        .menu-conta {
+            margin-top: 25px;
+        }
+
+        .menu-conta a {
+            display: block;
+            text-align: left;
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 7px;
+            text-decoration: none;
+            color: #222;
+        }
+
+        .menu-conta a:hover,
+        .menu-conta .selecionado {
+            background: #f0f0f0;
+        }
+
+        .dados h3,
+        .pedidos h3 {
+            margin-top: 0;
+            font-size: 22px;
+        }
+
+        .formulario {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .campo {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .campo.completo {
+            grid-column: 1 / -1;
+        }
+
+        .campo label {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .campo input {
+            padding: 13px;
+            border: 1px solid #ddd;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        .salvar {
+            margin-top: 22px;
+            border: 0;
+            padding: 13px 25px;
+            background: #111;
+            color: white;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .pedido {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 15px;
+            padding: 17px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .pedido:last-child {
+            border-bottom: 0;
+        }
+
+        .pedido h4 {
+            margin: 0 0 6px;
+        }
+
+        .pedido p {
+            margin: 4px 0;
+            color: #666;
+        }
+
+        .status {
+            align-self: center;
+            padding: 7px 12px;
+            border-radius: 20px;
+            background: #eee;
+            font-size: 13px;
+        }
+
+        @media (max-width: 800px) {
+            .usuario-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .formulario {
+                grid-template-columns: 1fr;
+            }
+
+            .campo.completo {
+                grid-column: auto;
+            }
+        }
+    
+        /* isso é da tela de usuario */
+        .pagina {
+            max-width: 1100px;
+            margin: 50px auto;
+            padding: 0 25px;
+        }
+
+        .cabecalho-pagina {
+            margin-bottom: 30px;
+        }
+
+        .cabecalho-pagina small {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .cabecalho-pagina h2 {
+            margin: 8px 0;
+            font-size: 32px;
+        }
+
+        .carrinho-layout {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .itens-carrinho,
+        .resumo,
+        .cliente {
+            background: #fff;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.08);
+        }
+
+        .item {
+            display: grid;
+            grid-template-columns: 110px 1fr auto;
+            gap: 20px;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .item:last-child {
+            border-bottom: 0;
+        }
+
+        .item img {
+            width: 110px;
+            height: 130px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: #f5f5f5;
+        }
+
+        .item h3 {
+            margin: 5px 0;
+        }
+
+        .item p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .quantidade {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .quantidade button {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #ddd;
+            background: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .preco {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .remover {
+            border: 0;
+            background: transparent;
+            color: #999;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .remover:hover {
+            color: #d00;
+        }
+
+        .resumo h3 {
+            margin-top: 0;
+            font-size: 22px;
+        }
+
+        .linha-resumo {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+        }
+
+        .total {
+            border-top: 1px solid #ddd;
+            padding-top: 18px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .finalizar {
+            width: 100%;
+            border: 0;
+            padding: 15px;
+            border-radius: 8px;
+            background: #111;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .finalizar:hover {
+            opacity: .85;
+        }
+
+        .continuar {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #111;
+            text-decoration: none;
+        }
+
+        .vazio {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .vazio i {
+            font-size: 55px;
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 800px) {
+            .carrinho-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .item {
+                grid-template-columns: 85px 1fr;
+            }
+
+            .item img {
+                width: 85px;
+                height: 105px;
+            }
+
+            .item .lado-direito {
+                grid-column: 2;
+            }
+        }
+    
+        
+    /* SOMENTE HOME */
+    .home-produtos {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+    }
+
+    .home-produtos .card {
+        width: 100%;
+    }
+
+    .home-produtos .carrossel {
+        width: 100%;
+    }
+
+    .home-produtos .carrossel img {
+        width: 100%;
+        display: block;
+    }

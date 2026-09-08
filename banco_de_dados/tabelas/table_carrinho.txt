@@ -1,0 +1,11 @@
+CREATE TABLE carrinhos (
+    id_carrinho INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT UNSIGNED NOT NULL,
+    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_carrinhos_cliente
+        FOREIGN KEY (id_cliente)
+        REFERENCES clientes(id_cliente)
+);

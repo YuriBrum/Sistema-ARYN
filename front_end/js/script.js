@@ -1,8 +1,27 @@
+// Página de login muda conforme a página atual
+function paginaLogin() {
+    return window.location.pathname.includes('/modelos/')
+        ? 'login.html'
+        : 'front_end/modelos/login.html';
+}
+
+// Garante que só usuário logado pode favoritar/adicionar ao carrinho
+function exigirLoginParaAcao() {
+    if (typeof isLoggedIn === 'function' && isLoggedIn()) {
+        return true;
+    }
+    alert('Faça login para continuar.');
+    window.location.href = paginaLogin();
+    return false;
+}
+
 const botoesFavorito = document.querySelectorAll(".favorito");
 
 botoesFavorito.forEach(botao => {
 
     botao.addEventListener("click", () => {
+
+        if (!exigirLoginParaAcao()) return;
 
         let quantidade = parseInt(
             botao.textContent.replace("❤", "").trim() // isso mostra apenas o número de favoritos, removendo o coração e espaços em branco
@@ -21,6 +40,9 @@ const botoesCarrinho = document.querySelectorAll(".carrinho");
 botoesCarrinho.forEach(botao => {
 
     botao.addEventListener("click", async () => {
+
+        if (!exigirLoginParaAcao()) return;
+
         // Tenta usar sistema de carrinho com auth (guest = localStorage, logado = banco)
         const card = botao.closest('.card') || botao.closest('.item');
         let produto = null;

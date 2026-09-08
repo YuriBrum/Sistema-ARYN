@@ -1,0 +1,377 @@
+.pagina {
+    max-width: 1100px;
+    margin: 50px auto;
+    padding: 0 25px;
+}
+
+.cabecalho-pagina {
+    margin-bottom: 30px;
+}
+
+.cabecalho-pagina small {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.cabecalho-pagina h2 {
+    margin: 8px 0;
+    font-size: 32px;
+}
+
+.carrinho-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 25px;
+    align-items: start;
+}
+
+.itens-carrinho,
+.resumo,
+.cliente {
+    background: #fff;
+    border-radius: 14px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,.08);
+    color: #111;
+}
+
+.item {
+    display: grid;
+    grid-template-columns: 110px 1fr auto;
+    gap: 20px;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.item:last-child {
+    border-bottom: 0;
+}
+
+.item img {
+    width: 110px;
+    height: 130px;
+    object-fit: contain;
+    border-radius: 10px;
+    background: #f5f5f5;
+}
+
+.item h3 {
+    margin: 5px 0;
+}
+
+.item p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.quantidade {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.quantidade button {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #ddd;
+    background: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.preco {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.remover {
+    border: 0;
+    background: transparent;
+    color: #999;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.remover:hover {
+    color: #d00;
+}
+
+.resumo h3 {
+    margin-top: 0;
+    font-size: 22px;
+}
+
+.linha-resumo {
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0;
+}
+
+.total {
+    border-top: 1px solid #ddd;
+    padding-top: 18px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.total-finalizar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #ddd;
+    margin-top: 20px;
+    padding-top: 16px;
+    font-size: 17px;
+}
+
+.total-finalizar strong {
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.finalizar {
+    width: 100%;
+    border: 0;
+    padding: 15px;
+    border-radius: 8px;
+    background: #111;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.finalizar:hover {
+    opacity: .85;
+}
+
+.continuar {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #111;
+    text-decoration: none;
+}
+
+.vazio {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.vazio i {
+    font-size: 55px;
+    color: #aaa;
+    margin-bottom: 15px;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal-finalizar {
+    background: #fff;
+    color: #111;
+    border-radius: 14px;
+    padding: 30px;
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0,0,0,.3);
+}
+
+.modal-fechar {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: transparent;
+    border: 0;
+    font-size: 28px;
+    line-height: 1;
+    color: #888;
+    cursor: pointer;
+}
+
+.modal-finalizar h3 {
+    margin: 0 0 6px;
+    font-size: 24px;
+}
+
+.modal-sub {
+    color: #777;
+    font-size: 14px;
+    margin: 0 0 20px;
+}
+
+.campo-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.campo-modal label {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.campo-modal input {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    font-size: 15px;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.campo-modal input:focus {
+    border-color: #111;
+}
+
+.pagamento-opcoes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 18px 0;
+}
+
+.opcao-pagamento {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    padding: 14px;
+    cursor: pointer;
+    transition: border-color .2s;
+}
+
+.opcao-pagamento:has(input:checked) {
+    border-color: #111;
+}
+
+.opcao-pagamento i {
+    font-size: 22px;
+    color: #444;
+}
+
+.opcao-pagamento span {
+    font-weight: bold;
+}
+
+.area-pagamento {
+    background: #f5f5f5;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 16px;
+}
+
+.area-pagamento small {
+    display: block;
+    color: #777;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.chave-pix {
+    background: #fff;
+    border: 1px dashed #aaa;
+    border-radius: 7px;
+    padding: 12px;
+    font-family: monospace;
+    font-size: 14px;
+    text-align: center;
+    letter-spacing: 1px;
+    word-break: break-all;
+    margin-bottom: 10px;
+}
+
+.btn-copiar {
+    width: 100%;
+    border: 0;
+    padding: 10px;
+    border-radius: 7px;
+    background: #111;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-copiar:hover {
+    opacity: .85;
+}
+
+.colunas-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.modal-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #eee;
+    padding-top: 16px;
+    margin-bottom: 18px;
+    font-size: 17px;
+}
+
+.modal-total strong {
+    font-size: 24px;
+}
+
+.btn-pagar {
+    width: 100%;
+    border: 0;
+    padding: 15px;
+    border-radius: 8px;
+    background: #111;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.btn-pagar:hover {
+    opacity: .85;
+}
+
+.btn-cancelar {
+    width: 100%;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #666;
+    padding: 13px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+@media (max-width: 800px) {
+    .carrinho-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .item {
+        grid-template-columns: 85px 1fr;
+    }
+
+    .item img {
+        width: 85px;
+        height: 105px;
+    }
+
+    .item .lado-direito {
+        grid-column: 2;
+    }
+}
