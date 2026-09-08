@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARYN - Curtidas</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/styles/curtidas.css">
+    <script src="../assets/js/autentificao.js"></script>
+    <script src="../assets/js/carrinho.js"></script>
+    <script src="../assets/js/curtida.js"></script>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        <h1><span>A</span>RYN</h1>
+        <p>Vista sua essência</p>
+    </div>
+
+    <nav>
+        <a href="../../index.html">
+            <i class="fa-solid fa-house"></i>
+            Home
+        </a>
+
+        <a href="masculino.html">
+            <i class="fa-solid fa-person"></i>
+            Masculino
+        </a>
+
+        <a href="feminino.html">
+            <i class="fa-solid fa-person-dress"></i>
+            Feminino
+        </a>
+    </nav>
+
+    <nav>
+        <a href="../../index.html">
+            <i class="fa-solid fa-store"></i>
+            Loja
+        </a>
+
+        <a href="carrinho.html">
+            <i class="fa-solid fa-cart-shopping"></i>
+            Carrinho
+        </a>
+
+        <a href="curtidas.html" class="active">
+            <i class="fa-solid fa-heart"></i>
+            Curtidas
+        </a>
+
+        <a href="usuarios.html">
+            <i class="fa-solid fa-user"></i>
+            Usuários
+        </a>
+    </nav>
+</header>
+
+<main class="pagina">
+
+    <div class="cabecalho-pagina">
+        <small>ARYN</small>
+        <h2>Minhas Curtidas</h2>
+        <p>Produtos que você curtiu. Clique no coração para parar de curtir.</p>
+    </div>
+
+    <div id="avisoVisitante" class="aviso-visitante" style="display:none;">
+        <i class="fa-solid fa-heart"></i>
+        <h3>Você está como visitante</h3>
+        <p>Crie uma conta ou entre para curtir produtos.</p>
+        <a href="cadastro.html">Criar conta</a>
+        <a href="login.html" class="link-login">Entrar</a>
+    </div>
+
+    <section class="curtidas-cartao">
+        <div id="lista-curtidas">
+            <!-- Produtos curtidos aparecem aqui -->
+        </div>
+    </section>
+
+</main>
+
+</body>
+</html>

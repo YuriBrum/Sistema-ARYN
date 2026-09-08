@@ -190,6 +190,14 @@ button{
 
 }
 
+.favorito.curtido{
+
+    color:#e31b1b;
+    border:1px solid #e31b1b;
+    background:#2a2020;
+
+}
+
 .carrinho{
 
     flex:1;
