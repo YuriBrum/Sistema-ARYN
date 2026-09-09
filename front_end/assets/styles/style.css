@@ -190,6 +190,14 @@ button{
 
 }
 
+.favorito.curtido{
+
+    color:#e31b1b;
+    border:1px solid #e31b1b;
+    background:#2a2020;
+
+}
+
 .carrinho{
 
     flex:1;
@@ -589,4 +597,150 @@ button{
     .home-produtos .carrossel img {
         width: 100%;
         display: block;
+    }
+
+    /* PAINEL DE TAMANHO/CORES */
+    .pedido-card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,.08);
+        margin-bottom: 20px;
+    }
+
+    .pedido-cabecalho {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .pedido-cabecalho .data {
+        color: #888;
+        font-size: 14px;
+    }
+
+    .pedido-cabecalho .status {
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: bold;
+        background: #e6f9e6;
+        color: #1a7a1a;
+    }
+
+    .pedido-item {
+        display: grid;
+        grid-template-columns: 80px 1fr auto;
+        gap: 15px;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .pedido-item:last-child {
+        border-bottom: 0;
+    }
+
+    .pedido-item img {
+        width: 80px;
+        height: 90px;
+        object-fit: contain;
+        border-radius: 8px;
+        background: #f5f5f5;
+    }
+
+    .pedido-item h4 {
+        margin: 0 0 4px;
+        font-size: 15px;
+    }
+
+    .pedido-item p {
+        margin: 0;
+        color: #666;
+        font-size: 13px;
+    }
+
+    .pedido-item .preco-item {
+        font-weight: bold;
+        font-size: 15px;
+    }
+
+    .pedido-rodape {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 1px solid #eee;
+    }
+
+    .pedido-rodape .pagamento {
+        color: #888;
+        font-size: 13px;
+    }
+
+    .pedido-rodape .total {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .vazio {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .vazio i {
+        font-size: 55px;
+        color: #aaa;
+        margin-bottom: 15px;
+    }
+
+    .vazio h3 {
+        margin-bottom: 8px;
+    }
+
+    .vazio p {
+        color: #888;
+    }
+
+    .vazio a {
+        display: inline-block;
+        margin-top: 18px;
+        padding: 12px 28px;
+        background: #111;
+        color: #fff;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .aviso-visitante {
+        text-align: center;
+        padding: 50px 20px;
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 5px 20px rgba(0,0,0,.08);
+    }
+
+    .aviso-visitante i {
+        font-size: 50px;
+        color: #ccc;
+        margin-bottom: 15px;
+    }
+
+    .aviso-visitante h3 { margin-bottom: 8px; }
+    .aviso-visitante p { color: #888; margin-bottom: 18px; }
+
+    .aviso-visitante a {
+        display: inline-block;
+        padding: 12px 28px;
+        background: #d91d1d;
+        color: #fff;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+        margin: 0 5px;
     }

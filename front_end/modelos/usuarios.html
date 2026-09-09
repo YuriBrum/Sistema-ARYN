@@ -86,7 +86,7 @@
                     Meus dados
                 </a>
 
-                <a href="#pedidos">
+                <a href="pedidos.html">
                     <i class="fa-solid fa-box"></i>
                     Meus pedidos
                 </a>
@@ -138,31 +138,6 @@
                     </div>
 
                     <div class="campo completo">
-                        <label for="endereco">Endereço</label>
-                        <input type="text" id="endereco" placeholder="Rua Exemplo, 100">
-                    </div>
-
-                    <div class="campo">
-                        <label for="cidade">Cidade</label>
-                        <input type="text" id="cidade" placeholder="Sua cidade">
-                    </div>
-
-                    <div class="campo">
-                        <label for="cep">CEP</label>
-                        <input type="text" id="cep" placeholder="00000-000">
-                    </div>
-
-                    <div class="campo">
-                        <label for="senha">Nova senha</label>
-                        <input type="password" id="senha" placeholder="Digite uma nova senha">
-                    </div>
-
-                    <div class="campo">
-                        <label for="confirmar">Confirmar senha</label>
-                        <input type="password" id="confirmar" placeholder="Confirme a nova senha">
-                    </div>
-
-                    <div class="campo completo">
                         <button type="submit" class="salvar">
                             <i class="fa-solid fa-floppy-disk"></i>
                             Salvar alterações
@@ -192,17 +167,9 @@
     function salvarDados(event) {
         event.preventDefault();
 
-        const senha = document.getElementById("senha").value;
-        const confirmar = document.getElementById("confirmar").value;
-
-        if (senha !== confirmar) {
-            alert("As senhas não são iguais.");
-            return;
-        }
-
         // Captura todos os campos do formulário
         const valores = {};
-        ["nome", "email", "telefone", "cpf", "endereco", "cidade", "cep"].forEach(id => {
+        ["nome", "email", "telefone", "cpf"].forEach(id => {
             const el = document.getElementById(id);
             valores[id] = el ? el.value.trim() : "";
         });
@@ -214,7 +181,7 @@
             // Mantém o e-mail da conta mesmo se o campo for esvaziado
             dados.nome = valores.nome || dados.nome || "";
             dados.email = valores.email || usuario;
-            ["telefone", "cpf", "endereco", "cidade", "cep"].forEach(id => {
+            ["telefone", "cpf", "endereco"].forEach(id => {
                 dados[id] = valores[id];
             });
 
@@ -261,10 +228,7 @@
                 nome: nome,
                 email: email,
                 telefone: (salvo && salvo.telefone) || "",
-                cpf: (salvo && salvo.cpf) || "",
-                endereco: (salvo && salvo.endereco) || "",
-                cidade: (salvo && salvo.cidade) || "",
-                cep: (salvo && salvo.cep) || ""
+                cpf: (salvo && salvo.cpf) || ""
             };
             Object.keys(preencher).forEach(id => {
                 const el = document.getElementById(id);

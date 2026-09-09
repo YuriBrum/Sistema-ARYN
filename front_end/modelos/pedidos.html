@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARYN - Meus Pedidos</title>
+
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/styles/usuario.css">
+    
+    <script src="../assets/js/autentificao.js"></script>
+    <script src="../assets/js/carrinho.js"></script>
+
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        <h1><span>A</span>RYN</h1>
+        <p>Vista sua essência</p>
+    </div>
+
+    <nav>
+        <a href="../../index.html">
+            <i class="fa-solid fa-house"></i>
+            Home
+        </a>
+
+        <a href="masculino.html">
+            <i class="fa-solid fa-person"></i>
+            Masculino
+        </a>
+
+        <a href="feminino.html">
+            <i class="fa-solid fa-person-dress"></i>
+            Feminino
+        </a>
+    </nav>
+
+    <nav>
+        <a href="../../index.html">
+            <i class="fa-solid fa-store"></i>
+            Loja
+        </a>
+
+        <a href="carrinho.html">
+            <i class="fa-solid fa-cart-shopping"></i>
+            Carrinho
+        </a>
+
+        <a href="curtidas.html">
+            <i class="fa-solid fa-heart"></i>
+            Curtidas
+        </a>
+
+        <a href="usuarios.html">
+            <i class="fa-solid fa-user"></i>
+            Usuários
+        </a>
+    </nav>
+</header>
+
+<main class="pagina">
+
+    <div class="cabecalho-pagina">
+        <small>ARYN</small>
+        <h2>Meus Pedidos</h2>
+        <p>Todos os pedidos que você realizou.</p>
+    </div>
+
+    <div id="avisoVisitante" class="aviso-visitante" style="display:none;">
+        <i class="fa-solid fa-box"></i>
+        <h3>Você está como visitante</h3>
+        <p>Faça login ou crie uma conta para ver seus pedidos.</p>
+        <a href="cadastro.html">Criar conta</a>
+        <a href="login.html">Entrar</a>
+    </div>
+
+    <div id="lista-pedidos"></div>
+
+</main>
+
+<script>
+    function formatarPreco(valor) {
+        valor = parseFloat(valor) || 0;
+        return "R$ " + valor.toFixed(2).replace(".", ",");
+    }
+
+    function carregarPedidos() {
+        if (typeof isLoggedIn !== 'function' || !isLoggedIn()) return [];
+        try {
+            const raw = localStorage.getItem('aryn_pedidos_' + getUsuarioLogado());
+            return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function renderizarPedidos() {
+        const container = document.getElementById("lista-pedidos");
+        const aviso = document.getElementById("avisoVisitante");
+        if (!container) return;
+
+        if (typeof isLoggedIn !== 'function' || !isLoggedIn()) {
+            if (aviso) aviso.style.display = "";
+            container.innerHTML = "";
+            return;
+        }
+
+        if (aviso) aviso.style.display = "none";
+
+        const pedidos = carregarPedidos();
+
+        if (!pedidos.length) {
+            container.innerHTML =
+                '<div class="vazio">' +
+                    '<i class="fa-solid fa-box-open"></i>' +
+                    '<h3>Nenhum pedido ainda</h3>' +
+                    '<p>Quando você finalizar uma compra, ela aparecerá aqui.</p>' +
+                    '<a href="../../index.html">Ver produtos</a>' +
+                '</div>';
+            return;
+        }
+
+        container.innerHTML = pedidos.map(pedido => {
+            const itensHtml = pedido.itens.map(item => {
+                const img = item.img || '../assets/images/mockup.png';
+                return (
+                    '<div class="pedido-item">' +
+                        '<img src="' + img + '" alt="' + item.nome + '">' +
+                        '<div>' +
+                            '<h4>' + item.nome + '</h4>' +
+                            '<p>Qtd: ' + item.qtd + ' &middot; ' + formatarPreco(item.preco) + ' cada</p>' +
+                        '</div>' +
+                        '<span class="preco-item">' + formatarPreco(item.preco * item.qtd) + '</span>' +
+                    '</div>'
+                );
+            }).join('');
+
+            return (
+                '<div class="pedido-card">' +
+                    '<div class="pedido-cabecalho">' +
+                        '<div>' +
+                            '<strong>Pedido #' + pedido.id + '</strong><br>' +
+                            '<span class="data">' + pedido.data + '</span>' +
+                        '</div>' +
+                        '<span class="status">Concluído</span>' +
+                    '</div>' +
+                    itensHtml +
+                    '<div class="pedido-rodape">' +
+                        '<span class="pagamento"><i class="fa-solid fa-credit-card"></i> ' + pedido.pagamento + '</span>' +
+                        '<span class="total">' + formatarPreco(pedido.total) + '</span>' +
+                    '</div>' +
+                '</div>'
+            );
+        }).join('');
+    }
+
+    window.addEventListener("DOMContentLoaded", renderizarPedidos);
+</script>
+
+</body>
+</html>

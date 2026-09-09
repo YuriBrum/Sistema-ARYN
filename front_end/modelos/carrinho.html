@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="../assets/styles/carrinho.css">
     <script src="../assets/js/autentificao.js"></script>
     <script src="../assets/js/carrinho.js"></script>
+    <script src="../assets/js/estoque.js"></script>
 </head>
 
 <body>
@@ -228,12 +229,16 @@
 
             container.innerHTML = lista.map(p => {
                 const img = p.img || IMG_PADRAO;
+                const detalhes = [];
+                if (p.cor) detalhes.push(p.cor);
+                if (p.tamanho) detalhes.push(p.tamanho);
+                const detalheStr = detalhes.length ? ' <span style="color:#888">(' + detalhes.join(' / ') + ')</span>' : '';
                 return (
                     '<div class="item" data-id="' + p.id + '">' +
                         "<img src=\"" + img + "\" alt=\"" + p.nome + "\">" +
                         "<div>" +
                             "<span>PRODUTO</span>" +
-                            "<h3>" + p.nome + "</h3>" +
+                            "<h3>" + p.nome + detalheStr + "</h3>" +
                             "<p>" + formatarPreco(p.preco) + " cada</p>" +
                             '<div class="quantidade">' +
                                 '<button class="qtd-menos" data-id="' + p.id + '">−</button>' +
@@ -410,17 +415,64 @@
             detalhePagamento = "Cartão **** " + numero.slice(-4) + " (" + nomeCartao + ")";
         }
 
+        const itensComprados = carregarCarrinho();
+        let semEstoque = [];
+
+        if (typeof reduzirEstoque === 'function') {
+            itensComprados.forEach(item => {
+                const estoqueAtual = obterEstoque(item.nome);
+                const qtdComprar = item.qtd || 1;
+                if (estoqueAtual <= 0) {
+                    semEstoque.push(item.nome + ' (já esgotado)');
+                } else if (qtdComprar > estoqueAtual) {
+                    semEstoque.push(item.nome + ' (disponível: ' + estoqueAtual + ')');
+                }
+                reduzirEstoque(item.nome, qtdComprar);
+            });
+        }
+
+        if (typeof isLoggedIn === 'function' && isLoggedIn()) {
+            const usuario = getUsuarioLogado();
+            const pedidosKey = 'aryn_pedidos_' + usuario;
+            let pedidos = [];
+            try { pedidos = JSON.parse(localStorage.getItem(pedidosKey) || '[]'); } catch (e) { pedidos = []; }
+
+            const agora = new Date();
+            const dataFormatada = agora.toLocaleDateString('pt-BR') + ' ' + agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+            pedidos.push({
+                id: Date.now(),
+                data: dataFormatada,
+                itens: itensComprados.map(item => ({
+                    nome: item.nome,
+                    preco: parseFloat(item.preco) || 0,
+                    qtd: parseInt(item.qtd, 10) || 1,
+                    img: item.img || ''
+                })),
+                total: calcularTotal(),
+                pagamento: detalhePagamento,
+                endereco: endereco + (complemento ? ' - ' + complemento : '') + ' | CEP: ' + cep
+            });
+
+            localStorage.setItem(pedidosKey, JSON.stringify(pedidos));
+        }
+
         salvarCarrinho([]).then(() => {
             fecharModal();
             renderizarCarrinho();
-            alert(
-                "Pedido confirmado!\n\n" +
+
+            let msg = "Pedido confirmado!\n\n" +
                 "Entrega: " + endereco +
                 (complemento ? " - " + complemento : "") +
                 "\nCEP: " + cep +
                 "\nPagamento: " + detalhePagamento +
-                "\nTotal: " + total
-            );
+                "\nTotal: " + total;
+
+            if (semEstoque.length) {
+                msg += "\n\nAviso de estoque:\n" + semEstoque.join('\n');
+            }
+
+            alert(msg);
         });
     }
 
