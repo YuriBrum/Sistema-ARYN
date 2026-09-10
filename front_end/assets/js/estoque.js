@@ -1,12 +1,11 @@
 const ESTOQUE_KEY = 'aryn_estoque';
 
 const ESTOQUE_INICIAL = {
-    'Camisa Social Polo ARYN': 24,
+    'Ternos ARYN': 21,
     'Blazer ARYN': 38,
     'Smoke Terno ARYN': 34,
-    'Terno ARYN': 21,
+    'Camiseta Social ARYN': 24,
     'Camisa Social Slim ARYN': 17,
-    'Camisa Social ARYN': 24,
     'Camisa Social Feminina ARYN': 24,
     'Blazer Feminino ARYN': 38
 };
@@ -14,7 +13,23 @@ const ESTOQUE_INICIAL = {
 function carregarEstoque() {
     try {
         const raw = localStorage.getItem(ESTOQUE_KEY);
-        if (raw) return JSON.parse(raw);
+        if (raw) {
+            const dados = JSON.parse(raw);
+            const chavesAntigas = {
+                'Terno ARYN': 'Ternos ARYN',
+                'Camisa Social Polo ARYN': 'Camiseta Social ARYN'
+            };
+            let mudou = false;
+            Object.entries(chavesAntigas).forEach(([antiga, nova]) => {
+                if (dados[antiga] !== undefined && dados[nova] === undefined) {
+                    dados[nova] = dados[antiga];
+                    delete dados[antiga];
+                    mudou = true;
+                }
+            });
+            if (mudou) localStorage.setItem(ESTOQUE_KEY, JSON.stringify(dados));
+            return dados;
+        }
     } catch (e) {}
     return { ...ESTOQUE_INICIAL };
 }

@@ -5,10 +5,13 @@ function formatarPreco(valor) {
     return "R$ " + valor.toFixed(2).replace(".", ",");
 }
 
+function chaveCurtidas() {
+    return 'aryn_favoritos_db_' + (typeof getUsuarioLogado === 'function' ? (getUsuarioLogado() || 'anon') : 'anon');
+}
+
 function carregarCurtidas() {
-    if (typeof isLoggedIn !== 'function' || !isLoggedIn()) return [];
     try {
-        const raw = localStorage.getItem('aryn_favoritos_db_' + getUsuarioLogado());
+        const raw = localStorage.getItem(chaveCurtidas());
         let lista = raw ? JSON.parse(raw) : [];
         if (!Array.isArray(lista)) return [];
         return lista.map(item => {
@@ -29,7 +32,7 @@ function carregarCurtidas() {
 }
 
 function salvarCurtidas(lista) {
-    localStorage.setItem('aryn_favoritos_db_' + getUsuarioLogado(), JSON.stringify(lista));
+    localStorage.setItem(chaveCurtidas(), JSON.stringify(lista));
 }
 
 function renderizarCurtidas() {
@@ -37,17 +40,12 @@ function renderizarCurtidas() {
     if (!container) return;
 
     const aviso = document.getElementById("avisoVisitante");
-
-    if (typeof isLoggedIn !== 'function' || !isLoggedIn()) {
-        if (aviso) aviso.style.display = "";
-        container.innerHTML = "";
-        return;
-    }
-    if (aviso) aviso.style.display = "none";
+    const logado = typeof isLoggedIn === 'function' && isLoggedIn();
 
     const lista = carregarCurtidas();
 
     if (!lista.length) {
+        if (aviso) aviso.style.display = logado ? "none" : "";
         container.innerHTML =
             '<div class="vazio">' +
                 '<i class="fa-solid fa-heart"></i>' +
@@ -57,6 +55,8 @@ function renderizarCurtidas() {
             "</div>";
         return;
     }
+
+    if (aviso) aviso.style.display = "none";
 
     container.innerHTML = lista.map(p => {
         const img = p.img || IMG_PADRAO;
@@ -80,33 +80,38 @@ function renderizarCurtidas() {
     }).join("");
 }
 
-document.getElementById("lista-curtidas").addEventListener("click", async (e) => {
-    const botao = e.target.closest("button");
-    if (!botao) return;
-    const id = botao.dataset.id;
-    if (!id) return;
+window.addEventListener("DOMContentLoaded", () => {
+    renderizarCurtidas();
 
-    let lista = carregarCurtidas();
+    const container = document.getElementById("lista-curtidas");
+    if (!container) return;
 
-    if (botao.classList.contains("remover-curtida")) {
-        salvarCurtidas(lista.filter(p => String(p.id) !== String(id)));
-        renderizarCurtidas();
-    } else if (botao.classList.contains("adicionar-carrinho")) {
-        const item = lista.find(p => String(p.id) === String(id));
-        if (item && typeof adicionarAoCarrinho === 'function') {
-            await adicionarAoCarrinho({
-                id: item.id,
-                nome: item.nome,
-                preco: item.preco,
-                img: item.img,
-                qtd: 1
-            });
-            botao.textContent = "✓ Adicionado ao carrinho";
-            setTimeout(() => {
-                botao.innerHTML = '<i class="fa-solid fa-cart-shopping"></i> Adicionar ao carrinho';
-            }, 1800);
+    container.addEventListener("click", async (e) => {
+        const botao = e.target.closest("button");
+        if (!botao) return;
+        const id = botao.dataset.id;
+        if (!id) return;
+
+        let lista = carregarCurtidas();
+
+        if (botao.classList.contains("remover-curtida")) {
+            salvarCurtidas(lista.filter(p => String(p.id) !== String(id)));
+            renderizarCurtidas();
+        } else if (botao.classList.contains("adicionar-carrinho")) {
+            const item = lista.find(p => String(p.id) === String(id));
+            if (item && typeof adicionarAoCarrinho === 'function') {
+                await adicionarAoCarrinho({
+                    id: item.id,
+                    nome: item.nome,
+                    preco: item.preco,
+                    img: item.img,
+                    qtd: 1
+                });
+                botao.textContent = "✓ Adicionado ao carrinho";
+                setTimeout(() => {
+                    botao.innerHTML = '<i class="fa-solid fa-cart-shopping"></i> Adicionar ao carrinho';
+                }, 1800);
+            }
         }
-    }
+    });
 });
-
-window.addEventListener("DOMContentLoaded", renderizarCurtidas);

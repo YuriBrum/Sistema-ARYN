@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ARYN - Usuário</title>
 
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../assets/styles/style.css">
     <link rel="stylesheet" href="../assets/styles/usuario.css">
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
@@ -209,7 +209,6 @@
         const perfilEmail = document.getElementById("perfilEmail");
         const aviso = document.getElementById("avisoVisitante");
         const dados = document.getElementById("dados");
-        const pedidos = document.getElementById("pedidos");
 
         if (typeof isLoggedIn === 'function' && isLoggedIn()) {
             // Logado: mostra os dados e preenche com o que foi salvo
@@ -221,7 +220,6 @@
             if (perfilEmail) perfilEmail.textContent = email;
             if (aviso) aviso.style.display = "none";
             if (dados) dados.style.display = "";
-            if (pedidos) pedidos.style.display = "";
 
             // Preenche o formulário com tudo que foi salvo
             const preencher = {
@@ -240,7 +238,6 @@
             if (perfilEmail) perfilEmail.textContent = "";
             if (aviso) aviso.style.display = "";
             if (dados) dados.style.display = "none";
-            if (pedidos) pedidos.style.display = "none";
         }
     });
 </script>
