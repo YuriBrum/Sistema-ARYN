@@ -25,7 +25,10 @@ async function listarVariacoes() {
             ON t.id_tamanho = v.id_tamanho
         INNER JOIN cores c
             ON c.id_cor = v.id_cor
-        ORDER BY p.nome ASC, t.ordem ASC, c.nome ASC
+        ORDER BY
+            p.nome ASC,
+            t.ordem ASC,
+            c.nome ASC
     `);
 
     return rows;

@@ -1,4 +1,5 @@
-const estoqueModel = require('../models/estoqueModel');
+const estoqueModel =
+    require('../models/estoqueModel');
 
 const TIPOS_MOVIMENTACAO = [
     'ENTRADA',
@@ -29,11 +30,15 @@ async function consultarEstoque(req, res) {
         });
 
     } catch (error) {
-        console.error('Erro ao consultar estoque:', error);
+        console.error(
+            'Erro ao consultar estoque:',
+            error
+        );
 
         return res.status(500).json({
             success: false,
-            message: 'Erro interno ao consultar estoque.'
+            message:
+                'Erro interno ao consultar estoque.'
         });
     }
 }
@@ -60,7 +65,8 @@ async function listarMovimentacoes(req, res) {
 
         return res.status(500).json({
             success: false,
-            message: 'Erro interno ao listar movimentações.'
+            message:
+                'Erro interno ao listar movimentações.'
         });
     }
 }
@@ -79,7 +85,8 @@ async function movimentarEstoque(req, res) {
         if (!id_variacao) {
             return res.status(400).json({
                 success: false,
-                message: 'A variação do produto é obrigatória.'
+                message:
+                    'A variação do produto é obrigatória.'
             });
         }
 
@@ -99,7 +106,8 @@ async function movimentarEstoque(req, res) {
         ) {
             return res.status(400).json({
                 success: false,
-                message: 'A quantidade informada é inválida.'
+                message:
+                    'A quantidade informada é inválida.'
             });
         }
 
@@ -137,14 +145,21 @@ async function movimentarEstoque(req, res) {
             error
         );
 
-        if (error.message === 'VARIACAO_NAO_ENCONTRADA') {
+        if (
+            error.message ===
+            'VARIACAO_NAO_ENCONTRADA'
+        ) {
             return res.status(404).json({
                 success: false,
-                message: 'Variação não encontrada.'
+                message:
+                    'Variação não encontrada.'
             });
         }
 
-        if (error.message === 'VARIACAO_INATIVA') {
+        if (
+            error.message ===
+            'VARIACAO_INATIVA'
+        ) {
             return res.status(409).json({
                 success: false,
                 message:
@@ -152,7 +167,10 @@ async function movimentarEstoque(req, res) {
             });
         }
 
-        if (error.message === 'ESTOQUE_INSUFICIENTE') {
+        if (
+            error.message ===
+            'ESTOQUE_INSUFICIENTE'
+        ) {
             return res.status(409).json({
                 success: false,
                 message:
@@ -160,11 +178,14 @@ async function movimentarEstoque(req, res) {
             });
         }
 
-        if (error.code === 'ER_NO_REFERENCED_ROW_2') {
+        if (
+            error.code ===
+            'ER_NO_REFERENCED_ROW_2'
+        ) {
             return res.status(400).json({
                 success: false,
                 message:
-                    'Produto, pedido ou usuário informado não existe.'
+                    'Pedido ou usuário informado não existe.'
             });
         }
 

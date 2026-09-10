@@ -14,6 +14,7 @@ async function buscarEstoquePorVariacao(id_variacao) {
             v.sku,
             v.estoque,
             v.preco,
+            p.preco AS preco_produto,
             v.status
         FROM variacoes_produto v
         INNER JOIN produtos p
@@ -108,8 +109,11 @@ async function movimentarEstoque({
             throw new Error('VARIACAO_INATIVA');
         }
 
-        const estoqueAnterior = Number(variacao.estoque);
-        const quantidadeMovimentada = Number(quantidade);
+        const estoqueAnterior =
+            Number(variacao.estoque);
+
+        const quantidadeMovimentada =
+            Number(quantidade);
 
         let estoquePosterior;
 
@@ -118,20 +122,25 @@ async function movimentarEstoque({
             tipo === 'DEVOLUCAO'
         ) {
             estoquePosterior =
-                estoqueAnterior + quantidadeMovimentada;
+                estoqueAnterior +
+                quantidadeMovimentada;
         }
 
         if (tipo === 'SAIDA') {
             estoquePosterior =
-                estoqueAnterior - quantidadeMovimentada;
+                estoqueAnterior -
+                quantidadeMovimentada;
 
             if (estoquePosterior < 0) {
-                throw new Error('ESTOQUE_INSUFICIENTE');
+                throw new Error(
+                    'ESTOQUE_INSUFICIENTE'
+                );
             }
         }
 
         if (tipo === 'AJUSTE') {
-            estoquePosterior = quantidadeMovimentada;
+            estoquePosterior =
+                quantidadeMovimentada;
         }
 
         await connection.query(`

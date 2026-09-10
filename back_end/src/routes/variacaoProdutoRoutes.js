@@ -5,14 +5,29 @@ const variacaoProdutoController =
 
 const router = express.Router();
 
-router.get('/', variacaoProdutoController.listarVariacoes);
+router.get(
+    '/',
+    variacaoProdutoController.listarVariacoes
+);
 
-router.get('/:id', variacaoProdutoController.buscarVariacaoPorId);
+router.get(
+    '/:id',
+    variacaoProdutoController.buscarVariacaoPorId
+);
 
-router.post('/', variacaoProdutoController.criarVariacao);
+router.post(
+    '/',
+    variacaoProdutoController.criarVariacao
+);
 
-router.put('/:id', variacaoProdutoController.atualizarVariacao);
+router.put(
+    '/:id',
+    variacaoProdutoController.atualizarVariacao
+);
 
-router.delete('/:id', variacaoProdutoController.excluirVariacao);
+router.delete(
+    '/:id',
+    variacaoProdutoController.excluirVariacao
+);
 
 module.exports = router;

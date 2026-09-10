@@ -1,17 +1,67 @@
 const express = require('express');
 
-const categoriaController = require('../controllers/categoriaController');
-
 const router = express.Router();
 
-router.get('/', categoriaController.listarCategorias);
+const categoriaController = require('../controllers/categoriaController');
 
-router.get('/:id', categoriaController.buscarCategoriaPorId);
+const {
+    validarId,
+    validarBody,
+    validarCamposObrigatorios
+} = require('../middleware/validationMiddleware');
 
-router.post('/', categoriaController.criarCategoria);
+const {
+    autenticar,
+    autorizar
+} = require('../middleware/authMiddleware');
 
-router.put('/:id', categoriaController.atualizarCategoria);
 
-router.delete('/:id', categoriaController.excluirCategoria);
+// GET /api/categorias
+router.get(
+    '/',
+    categoriaController.listarTodas
+);
+
+
+// GET /api/categorias/:id
+router.get(
+    '/:id',
+    validarId('id'),
+    categoriaController.buscarPorId
+);
+
+
+// POST /api/categorias
+router.post(
+    '/',
+    autenticar,
+    autorizar('admin'),
+    validarBody,
+    validarCamposObrigatorios(['nome']),
+    categoriaController.criar
+);
+
+
+// PUT /api/categorias/:id
+router.put(
+    '/:id',
+    autenticar,
+    autorizar('admin'),
+    validarId('id'),
+    validarBody,
+    validarCamposObrigatorios(['nome']),
+    categoriaController.atualizar
+);
+
+
+// DELETE /api/categorias/:id
+router.delete(
+    '/:id',
+    autenticar,
+    autorizar('admin'),
+    validarId('id'),
+    categoriaController.excluir
+);
+
 
 module.exports = router;

@@ -1,186 +1,237 @@
-const categoriaModel = require('../models/categoriaModel');
+const CategoriaModel = require('../models/categoriaModel');
 
-async function listarCategorias(req, res) {
-    try {
-        const categorias = await categoriaModel.listarCategorias();
+class CategoriaController {
 
-        return res.status(200).json({
-            success: true,
-            data: categorias
-        });
+    // GET /api/categorias
+    static async listar(req, res) {
+        try {
+            const categorias = await CategoriaModel.listarTodas();
 
-    } catch (error) {
-        console.error('Erro ao listar categorias:', error);
+            return res.status(200).json({
+                success: true,
+                message: 'Categorias listadas com sucesso.',
+                data: categorias
+            });
 
-        return res.status(500).json({
-            success: false,
-            message: 'Erro interno ao listar categorias.'
-        });
+        } catch (error) {
+            console.error('Erro ao listar categorias:', error);
+
+            return res.status(500).json({
+                success: false,
+                message: 'Erro interno ao listar categorias.'
+            });
+        }
+    }
+
+    // GET /api/categorias/:id
+    static async buscarPorId(req, res) {
+        try {
+            const { id } = req.params;
+
+            if (!Number.isInteger(Number(id)) || Number(id) <= 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'ID da categoria inválido.'
+                });
+            }
+
+            const categoria = await CategoriaModel.buscarPorId(id);
+
+            if (!categoria) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Categoria não encontrada.'
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: 'Categoria encontrada com sucesso.',
+                data: categoria
+            });
+
+        } catch (error) {
+            console.error('Erro ao buscar categoria:', error);
+
+            return res.status(500).json({
+                success: false,
+                message: 'Erro interno ao buscar categoria.'
+            });
+        }
+    }
+
+    // POST /api/categorias
+    static async criar(req, res) {
+        try {
+            const { nome } = req.body;
+
+            if (!nome || typeof nome !== 'string') {
+                return res.status(400).json({
+                    success: false,
+                    message: 'O campo nome é obrigatório.'
+                });
+            }
+
+            const nomeTratado = nome.trim();
+
+            if (!nomeTratado) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'O nome não pode estar vazio.'
+                });
+            }
+
+            if (nomeTratado.length > 100) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'O nome deve possuir no máximo 100 caracteres.'
+                });
+            }
+
+            const existente =
+                await CategoriaModel.buscarPorNome(nomeTratado);
+
+            if (existente) {
+                return res.status(409).json({
+                    success: false,
+                    message: 'Já existe uma categoria com esse nome.'
+                });
+            }
+
+            const categoria =
+                await CategoriaModel.criar(nomeTratado);
+
+            return res.status(201).json({
+                success: true,
+                message: 'Categoria criada com sucesso.',
+                data: categoria
+            });
+
+        } catch (error) {
+            console.error('Erro ao criar categoria:', error);
+
+            return res.status(500).json({
+                success: false,
+                message: 'Erro interno ao criar categoria.'
+            });
+        }
+    }
+
+    // PUT /api/categorias/:id
+    static async atualizar(req, res) {
+        try {
+            const { id } = req.params;
+            const { nome } = req.body;
+
+            if (!Number.isInteger(Number(id)) || Number(id) <= 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'ID da categoria inválido.'
+                });
+            }
+
+            if (!nome || typeof nome !== 'string') {
+                return res.status(400).json({
+                    success: false,
+                    message: 'O campo nome é obrigatório.'
+                });
+            }
+
+            const nomeTratado = nome.trim();
+
+            const categoria =
+                await CategoriaModel.buscarPorId(id);
+
+            if (!categoria) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Categoria não encontrada.'
+                });
+            }
+
+            const existente =
+                await CategoriaModel.buscarPorNome(nomeTratado);
+
+            if (
+                existente &&
+                Number(existente.id_categoria) !== Number(id)
+            ) {
+                return res.status(409).json({
+                    success: false,
+                    message: 'Já existe outra categoria com esse nome.'
+                });
+            }
+
+            await CategoriaModel.atualizar(id, nomeTratado);
+
+            const atualizada =
+                await CategoriaModel.buscarPorId(id);
+
+            return res.status(200).json({
+                success: true,
+                message: 'Categoria atualizada com sucesso.',
+                data: atualizada
+            });
+
+        } catch (error) {
+            console.error('Erro ao atualizar categoria:', error);
+
+            return res.status(500).json({
+                success: false,
+                message: 'Erro interno ao atualizar categoria.'
+            });
+        }
+    }
+
+    // DELETE /api/categorias/:id
+    static async excluir(req, res) {
+        try {
+            const { id } = req.params;
+
+            if (!Number.isInteger(Number(id)) || Number(id) <= 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'ID da categoria inválido.'
+                });
+            }
+
+            const categoria =
+                await CategoriaModel.buscarPorId(id);
+
+            if (!categoria) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Categoria não encontrada.'
+                });
+            }
+
+            await CategoriaModel.excluir(id);
+
+            return res.status(200).json({
+                success: true,
+                message: 'Categoria excluída com sucesso.'
+            });
+
+        } catch (error) {
+            console.error('Erro ao excluir categoria:', error);
+
+            if (
+                error.code === 'ER_ROW_IS_REFERENCED_2' ||
+                error.code === 'ER_ROW_IS_REFERENCED'
+            ) {
+                return res.status(409).json({
+                    success: false,
+                    message:
+                        'Não é possível excluir a categoria porque existem registros vinculados a ela.'
+                });
+            }
+
+            return res.status(500).json({
+                success: false,
+                message: 'Erro interno ao excluir categoria.'
+            });
+        }
     }
 }
 
-async function buscarCategoriaPorId(req, res) {
-    try {
-        const { id } = req.params;
-
-        const categoria = await categoriaModel.buscarCategoriaPorId(id);
-
-        if (!categoria) {
-            return res.status(404).json({
-                success: false,
-                message: 'Categoria não encontrada.'
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            data: categoria
-        });
-
-    } catch (error) {
-        console.error('Erro ao buscar categoria:', error);
-
-        return res.status(500).json({
-            success: false,
-            message: 'Erro interno ao buscar categoria.'
-        });
-    }
-}
-
-async function criarCategoria(req, res) {
-    try {
-        const { nome, descricao } = req.body;
-
-        if (!nome || nome.trim() === '') {
-            return res.status(400).json({
-                success: false,
-                message: 'O nome da categoria é obrigatório.'
-            });
-        }
-
-        const categoria = await categoriaModel.criarCategoria(
-            nome.trim(),
-            descricao
-        );
-
-        return res.status(201).json({
-            success: true,
-            message: 'Categoria criada com sucesso.',
-            data: categoria
-        });
-
-    } catch (error) {
-        console.error('Erro ao criar categoria:', error);
-
-        if (error.code === 'ER_DUP_ENTRY') {
-            return res.status(409).json({
-                success: false,
-                message: 'Já existe uma categoria com este nome.'
-            });
-        }
-
-        return res.status(500).json({
-            success: false,
-            message: 'Erro interno ao criar categoria.'
-        });
-    }
-}
-
-async function atualizarCategoria(req, res) {
-    try {
-        const { id } = req.params;
-        const { nome, descricao, status } = req.body;
-
-        if (!nome || nome.trim() === '') {
-            return res.status(400).json({
-                success: false,
-                message: 'O nome da categoria é obrigatório.'
-            });
-        }
-
-        if (typeof status !== 'boolean') {
-            return res.status(400).json({
-                success: false,
-                message: 'O campo status deve ser booleano.'
-            });
-        }
-
-        const categoria = await categoriaModel.atualizarCategoria(
-            id,
-            nome.trim(),
-            descricao,
-            status
-        );
-
-        if (!categoria) {
-            return res.status(404).json({
-                success: false,
-                message: 'Categoria não encontrada.'
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: 'Categoria atualizada com sucesso.',
-            data: categoria
-        });
-
-    } catch (error) {
-        console.error('Erro ao atualizar categoria:', error);
-
-        if (error.code === 'ER_DUP_ENTRY') {
-            return res.status(409).json({
-                success: false,
-                message: 'Já existe uma categoria com este nome.'
-            });
-        }
-
-        return res.status(500).json({
-            success: false,
-            message: 'Erro interno ao atualizar categoria.'
-        });
-    }
-}
-
-async function excluirCategoria(req, res) {
-    try {
-        const { id } = req.params;
-
-        const excluida = await categoriaModel.excluirCategoria(id);
-
-        if (!excluida) {
-            return res.status(404).json({
-                success: false,
-                message: 'Categoria não encontrada.'
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: 'Categoria excluída com sucesso.'
-        });
-
-    } catch (error) {
-        console.error('Erro ao excluir categoria:', error);
-
-        if (error.code === 'ER_ROW_IS_REFERENCED_2') {
-            return res.status(409).json({
-                success: false,
-                message: 'Não é possível excluir esta categoria porque existem produtos vinculados a ela.'
-            });
-        }
-
-        return res.status(500).json({
-            success: false,
-            message: 'Erro interno ao excluir categoria.'
-        });
-    }
-}
-
-module.exports = {
-    listarCategorias,
-    buscarCategoriaPorId,
-    criarCategoria,
-    atualizarCategoria,
-    excluirCategoria
-};
+module.exports = CategoriaController;

@@ -1,74 +1,70 @@
-const pool = require('../config/database');
+const db = require('../config/database');
 
-async function listarCategorias() {
-    const [rows] = await pool.query(`
-        SELECT
-            id_categoria,
-            nome,
-            descricao,
-            status,
-            criado_em
-        FROM categorias
-        ORDER BY nome ASC
-    `);
+const CategoriaModel = {
 
-    return rows;
-}
+    async listarTodas() {
+        const [rows] = await db.execute(`
+            SELECT
+                id_categoria,
+                nome
+            FROM categorias
+            ORDER BY nome ASC
+        `);
 
-async function buscarCategoriaPorId(id) {
-    const [rows] = await pool.query(`
-        SELECT
-            id_categoria,
-            nome,
-            descricao,
-            status,
-            criado_em
-        FROM categorias
-        WHERE id_categoria = ?
-    `, [id]);
+        return rows;
+    },
 
-    return rows[0];
-}
+    async buscarPorId(id) {
+        const [rows] = await db.execute(`
+            SELECT
+                id_categoria,
+                nome
+            FROM categorias
+            WHERE id_categoria = ?
+        `, [id]);
 
-async function criarCategoria(nome, descricao) {
-    const [result] = await pool.query(`
-        INSERT INTO categorias (nome, descricao)
-        VALUES (?, ?)
-    `, [nome, descricao || null]);
+        return rows[0] || null;
+    },
 
-    return buscarCategoriaPorId(result.insertId);
-}
+    async buscarPorNome(nome) {
+        const [rows] = await db.execute(`
+            SELECT
+                id_categoria,
+                nome
+            FROM categorias
+            WHERE nome = ?
+        `, [nome]);
 
-async function atualizarCategoria(id, nome, descricao, status) {
-    const [result] = await pool.query(`
-        UPDATE categorias
-        SET
-            nome = ?,
-            descricao = ?,
-            status = ?
-        WHERE id_categoria = ?
-    `, [nome, descricao || null, status, id]);
+        return rows[0] || null;
+    },
 
-    if (result.affectedRows === 0) {
-        return null;
+    async criar(nome) {
+        const [result] = await db.execute(`
+            INSERT INTO categorias (nome)
+            VALUES (?)
+        `, [nome]);
+
+        return this.buscarPorId(result.insertId);
+    },
+
+    async atualizar(id, nome) {
+        await db.execute(`
+            UPDATE categorias
+            SET nome = ?
+            WHERE id_categoria = ?
+        `, [nome, id]);
+
+        return this.buscarPorId(id);
+    },
+
+    async excluir(id) {
+        const [result] = await db.execute(`
+            DELETE FROM categorias
+            WHERE id_categoria = ?
+        `, [id]);
+
+        return result.affectedRows > 0;
     }
-
-    return buscarCategoriaPorId(id);
-}
-
-async function excluirCategoria(id) {
-    const [result] = await pool.query(`
-        DELETE FROM categorias
-        WHERE id_categoria = ?
-    `, [id]);
-
-    return result.affectedRows > 0;
-}
-
-module.exports = {
-    listarCategorias,
-    buscarCategoriaPorId,
-    criarCategoria,
-    atualizarCategoria,
-    excluirCategoria
 };
+
+module.exports = CategoriaModel;

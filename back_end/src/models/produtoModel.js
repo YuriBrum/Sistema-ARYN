@@ -1,125 +1,126 @@
-const pool = require('../config/database');
+const db = require('../config/database');
 
-async function listarProdutos() {
-    const [rows] = await pool.query(`
-        SELECT
-            p.id_produto,
-            p.id_categoria,
-            c.nome AS categoria,
-            p.nome,
-            p.descricao,
-            p.preco,
-            p.imagem,
-            p.status,
-            p.criado_em,
-            p.atualizado_em
-        FROM produtos p
-        INNER JOIN categorias c
-            ON c.id_categoria = p.id_categoria
-        ORDER BY p.criado_em DESC
-    `);
+const ProdutoModel = {
 
-    return rows;
-}
+    async listarTodos() {
+        const [rows] = await db.execute(`
+            SELECT
+                p.*
+            FROM produtos p
+            ORDER BY p.id_produto DESC
+        `);
 
-async function buscarProdutoPorId(id) {
-    const [rows] = await pool.query(`
-        SELECT
-            p.id_produto,
-            p.id_categoria,
-            c.nome AS categoria,
-            p.nome,
-            p.descricao,
-            p.preco,
-            p.imagem,
-            p.status,
-            p.criado_em,
-            p.atualizado_em
-        FROM produtos p
-        INNER JOIN categorias c
-            ON c.id_categoria = p.id_categoria
-        WHERE p.id_produto = ?
-    `, [id]);
+        return rows;
+    },
 
-    return rows[0];
-}
+    async buscarPorId(id) {
+        const [rows] = await db.execute(`
+            SELECT
+                p.*
+            FROM produtos p
+            WHERE p.id_produto = ?
+        `, [id]);
 
-async function criarProduto(
-    id_categoria,
-    nome,
-    descricao,
-    preco,
-    imagem
-) {
-    const [result] = await pool.query(`
-        INSERT INTO produtos (
-            id_categoria,
+        return rows[0] || null;
+    },
+
+    async listarPorCategoria(idCategoria) {
+        const [rows] = await db.execute(`
+            SELECT
+                p.*
+            FROM produtos p
+            WHERE p.id_categoria = ?
+            ORDER BY p.id_produto DESC
+        `, [idCategoria]);
+
+        return rows;
+    },
+
+    async criar(dados) {
+        const {
             nome,
             descricao,
             preco,
-            imagem
-        )
-        VALUES (?, ?, ?, ?, ?)
-    `, [
-        id_categoria,
-        nome,
-        descricao || null,
-        preco,
-        imagem || null
-    ]);
+            quantidade,
+            tamanho,
+            cor,
+            imagem,
+            id_categoria
+        } = dados;
 
-    return buscarProdutoPorId(result.insertId);
-}
+        const [result] = await db.execute(`
+            INSERT INTO produtos (
+                nome,
+                descricao,
+                preco,
+                quantidade,
+                tamanho,
+                cor,
+                imagem,
+                id_categoria
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `, [
+            nome,
+            descricao,
+            preco,
+            quantidade,
+            tamanho,
+            cor,
+            imagem,
+            id_categoria
+        ]);
 
-async function atualizarProduto(
-    id,
-    id_categoria,
-    nome,
-    descricao,
-    preco,
-    imagem,
-    status
-) {
-    const [result] = await pool.query(`
-        UPDATE produtos
-        SET
-            id_categoria = ?,
-            nome = ?,
-            descricao = ?,
-            preco = ?,
-            imagem = ?,
-            status = ?
-        WHERE id_produto = ?
-    `, [
-        id_categoria,
-        nome,
-        descricao || null,
-        preco,
-        imagem || null,
-        status,
-        id
-    ]);
+        return this.buscarPorId(result.insertId);
+    },
 
-    if (result.affectedRows === 0) {
-        return null;
+    async atualizar(id, dados) {
+        const {
+            nome,
+            descricao,
+            preco,
+            quantidade,
+            tamanho,
+            cor,
+            imagem,
+            id_categoria
+        } = dados;
+
+        await db.execute(`
+            UPDATE produtos
+            SET
+                nome = ?,
+                descricao = ?,
+                preco = ?,
+                quantidade = ?,
+                tamanho = ?,
+                cor = ?,
+                imagem = ?,
+                id_categoria = ?
+            WHERE id_produto = ?
+        `, [
+            nome,
+            descricao,
+            preco,
+            quantidade,
+            tamanho,
+            cor,
+            imagem,
+            id_categoria,
+            id
+        ]);
+
+        return this.buscarPorId(id);
+    },
+
+    async excluir(id) {
+        const [result] = await db.execute(`
+            DELETE FROM produtos
+            WHERE id_produto = ?
+        `, [id]);
+
+        return result.affectedRows > 0;
     }
-
-    return buscarProdutoPorId(id);
-}
-
-async function excluirProduto(id) {
-    const [result] = await pool.query(`
-        DELETE FROM produtos
-        WHERE id_produto = ?
-    `, [id]);
-
-    return result.affectedRows > 0;
-}
-
-module.exports = {
-    listarProdutos,
-    buscarProdutoPorId,
-    criarProduto,
-    atualizarProduto,
-    excluirProduto
 };
+
+module.exports = ProdutoModel;

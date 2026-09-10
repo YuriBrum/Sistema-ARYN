@@ -1,21 +1,21 @@
-CREATE TABLE favoritos (
-    id_favorito INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    id_cliente INT UNSIGNED NOT NULL,
-    id_produto INT UNSIGNED NOT NULL,
-    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE IF NOT EXISTS favoritos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cliente_id INT NOT NULL,
+    produto_id INT NOT NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT fk_favoritos_cliente
-        FOREIGN KEY (id_cliente)
-        REFERENCES clientes(id_cliente)
+    CONSTRAINT fk_favorito_cliente
+        FOREIGN KEY (cliente_id)
+        REFERENCES clientes(id)
         ON DELETE CASCADE,
 
-    CONSTRAINT fk_favoritos_produto
-        FOREIGN KEY (id_produto)
-        REFERENCES produtos(id_produto)
+    CONSTRAINT fk_favorito_produto
+        FOREIGN KEY (produto_id)
+        REFERENCES produtos(id)
         ON DELETE CASCADE,
 
-    UNIQUE KEY uk_favorito_cliente_produto (
-        id_cliente,
-        id_produto
-    )
+    UNIQUE KEY uk_favorito_cliente_produto (cliente_id, produto_id),
+
+    INDEX idx_favorito_cliente (cliente_id),
+    INDEX idx_favorito_produto (produto_id)
 );
