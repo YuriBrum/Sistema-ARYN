@@ -1,70 +1,63 @@
-const db = require('../config/database');
+const pool = require('../config/database');
 
-const CategoriaModel = {
+const Categoria = {
 
     async listarTodas() {
-        const [rows] = await db.execute(`
+        const [categorias] = await pool.query(`
             SELECT
                 id_categoria,
-                nome
+                nome,
+                descricao,
+                status,
+                criado_em
             FROM categorias
             ORDER BY nome ASC
         `);
 
-        return rows;
+        return categorias;
     },
 
     async buscarPorId(id) {
-        const [rows] = await db.execute(`
+        const [categorias] = await pool.query(`
             SELECT
                 id_categoria,
-                nome
+                nome,
+                descricao,
+                status,
+                criado_em
             FROM categorias
             WHERE id_categoria = ?
         `, [id]);
 
-        return rows[0] || null;
+        return categorias[0];
     },
 
-    async buscarPorNome(nome) {
-        const [rows] = await db.execute(`
-            SELECT
-                id_categoria,
-                nome
-            FROM categorias
-            WHERE nome = ?
-        `, [nome]);
+    async criar(dados) {
+        const {
+            nome,
+            descricao,
+            status = 1
+        } = dados;
 
-        return rows[0] || null;
-    },
+        const [resultado] = await pool.query(`
+            INSERT INTO categorias
+                (nome, descricao, status)
+            VALUES
+                (?, ?, ?)
+        `, [
+            nome,
+            descricao,
+            status
+        ]);
 
-    async criar(nome) {
-        const [result] = await db.execute(`
-            INSERT INTO categorias (nome)
-            VALUES (?)
-        `, [nome]);
-
-        return this.buscarPorId(result.insertId);
-    },
-
-    async atualizar(id, nome) {
-        await db.execute(`
-            UPDATE categorias
-            SET nome = ?
-            WHERE id_categoria = ?
-        `, [nome, id]);
-
-        return this.buscarPorId(id);
-    },
-
-    async excluir(id) {
-        const [result] = await db.execute(`
-            DELETE FROM categorias
-            WHERE id_categoria = ?
-        `, [id]);
-
-        return result.affectedRows > 0;
+        return {
+            id_categoria: resultado.insertId,
+            nome,
+            descricao,
+            status
+        };
     }
+
 };
 
-module.exports = CategoriaModel;
+module.exports = Categoria;

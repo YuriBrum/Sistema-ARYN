@@ -1,126 +1,73 @@
-const db = require('../config/database');
+const pool = require('../config/database');
 
-const ProdutoModel = {
+const Produto = {
 
     async listarTodos() {
-        const [rows] = await db.execute(`
+        const [produtos] = await pool.query(`
             SELECT
-                p.*
-            FROM produtos p
+                p.id_produto,
+                p.nome,
+                p.descricao,
+                p.preco,
+                p.imagem,
+                p.id_categoria,
+                c.nome AS categoria,
+                p.status,
+                p.criado_em,
+                p.atualizado_em
+            FROM produtos AS p
+            INNER JOIN categorias AS c
+                ON c.id_categoria = p.id_categoria
             ORDER BY p.id_produto DESC
         `);
 
-        return rows;
+        return produtos;
     },
 
     async buscarPorId(id) {
-        const [rows] = await db.execute(`
+        const [produtos] = await pool.query(`
             SELECT
-                p.*
-            FROM produtos p
+                p.id_produto,
+                p.nome,
+                p.descricao,
+                p.preco,
+                p.imagem,
+                p.id_categoria,
+                c.nome AS categoria,
+                p.status,
+                p.criado_em,
+                p.atualizado_em
+            FROM produtos AS p
+            INNER JOIN categorias AS c
+                ON c.id_categoria = p.id_categoria
             WHERE p.id_produto = ?
         `, [id]);
 
-        return rows[0] || null;
+        return produtos[0];
     },
 
     async listarPorCategoria(idCategoria) {
-        const [rows] = await db.execute(`
+        const [produtos] = await pool.query(`
             SELECT
-                p.*
-            FROM produtos p
+                p.id_produto,
+                p.nome,
+                p.descricao,
+                p.preco,
+                p.imagem,
+                p.id_categoria,
+                c.nome AS categoria,
+                p.status
+            FROM produtos AS p
+            INNER JOIN categorias AS c
+                ON c.id_categoria = p.id_categoria
             WHERE p.id_categoria = ?
-            ORDER BY p.id_produto DESC
+              AND p.status = 1
+            ORDER BY p.nome ASC
         `, [idCategoria]);
 
-        return rows;
-    },
-
-    async criar(dados) {
-        const {
-            nome,
-            descricao,
-            preco,
-            quantidade,
-            tamanho,
-            cor,
-            imagem,
-            id_categoria
-        } = dados;
-
-        const [result] = await db.execute(`
-            INSERT INTO produtos (
-                nome,
-                descricao,
-                preco,
-                quantidade,
-                tamanho,
-                cor,
-                imagem,
-                id_categoria
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        `, [
-            nome,
-            descricao,
-            preco,
-            quantidade,
-            tamanho,
-            cor,
-            imagem,
-            id_categoria
-        ]);
-
-        return this.buscarPorId(result.insertId);
-    },
-
-    async atualizar(id, dados) {
-        const {
-            nome,
-            descricao,
-            preco,
-            quantidade,
-            tamanho,
-            cor,
-            imagem,
-            id_categoria
-        } = dados;
-
-        await db.execute(`
-            UPDATE produtos
-            SET
-                nome = ?,
-                descricao = ?,
-                preco = ?,
-                quantidade = ?,
-                tamanho = ?,
-                cor = ?,
-                imagem = ?,
-                id_categoria = ?
-            WHERE id_produto = ?
-        `, [
-            nome,
-            descricao,
-            preco,
-            quantidade,
-            tamanho,
-            cor,
-            imagem,
-            id_categoria,
-            id
-        ]);
-
-        return this.buscarPorId(id);
-    },
-
-    async excluir(id) {
-        const [result] = await db.execute(`
-            DELETE FROM produtos
-            WHERE id_produto = ?
-        `, [id]);
-
-        return result.affectedRows > 0;
+        return produtos;
     }
+
 };
 
-module.exports = ProdutoModel;
+module.exports = Produto;

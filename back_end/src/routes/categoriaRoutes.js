@@ -1,67 +1,13 @@
 const express = require('express');
 
+const CategoriaController = require('../controllers/categoriaController');
+
 const router = express.Router();
 
-const categoriaController = require('../controllers/categoriaController');
+router.get('/', CategoriaController.listarTodas);
 
-const {
-    validarId,
-    validarBody,
-    validarCamposObrigatorios
-} = require('../middleware/validationMiddleware');
+router.get('/:id', CategoriaController.buscarPorId);
 
-const {
-    autenticar,
-    autorizar
-} = require('../middleware/authMiddleware');
-
-
-// GET /api/categorias
-router.get(
-    '/',
-    categoriaController.listarTodas
-);
-
-
-// GET /api/categorias/:id
-router.get(
-    '/:id',
-    validarId('id'),
-    categoriaController.buscarPorId
-);
-
-
-// POST /api/categorias
-router.post(
-    '/',
-    autenticar,
-    autorizar('admin'),
-    validarBody,
-    validarCamposObrigatorios(['nome']),
-    categoriaController.criar
-);
-
-
-// PUT /api/categorias/:id
-router.put(
-    '/:id',
-    autenticar,
-    autorizar('admin'),
-    validarId('id'),
-    validarBody,
-    validarCamposObrigatorios(['nome']),
-    categoriaController.atualizar
-);
-
-
-// DELETE /api/categorias/:id
-router.delete(
-    '/:id',
-    autenticar,
-    autorizar('admin'),
-    validarId('id'),
-    categoriaController.excluir
-);
-
+router.post('/', CategoriaController.criar);
 
 module.exports = router;

@@ -1,98 +1,61 @@
-const db = require('../config/database');
+const pool = require('../config/database');
 
-const ClienteModel = {
+const Cliente = {
 
     async listarTodos() {
-        const [rows] = await db.execute(`
+        const [clientes] = await pool.query(`
             SELECT
-                id_cliente,
-                nome,
-                email
-            FROM clientes
-            ORDER BY id_cliente DESC
+                c.id_cliente,
+                c.id_usuario,
+                u.nome,
+                u.email,
+                c.telefone,
+                c.data_nascimento
+            FROM clientes AS c
+            INNER JOIN usuarios AS u
+                ON u.id_usuario = c.id_usuario
+            ORDER BY c.id_cliente DESC
         `);
 
-        return rows;
+        return clientes;
     },
 
     async buscarPorId(id) {
-        const [rows] = await db.execute(`
+        const [clientes] = await pool.query(`
             SELECT
-                id_cliente,
-                nome,
-                email
-            FROM clientes
-            WHERE id_cliente = ?
+                c.id_cliente,
+                c.id_usuario,
+                u.nome,
+                u.email,
+                c.telefone,
+                c.data_nascimento
+            FROM clientes AS c
+            INNER JOIN usuarios AS u
+                ON u.id_usuario = c.id_usuario
+            WHERE c.id_cliente = ?
         `, [id]);
 
-        return rows[0] || null;
+        return clientes[0];
     },
 
-    async buscarPorEmail(email) {
-        const [rows] = await db.execute(`
-            SELECT *
-            FROM clientes
-            WHERE email = ?
-        `, [email]);
+    async buscarPorUsuario(idUsuario) {
+        const [clientes] = await pool.query(`
+            SELECT
+                c.id_cliente,
+                c.id_usuario,
+                u.nome,
+                u.email,
+                c.telefone,
+                c.data_nascimento
+            FROM clientes AS c
+            INNER JOIN usuarios AS u
+                ON u.id_usuario = c.id_usuario
+            WHERE c.id_usuario = ?
+        `, [idUsuario]);
 
-        return rows[0] || null;
-    },
-
-    async criar(dados) {
-        const {
-            nome,
-            email,
-            senha
-        } = dados;
-
-        const [result] = await db.execute(`
-            INSERT INTO clientes (
-                nome,
-                email,
-                senha
-            )
-            VALUES (?, ?, ?)
-        `, [
-            nome,
-            email,
-            senha
-        ]);
-
-        return this.buscarPorId(result.insertId);
-    },
-
-    async atualizar(id, dados) {
-        const {
-            nome,
-            email,
-            senha
-        } = dados;
-
-        await db.execute(`
-            UPDATE clientes
-            SET
-                nome = ?,
-                email = ?,
-                senha = ?
-            WHERE id_cliente = ?
-        `, [
-            nome,
-            email,
-            senha,
-            id
-        ]);
-
-        return this.buscarPorId(id);
-    },
-
-    async excluir(id) {
-        const [result] = await db.execute(`
-            DELETE FROM clientes
-            WHERE id_cliente = ?
-        `, [id]);
-
-        return result.affectedRows > 0;
+        return clientes[0];
     }
+
 };
 
-module.exports = ClienteModel;
+module.exports = Cliente;

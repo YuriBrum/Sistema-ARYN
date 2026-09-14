@@ -1,22 +1,24 @@
-const Categoria = require('../models/categoriaModel');
+const bcrypt = require('bcrypt');
 
-const CategoriaController = {
+const Usuario = require('../models/usuarioModel');
 
-    async listarTodas(req, res) {
+const UsuarioController = {
+
+    async listarTodos(req, res) {
 
         try {
 
-            const categorias = await Categoria.listarTodas();
+            const usuarios = await Usuario.listarTodos();
 
             return res.status(200).json({
                 success: true,
-                data: categorias
+                data: usuarios
             });
 
         } catch (erro) {
 
             console.error(
-                'Erro ao listar categorias:',
+                'Erro ao listar usuários:',
                 erro.message
             );
 
@@ -35,26 +37,26 @@ const CategoriaController = {
 
             const { id } = req.params;
 
-            const categoria = await Categoria.buscarPorId(id);
+            const usuario = await Usuario.buscarPorId(id);
 
-            if (!categoria) {
+            if (!usuario) {
 
                 return res.status(404).json({
                     success: false,
-                    message: 'Categoria não encontrada.'
+                    message: 'Usuário não encontrado.'
                 });
 
             }
 
             return res.status(200).json({
                 success: true,
-                data: categoria
+                data: usuario
             });
 
         } catch (erro) {
 
             console.error(
-                'Erro ao buscar categoria:',
+                'Erro ao buscar usuário:',
                 erro.message
             );
 
@@ -73,35 +75,56 @@ const CategoriaController = {
 
             const {
                 nome,
-                descricao,
+                email,
+                senha,
+                tipo,
                 status
             } = req.body;
 
-            if (!nome) {
+            // Validação dos campos obrigatórios
+            if (!nome || !email || !senha) {
 
                 return res.status(400).json({
                     success: false,
-                    message: 'O nome da categoria é obrigatório.'
+                    message: 'Nome, email e senha são obrigatórios.'
                 });
 
             }
 
-            const categoria = await Categoria.criar({
+            // Verifica se o email já está cadastrado
+            const usuarioExistente = await Usuario.buscarPorEmail(email);
+
+            if (usuarioExistente) {
+
+                return res.status(409).json({
+                    success: false,
+                    message: 'Este email já está cadastrado.'
+                });
+
+            }
+
+            // Criptografa a senha
+            const senhaHash = await bcrypt.hash(senha, 10);
+
+            // Cria o usuário no banco
+            const usuario = await Usuario.criar({
                 nome,
-                descricao,
+                email,
+                senha: senhaHash,
+                tipo,
                 status
             });
 
             return res.status(201).json({
                 success: true,
-                message: 'Categoria criada com sucesso.',
-                data: categoria
+                message: 'Usuário criado com sucesso.',
+                data: usuario
             });
 
         } catch (erro) {
 
             console.error(
-                'Erro ao criar categoria:',
+                'Erro ao criar usuário:',
                 erro.message
             );
 
@@ -116,4 +139,4 @@ const CategoriaController = {
 
 };
 
-module.exports = CategoriaController;
+module.exports = UsuarioController;
