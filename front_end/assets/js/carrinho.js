@@ -118,7 +118,7 @@ function ondeCarrinhoEstaSalvo() {
 }
 
 /* Funções do Carrinho */
-const IMG_PADRAO = "../assets/images/mockup.png";
+const IMG_PADRAO_CARRINHO = "../assets/images/as_cb.jpg";
 
     function formatarPreco(valor) {
         valor = parseFloat(valor) || 0;
@@ -131,7 +131,7 @@ const IMG_PADRAO = "../assets/images/mockup.png";
         p.qtd = parseInt(p.qtd, 10) || 1;
         if (p.qtd < 1) p.qtd = 1;
         if (!p.nome) p.nome = "Produto ARYN";
-        if (!p.img) p.img = IMG_PADRAO;
+        if (!p.img) p.img = IMG_PADRAO_CARRINHO;
         return p;
     }
 
@@ -159,14 +159,14 @@ const IMG_PADRAO = "../assets/images/mockup.png";
             }
 
             container.innerHTML = lista.map(p => {
-                const img = p.img || IMG_PADRAO;
+                const img = p.img || IMG_PADRAO_CARRINHO;
                 const detalhes = [];
                 if (p.cor) detalhes.push(p.cor);
                 if (p.tamanho) detalhes.push(p.tamanho);
                 const detalheStr = detalhes.length ? ' <span style="color:#888">(' + detalhes.join(' / ') + ')</span>' : '';
                 return (
                     '<div class="item" data-id="' + p.id + '">' +
-                        "<img src=\"" + img + "\" alt=\"" + p.nome + "\">" +
+                        '<img src="' + img + '" alt="' + p.nome + '" onerror="this.onerror=null;this.src=\'../assets/images/as_cb.jpg\';">' +
                         "<div>" +
                             "<span>PRODUTO</span>" +
                             "<h3>" + p.nome + detalheStr + "</h3>" +
@@ -373,31 +373,30 @@ const IMG_PADRAO = "../assets/images/mockup.png";
             });
         }
 
-        if (typeof isLoggedIn === 'function' && isLoggedIn()) {
-            const usuario = getUsuarioLogado();
-            const pedidosKey = 'aryn_pedidos_' + usuario;
-            let pedidos = [];
-            try { pedidos = JSON.parse(localStorage.getItem(pedidosKey) || '[]'); } catch (e) { pedidos = []; }
+        const pedidosKey = (typeof isLoggedIn === 'function' && isLoggedIn())
+            ? 'aryn_pedidos_' + getUsuarioLogado()
+            : 'aryn_pedidos_anon';
+        let pedidos = [];
+        try { pedidos = JSON.parse(localStorage.getItem(pedidosKey) || '[]'); } catch (e) { pedidos = []; }
 
-            const agora = new Date();
-            const dataFormatada = agora.toLocaleDateString('pt-BR') + ' ' + agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        const agora = new Date();
+        const dataFormatada = agora.toLocaleDateString('pt-BR') + ' ' + agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-            pedidos.push({
-                id: Date.now(),
-                data: dataFormatada,
-                itens: itensComprados.map(item => ({
-                    nome: item.nome,
-                    preco: parseFloat(item.preco) || 0,
-                    qtd: parseInt(item.qtd, 10) || 1,
-                    img: item.img || ''
-                })),
-                total: calcularTotal(),
-                pagamento: detalhePagamento,
-                endereco: endereco + (complemento ? ' - ' + complemento : '') + ' | CEP: ' + cep
-            });
+        pedidos.push({
+            id: Date.now(),
+            data: dataFormatada,
+            itens: itensComprados.map(item => ({
+                nome: item.nome,
+                preco: parseFloat(item.preco) || 0,
+                qtd: parseInt(item.qtd, 10) || 1,
+                img: item.img || ''
+            })),
+            total: calcularTotal(),
+            pagamento: detalhePagamento,
+            endereco: endereco + (complemento ? ' - ' + complemento : '') + ' | CEP: ' + cep
+        });
 
-            localStorage.setItem(pedidosKey, JSON.stringify(pedidos));
-        }
+        localStorage.setItem(pedidosKey, JSON.stringify(pedidos));
 
         salvarCarrinho([]).then(() => {
             fecharModal();

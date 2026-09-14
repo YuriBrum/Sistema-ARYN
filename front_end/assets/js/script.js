@@ -24,31 +24,44 @@ function exigirLoginParaAcao() {
 // --- CORES E OPÇÕES DE PRODUTO ---
 
 const CORES_HEX = {
-    'Preto':        '#111111',
-    'Branco':       '#FFFFFF',
-    'Azul':         '#1a3c7a',
-    'Cinza':        '#8a8a8a',
-    'Cinza Escuro': '#3e3e3e',
-    'Azul Marinho': '#0a1f44',
-    'Azul Claro':   '#7fb3e0',
-    'Rosa':         '#e8729a',
-    'Bege':         '#d9c9a8',
-    'Vermelho':     '#c0392b'
+    'Preto':         '#111111',
+    'Branco':        '#FFFFFF',
+    'Bege':          '#d9c9a8',
+    'Vermelho Vinho': '#722F37'
 };
 
 const PRODUTO_OPCOES = {
-    'Ternos ARYN':                  { cores: ['Preto', 'Azul Marinho'],               tamanhos: ['P', 'M', 'G', 'GG'] },
-    'Blazer ARYN':                  { cores: ['Preto', 'Cinza'],                      tamanhos: ['P', 'M', 'G', 'GG'] },
-    'Smoke Terno ARYN':             { cores: ['Preto', 'Cinza Escuro'],               tamanhos: ['P', 'M', 'G', 'GG'] },
-    'Camiseta Social ARYN':         { cores: ['Preto', 'Branco', 'Azul'],             tamanhos: ['P', 'M', 'G', 'GG'] },
-    'Camisa Social Slim ARYN':      { cores: ['Branco', 'Azul Claro'],                tamanhos: ['P', 'M', 'G', 'GG'] },
-    'Camisa Social Feminina ARYN':  { cores: ['Preto', 'Branco', 'Rosa'],             tamanhos: ['P', 'M', 'G'] },
-    'Blazer Feminino ARYN':         { cores: ['Preto', 'Bege'],                       tamanhos: ['P', 'M', 'G'] }
+    'Ternos ARYN':                  { cores: ['Preto', 'Branco', 'Vermelho Vinho'],   tamanhos: ['P', 'M', 'G', 'GG'] },
+    'Blazer ARYN':                  { cores: ['Preto', 'Branco', 'Vermelho Vinho'],   tamanhos: ['P', 'M', 'G', 'GG'] },
+    'Smoke Terno ARYN':             { cores: ['Preto', 'Branco', 'Vermelho Vinho'],   tamanhos: ['P', 'M', 'G', 'GG'] },
+    'Camiseta Social ARYN':         { cores: ['Preto', 'Branco', 'Vermelho Vinho'],   tamanhos: ['P', 'M', 'G', 'GG'] },
+    'Camisa Social Slim ARYN':      { cores: ['Preto', 'Branco', 'Vermelho Vinho'],   tamanhos: ['P', 'M', 'G', 'GG'] },
+    'Ternos Femininos ARYN':        { cores: ['Preto', 'Branco', 'Vermelho Vinho', 'Bege'], tamanhos: ['P', 'M', 'G'] },
+    'Blazer Feminino ARYN':         { cores: ['Preto', 'Branco', 'Vermelho Vinho', 'Bege'], tamanhos: ['P', 'M', 'G'] }
 };
 
 function formatarPreco(valor) {
     valor = parseFloat(valor) || 0;
-    return "R$ " + valor.toFixed(2).replace(".", ",");
+    const partes = valor.toFixed(2).split('.');
+    partes[0] = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return "R$ " + partes.join(',');
+}
+
+function parsePreco(texto) {
+    const s = String(texto == null ? '' : texto).replace(/[^\d.,]/g, '');
+    if (!s) return 0;
+    const ultVirg = s.lastIndexOf(',');
+    const ultPonto = s.lastIndexOf('.');
+    let num;
+    if (ultVirg > -1 && ultPonto > -1) {
+        const sepDecimal = Math.max(ultVirg, ultPonto);
+        num = s.split('').map((c, i) => (c === ',' || c === '.') ? (i === sepDecimal ? '.' : '') : c).join('');
+    } else if (ultVirg > -1) {
+        num = (s.length - ultVirg - 1) === 3 ? s.replace(/,/g, '') : s.replace(',', '.');
+    } else {
+        num = s;
+    }
+    return parseFloat(num) || 0;
 }
 
 // --- FAVORITOS ---
@@ -79,8 +92,7 @@ function favoritoProdutoId(card) {
     const nome = nomeEl ? nomeEl.textContent.trim() : 'Produto ARYN';
     let preco = 99.90;
     if (precoEl) {
-        const txt = precoEl.textContent.replace('R$', '').replace(',', '.').trim();
-        preco = parseFloat(txt) || preco;
+        preco = parsePreco(precoEl.textContent);
     }
     return nome + '|' + preco;
 }
@@ -139,8 +151,7 @@ function coletarDadosCard(card) {
     const nome = nomeEl ? nomeEl.textContent.trim() : 'Produto ARYN';
     let preco = 99.90;
     if (precoEl) {
-        const txt = precoEl.textContent.replace('R$', '').replace(',', '.').trim();
-        preco = parseFloat(txt) || preco;
+        preco = parsePreco(precoEl.textContent);
     }
 
     const imagens = [];
@@ -311,11 +322,20 @@ function renderizarProduto() {
         const carrossel = document.getElementById('galeriaCarrossel');
         const imgs = carrossel.querySelectorAll('.imagem');
         let atual = 0;
-        setInterval(() => {
+        let intervalo = null;
+        const avancar = () => {
             imgs[atual].classList.remove('ativa');
             atual = (atual + 1) % imgs.length;
             imgs[atual].classList.add('ativa');
-        }, 2500);
+        };
+        carrossel.addEventListener('mouseenter', () => {
+            if (!intervalo) intervalo = setInterval(avancar, 2500);
+        });
+        carrossel.addEventListener('mouseleave', () => {
+            if (intervalo) { clearInterval(intervalo); intervalo = null; }
+            imgs.forEach((img, i) => img.classList.toggle('ativa', i === 0));
+            atual = 0;
+        });
     }
 }
 
@@ -335,10 +355,13 @@ window.addEventListener('DOMContentLoaded', renderizarProduto);
 
 /* Funções dos Pedidos */
 
-const IMG_PADRAO = "../assets/images/mockup.png";
+const IMG_PADRAO_PEDIDOS = "../assets/images/as_cb.jpg";
 
 function formatarPreco(valor) {
-    return "R$ " + (parseFloat(valor) || 0).toFixed(2).replace(".", ",");
+    valor = parseFloat(valor) || 0;
+    const partes = valor.toFixed(2).split('.');
+    partes[0] = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return "R$ " + partes.join(',');
 }
 
 // A data é salva no formato "dd/mm/aaaa hh:mm" ou como ISO
@@ -374,7 +397,7 @@ function calcularEntrega(dataPedido) {
 
 // Normaliza o caminho da imagem (vindo de index => front_end/... ou ../assets/...)
 function normalizarImg(src) {
-    if (!src) return IMG_PADRAO;
+    if (!src) return IMG_PADRAO_PEDIDOS;
     if (src.indexOf("front_end/") === 0) return "../" + src;
     if (src.indexOf("http") === 0) return src;
     return src;
@@ -385,19 +408,14 @@ function renderizarPedidos() {
     const container = document.getElementById("lista-pedidos");
     if (!container) return;
 
-    if (typeof isLoggedIn !== 'function' || !isLoggedIn()) {
-        if (aviso) aviso.style.display = "";
-        container.innerHTML = "";
-        return;
-    }
-    if (aviso) aviso.style.display = "none";
-
-    const email = getUsuarioLogado();
-    const raw = localStorage.getItem("aryn_pedidos_" + email);
+    const logado = typeof isLoggedIn === 'function' && isLoggedIn();
+    const pedidosKey = logado ? 'aryn_pedidos_' + getUsuarioLogado() : 'aryn_pedidos_anon';
+    const raw = localStorage.getItem(pedidosKey);
     let pedidos = [];
     try { pedidos = raw ? JSON.parse(raw) : []; } catch (e) { pedidos = []; }
 
     if (!pedidos.length) {
+        if (aviso) aviso.style.display = logado ? "none" : "";
         container.innerHTML =
             '<div class="vazio">' +
                 '<i class="fa-solid fa-box-open"></i>' +
@@ -407,6 +425,7 @@ function renderizarPedidos() {
             "</div>";
         return;
     }
+    if (aviso) aviso.style.display = "none";
 
     container.innerHTML = pedidos.map(pedido => {
         const numero = pedido.id || Date.now();

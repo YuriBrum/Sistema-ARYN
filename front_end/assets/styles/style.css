@@ -218,7 +218,7 @@ button{
 
 .carrossel {
     width: 100%;
-    height: 480px;
+    aspect-ratio: 3 / 4;
     position: relative;
     overflow: hidden;
 }
@@ -226,7 +226,7 @@ button{
 .carrossel .imagem {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
 
     position: absolute;
     top: 0;
@@ -802,4 +802,60 @@ button{
         .produto-galeria .carrossel {
             height: 350px;
         }
+    }
+
+    /* Seção de contato da home */
+    .contato {
+        background: #111;
+        color: #fff;
+        padding: 45px 20px;
+        text-align: center;
+        margin-top: 45px;
+    }
+
+    .contato-inner {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .contato h2 {
+        font-size: 28px;
+        margin: 0 0 8px;
+    }
+
+    .contato p {
+        color: #bbb;
+        margin: 0 0 25px;
+    }
+
+    .contato-itens {
+        display: flex;
+        justify-content: center;
+        gap: 18px;
+        flex-wrap: wrap;
+    }
+
+    .contato-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: #1c1c1c;
+        border: 1px solid #2a2a2a;
+        color: #fff;
+        text-decoration: none;
+        padding: 13px 22px;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: bold;
+        transition: .2s;
+    }
+
+    .contato-item:hover {
+        border-color: #d91d1d;
+        transform: translateY(-2px);
+    }
+
+    .contato-item i {
+        color: #d91d1d;
+        font-size: 22px;
     }

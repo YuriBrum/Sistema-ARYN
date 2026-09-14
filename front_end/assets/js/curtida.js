@@ -1,8 +1,10 @@
-const IMG_PADRAO = "../assets/images/mockup.png";
+const IMG_PADRAO_CURTIDAS = "../assets/images/as_cb.jpg";
 
 function formatarPreco(valor) {
     valor = parseFloat(valor) || 0;
-    return "R$ " + valor.toFixed(2).replace(".", ",");
+    const partes = valor.toFixed(2).split('.');
+    partes[0] = partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return "R$ " + partes.join(',');
 }
 
 function chaveCurtidas() {
@@ -59,10 +61,10 @@ function renderizarCurtidas() {
     if (aviso) aviso.style.display = "none";
 
     container.innerHTML = lista.map(p => {
-        const img = p.img || IMG_PADRAO;
+        const img = p.img || IMG_PADRAO_CURTIDAS;
         return (
             '<div class="item" data-id="' + p.id + '">' +
-                "<img src=\"" + img + "\" alt=\"" + p.nome + "\">" +
+                '<img src="' + img + '" alt="' + p.nome + '" onerror="this.onerror=null;this.src=\'../assets/images/as_cb.jpg\';">' +
                 "<div>" +
                     "<h3>" + p.nome + "</h3>" +
                     "<p>" + formatarPreco(p.preco) + "</p>" +

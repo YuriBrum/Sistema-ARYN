@@ -7,6 +7,7 @@ const ESTOQUE_INICIAL = {
     'Camiseta Social ARYN': 24,
     'Camisa Social Slim ARYN': 17,
     'Camisa Social Feminina ARYN': 24,
+    'Ternos Femininos ARYN': 34,
     'Blazer Feminino ARYN': 38
 };
 
@@ -17,7 +18,8 @@ function carregarEstoque() {
             const dados = JSON.parse(raw);
             const chavesAntigas = {
                 'Terno ARYN': 'Ternos ARYN',
-                'Camisa Social Polo ARYN': 'Camiseta Social ARYN'
+                'Camisa Social Polo ARYN': 'Camiseta Social ARYN',
+                'Terno Feminino ARYN': 'Ternos Femininos ARYN'
             };
             let mudou = false;
             Object.entries(chavesAntigas).forEach(([antiga, nova]) => {

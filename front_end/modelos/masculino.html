@@ -62,15 +62,23 @@
 
         <div class="card">
             <div class="carrossel"> <!-- isso faz as fotos ficarem em movimento continuo -->
-                <img src="../assets/images/mockup.png" class="imagem ativa">
-                <img src="../assets/images/MOCKUP_CAMISETA_AZUL_ESCURO_M.png" class="imagem">
-                <img src="../assets/images/MOCKUP_CAMISETA_BRANCA_M.png" class="imagem">
-                <img src="../assets/images/MOCKUP_CAMISETA_VERMELHA_M.png" class="imagem">
+                <img src="../assets/images/yt_fp.jpg" class="imagem ativa">
+                <img src="../assets/images/yt_dp.jpg" class="imagem">
+                <img src="../assets/images/yt_ep.jpg" class="imagem">
+                <img src="../assets/images/yt_cp.jpg" class="imagem">
+                <img src="../assets/images/yt_fb.jpg" class="imagem">
+                <img src="../assets/images/yt_db.jpg" class="imagem">
+                <img src="../assets/images/yt_eb.jpg" class="imagem">
+                <img src="../assets/images/yt_cb.jpg" class="imagem">
+                <img src="../assets/images/yt_fv.jpg" class="imagem">
+                <img src="../assets/images/yt_dv.jpg" alt="imagem"> 
+                <img src="../assets/images/yt_ev.jpg" alt="imagem"> 
+                <img src="../assets/images/yt_vc.jpg" alt="imagem"> 
             </div>
             <div class="info">
-                <span>CAMISAS</span>
-                <h3>Camisa Social ARYN</h3>
-                <h4>R$ 129,90</h4>
+                <span>TERNOS</span>
+                <h3>Ternos ARYN</h3>
+                <h4>R$ 1,700</h4>
                 <p>24 em estoque</p>
                 <div class="acoes">
                     <button class="favorito">❤ 0</button>
@@ -81,15 +89,23 @@
 
         <div class="card">
             <div class="carrossel">  <!-- isso faz as fotos ficarem em movimento continuo -->
-                <img src="../assets/images/MOCKUP_CALÇA_H1.png" class="imagem ativa">
-                <img src="../assets/images/MOCKUP_CALÇA_H2.png" class="imagem">
-                <img src="../assets/images/MOCKUP_CALÇA_M1.png" class="imagem">
-                <img src="../assets/images/MOCKUP_CALÇA_M2.png" class="imagem">
+                <img src="../assets/images/as_fp.jpg" class="imagem ativa">
+                <img src="../assets/images/as_dp.jpg" class="imagem">
+                <img src="../assets/images/as_ep.jpg" class="imagem">
+                <img src="../assets/images/as_cp.jpg" class="imagem">
+                <img src="../assets/images/as_fb.jpg" class="imagem">
+                <img src="../assets/images/as_db.jpg" class="imagem">
+                <img src="../assets/images/as_eb.jpg" class="imagem">
+                <img src="../assets/images/as_cb.jpg" class="imagem">
+                <img src="../assets/images/as_fv.jpg" class="imagem">
+                <img src="../assets/images/as_dv.jpg" class="imagem">
+                <img src="../assets/images/as_ev.jpg" class="imagem">
+                <img src="../assets/images/as_cv.jpg" class="imagem">
             </div>
             <div class="info">
                 <span>BLAZERS</span>
                 <h3>Blazer ARYN</h3>
-                <h4>R$ 180,90</h4>
+                <h4>R$ 2,000</h4>
                 <p>38 em estoque</p>
                 <div class="acoes">
                     <button class="favorito">❤ 0</button>
@@ -105,13 +121,22 @@
 document.querySelectorAll('.carrossel').forEach(carrossel => {
     const imagens = carrossel.querySelectorAll('.imagem');
     let atual = 0;
+    let intervalo = null;
 
     if (imagens.length > 1) {
-        setInterval(() => {
+        const avancar = () => {
             imagens[atual].classList.remove('ativa');
             atual = (atual + 1) % imagens.length;
             imagens[atual].classList.add('ativa');
-        }, 2500);
+        };
+        carrossel.addEventListener('mouseenter', () => {
+            if (!intervalo) intervalo = setInterval(avancar, 2500);
+        });
+        carrossel.addEventListener('mouseleave', () => {
+            if (intervalo) { clearInterval(intervalo); intervalo = null; }
+            imagens.forEach((img, i) => img.classList.toggle('ativa', i === 0));
+            atual = 0;
+        });
     }
 });
 </script>
