@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head><meta charset="UTF-8"><title>teste filtros home/feminino/masculino</title></head>
+<body>
+<pre id="out">aguardando...</pre>
+<script>
+var resultados = [];
+var paginas = [
+    'index.html',
+    'front_end/modelos/feminino.html',
+    'front_end/modelos/masculino.html'
+];
+function log(x) { resultados.push(String(x)); var p = document.getElementById('out'); if (p) p.textContent = resultados.join('\n'); }
+window.addEventListener('error', function(e) { log('ERRO GLOBAL: ' + e.message); });
+
+function criarIframe(src, cb) {
+    var f = document.createElement('iframe');
+    f.style.display = 'none';
+    document.body.appendChild(f);
+    f.addEventListener('load', function() { cb(f); });
+    f.src = src;
+}
+function clickBox(labels, value) {
+    for (var i = 0; i < labels.length; i++) {
+        if (labels[i].value === value) { labels[i].checked = true; labels[i].dispatchEvent(new Event('change')); return true; }
+    }
+    return false;
+}
+function testes() {
+    if (!paginas.length) { log('FIM'); return; }
+    var src = paginas.shift();
+    criarIframe(src, function(f) {
+        try {
+            var doc = f.contentDocument;
+            var res = {};
+            var labTam = doc.querySelectorAll('#filtroTamanhos label input');
+            var labCor = doc.querySelectorAll('#filtroCores label input');
+            var labAva = doc.querySelectorAll('#filtroAvaliacao label input');
+            res.pagina = src;
+            res.tamanhos = Array.prototype.map.call(labTam, function(i) { return i.value; });
+            res.cores = Array.prototype.map.call(labCor, function(i) { return i.value; });
+            res.avas = Array.prototype.map.call(labAva, function(i) { return i.value; });
+            res.totalCards = doc.querySelectorAll('#listaProdutos .card').length;
+            res.contadorInicial = (doc.getElementById('contadorFiltros') || {}).textContent || '';
+
+            if (labCor.length > 1) {
+                clickBox(labCor, labCor[1].value);
+                var h3s = doc.querySelectorAll('#listaProdutos .card h3');
+                var nomes = [];
+                Array.prototype.forEach.call(h3s, function(h) {
+                    if (h.closest('.card').style.display !== 'none') nomes.push(h.textContent.trim());
+                });
+                res.visiveisComCor = nomes;
+                res.contadorComCor = (doc.getElementById('contadorFiltros') || {}).textContent || '';
+                Array.prototype.forEach.call(doc.querySelectorAll('#painelFiltros input[type="checkbox"]'), function(i) { i.checked = false; });
+            }
+            log('OK ' + JSON.stringify(res));
+        } catch (e) {
+            log('ERRO ' + src + ': ' + e.message);
+        }
+        f.remove();
+        testes();
+    });
+}
+testes();
+</script>
+</body>
+</html>

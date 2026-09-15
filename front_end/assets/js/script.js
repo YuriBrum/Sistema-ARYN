@@ -86,6 +86,31 @@ function salvarFavoritos(lista) {
     localStorage.setItem(favoritosKey(), JSON.stringify(lista));
 }
 
+// --- AVALIAÇÕES ---
+
+const AVALIACOES_KEY = 'aryn_avaliacoes';
+
+function carregarAvaliacoes() {
+    try { return JSON.parse(localStorage.getItem(AVALIACOES_KEY) || '{}'); } catch (e) { return {}; }
+}
+
+function salvarAvaliacoes(objeto) {
+    localStorage.setItem(AVALIACOES_KEY, JSON.stringify(objeto));
+}
+
+function mediaAvaliacao(nome) {
+    const lista = (carregarAvaliacoes() || {})[nome] || [];
+    if (!lista.length) return 0;
+    return lista.reduce((s, a) => s + (Number(a.estrelas) || 0), 0) / lista.length;
+}
+
+function estrelasHtml(nota) {
+    nota = Math.round(Number(nota) || 0);
+    let s = '';
+    for (let i = 1; i <= 5; i++) s += i <= nota ? '★' : '☆';
+    return s;
+}
+
 function favoritoProdutoId(card) {
     if (!card) return 'geral-' + Date.now();
     const nomeEl = card.querySelector('h3');
@@ -159,7 +184,9 @@ function coletarDadosCard(card) {
         if (img.src) imagens.push(img.src);
     });
 
-    return { nome, preco, imagens };
+    const promo = !!(card && (card.querySelector('.selo-promo') || card.querySelector('.preco-antigo')));
+
+    return { nome, preco, imagens, promo };
 }
 
 function irParaProduto(card) {
@@ -205,6 +232,16 @@ function carregarProduto() {
     } catch (e) { return null; }
 }
 
+function corDoSrc(src) {
+    const base = String(src || '').split('/').pop().replace(/\.[^.?#]+$/, '').toLowerCase();
+    if (base.endsWith('bg')) return 'Bege';
+    const ult = base[base.length - 1];
+    if (ult === 'p') return 'Preto';
+    if (ult === 'b') return 'Branco';
+    if (ult === 'v') return 'Vermelho Vinho';
+    return null;
+}
+
 function renderizarProduto() {
     const container = document.getElementById('conteudoProduto');
     if (!container) return;
@@ -228,14 +265,27 @@ function renderizarProduto() {
     const opcoes = PRODUTO_OPCOES[nome] || { cores: ['Preto', 'Branco', 'Azul'], tamanhos: ['P', 'M', 'G', 'GG'] };
     const estoque = typeof obterEstoque === 'function' ? obterEstoque(nome) : 0;
 
+    let coresDisponiveis = opcoes.cores;
+    let imagensFiltradas = imagens;
+
+    if (produtoData.promo) {
+        const femininos = ['Ternos Femininos ARYN', 'Blazer Feminino ARYN'];
+        const proibidas = femininos.includes(nome) ? ['Preto', 'Vermelho Vinho'] : ['Branco', 'Vermelho Vinho'];
+        coresDisponiveis = coresDisponiveis.filter(cor => !proibidas.includes(cor));
+        imagensFiltradas = imagens.filter(src => {
+            const c = corDoSrc(src);
+            return c === null || coresDisponiveis.includes(c);
+        });
+    }
+
     corSelecionada = null;
     tamanhoSelecionado = null;
 
-    const imgsHtml = imagens.map((src, i) =>
+    const imgsHtml = imagensFiltradas.map((src, i) =>
         '<img src="' + src + '" class="imagem' + (i === 0 ? ' ativa' : '') + '">'
     ).join('');
 
-    const coresHtml = opcoes.cores.map(cor => {
+    const coresHtml = coresDisponiveis.map(cor => {
         const hex = CORES_HEX[cor] || '#cccccc';
         const bordaBranca = ['Branco', 'Bege', 'Azul Claro'].includes(cor);
         return '<button data-cor="' + cor + '" title="' + cor + '" style="background:' + hex + ';' + (bordaBranca ? 'border-color:#ccc;' : '') + '"></button>';
@@ -254,6 +304,15 @@ function renderizarProduto() {
             '<a href="javascript:history.back()" class="voltar"><i class="fa-solid fa-arrow-left"></i> Voltar</a>' +
             '<div class="produto-galeria">' +
                 '<div class="carrossel" id="galeriaCarrossel">' + imgsHtml + '</div>' +
+                '<div class="avaliacoes" id="blocoAvaliacoes">' +
+                    '<h3 class="avaliacoes-titulo">Deixe sua avaliação</h3>' +
+                    '<div class="estrelas-input" id="estrelasInput">' +
+                        '<span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span>' +
+                    '</div>' +
+                    '<textarea id="textoAvaliacao" rows="3" placeholder="Escreva o que achou do produto..."></textarea>' +
+                    '<button type="button" class="btn-avaliacao" id="btnAvaliacao">Enviar avaliação</button>' +
+                    '<div class="lista-avaliacoes" id="listaAvaliacoes"></div>' +
+                '</div>' +
             '</div>' +
         '</div>' +
         '<div class="produto-info-detalhe">' +
@@ -303,7 +362,7 @@ function renderizarProduto() {
     }
 
     function mostrarImagem(grupo, indice) {
-        grupo.forEach(img => img.classList.remove('ativa'));
+        imgsGaleria.forEach(img => img.classList.remove('ativa'));
         if (grupo[indice]) grupo[indice].classList.add('ativa');
     }
 
@@ -371,6 +430,58 @@ function renderizarProduto() {
             btn.textContent = 'Adicionar ao carrinho';
             btn.style.background = '';
         }, 2000);
+    });
+
+    // --- AVALIAÇÕES (deixar nota + comentário abaixo da foto) ---
+    const estrelasEls = document.querySelectorAll('#estrelasInput span');
+    let notaEscolhida = 0;
+    function pintarEstrelas(nota) {
+        estrelasEls.forEach(sp => sp.classList.toggle('ativa', Number(sp.dataset.val) <= nota));
+    }
+    estrelasEls.forEach(sp => sp.addEventListener('click', () => {
+        notaEscolhida = Number(sp.dataset.val);
+        pintarEstrelas(notaEscolhida);
+    }));
+
+    function renderizarListaAvaliacoes() {
+        const listaEl = document.getElementById('listaAvaliacoes');
+        if (!listaEl) return;
+        const itens = (carregarAvaliacoes()[nome] || []).slice().reverse();
+        if (!itens.length) {
+            listaEl.innerHTML = '<p class="sem-avaliacoes">Ainda não há avaliações para este produto.</p>';
+            return;
+        }
+        listaEl.innerHTML = itens.map(av =>
+            '<div class="avaliacao-item">' +
+                '<div class="avaliacao-topo">' +
+                    '<span class="estrelas">' + estrelasHtml(av.estrelas) + '</span>' +
+                    '<span class="data">' + (av.data || '') + '</span>' +
+                '</div>' +
+                (av.texto ? '<p class="texto">' + String(av.texto).replace(/</g, '&lt;') + '</p>' : '') +
+            '</div>'
+        ).join('');
+    }
+
+    renderizarListaAvaliacoes();
+
+    document.getElementById('btnAvaliacao').addEventListener('click', () => {
+        if (!notaEscolhida) {
+            alert('Escolha quantas estrelas você quer dar (1 a 5).');
+            return;
+        }
+        const texto = document.getElementById('textoAvaliacao').value.trim();
+        const todas = carregarAvaliacoes();
+        (todas[nome] = todas[nome] || []).push({
+            estrelas: notaEscolhida,
+            texto: texto,
+            data: new Date().toLocaleDateString('pt-BR')
+        });
+        salvarAvaliacoes(todas);
+        renderizarListaAvaliacoes();
+        notaEscolhida = 0;
+        pintarEstrelas(0);
+        document.getElementById('textoAvaliacao').value = '';
+        alert('Avaliação enviada. Obrigado!');
     });
 
     if (imgsGaleria.length > 1) {

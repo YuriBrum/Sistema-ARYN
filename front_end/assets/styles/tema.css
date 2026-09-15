@@ -161,3 +161,47 @@ html[data-tema="claro"] .contato { background: #171717; color: #fff; }
 
 /* Página de promoções */
 html[data-tema="claro"] .preco-antigo { color: #888; }
+
+/* Painel de filtros em tema claro */
+html[data-tema="claro"] .painel-filtros {
+    background: #fff;
+    border-color: #e5e5e5;
+    color: #111;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, .06);
+}
+
+html[data-tema="claro"] .painel-filtros h3 { color: #111; }
+html[data-tema="claro"] .painel-filtros .limpar-filtros { color: #333; border-color: #ddd; }
+html[data-tema="claro"] .painel-filtros .limpar-filtros:hover { border-color: #d91d1d; color: #d91d1d; }
+html[data-tema="claro"] .filtro-grupo { border-color: #eee; }
+html[data-tema="claro"] .filtro-grupo h4 { color: #555; }
+html[data-tema="claro"] .opcoes-filtro label { color: #333; }
+html[data-tema="claro"] .opcoes-filtro .bolinha-cor { border-color: #ccc; }
+html[data-tema="claro"] .valor-linha label { color: #555; }
+html[data-tema="claro"] .valor-linha input[type="number"] {
+    background: #fff;
+    border-color: #ddd;
+    color: #111;
+}
+
+/* Avaliações em tema claro */
+html[data-tema="claro"] .avaliacoes-titulo { color: #111; }
+html[data-tema="claro"] .estrelas-input { color: #d5d5d5; }
+html[data-tema="claro"] .avaliacoes textarea {
+    background: #fff;
+    color: #111;
+    border-color: #ddd;
+}
+html[data-tema="claro"] .avaliacao-item {
+    background: #fafafa;
+    border-color: #eee;
+}
+html[data-tema="claro"] .avaliacao-item .texto { color: #333; }
+
+/* Avaliações em tema escuro */
+html[data-tema="escuro"] .avaliacoes-titulo { color: #eee; }
+html[data-tema="escuro"] .avaliacao-item {
+    background: #161616;
+    border-color: #2a2a2a;
+}
+html[data-tema="escuro"] .avaliacao-item .texto { color: #ccc; }

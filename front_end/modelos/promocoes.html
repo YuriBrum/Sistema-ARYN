@@ -68,7 +68,41 @@
     <small>Oportunidade especial</small>
     <h2>Promoções</h2>
 
-    <section class="produtos">
+    <div class="layout-loja">
+
+        <aside class="painel-filtros" id="painelFiltros" aria-label="Filtros de busca">
+            <h3>Filtrar produtos</h3>
+            <button type="button" class="limpar-filtros" id="limparFiltros">Limpar filtros</button>
+
+            <div class="filtro-grupo">
+                <h4>Tamanho</h4>
+                <div class="opcoes-filtro" id="filtroTamanhos"></div>
+            </div>
+
+            <div class="filtro-grupo">
+                <h4>Cor</h4>
+                <div class="opcoes-filtro" id="filtroCores"></div>
+            </div>
+
+            <div class="filtro-grupo">
+                <h4>Avaliação</h4>
+                <div class="opcoes-filtro" id="filtroAvaliacao"></div>
+            </div>
+
+            <div class="filtro-grupo">
+                <h4>Valor (R$)</h4>
+                <div class="valor-linha">
+                    <label>De
+                        <input type="number" id="valorMin" min="0" placeholder="ex: 1000">
+                    </label>
+                    <label>Até
+                        <input type="number" id="valorMax" min="0" placeholder="ex: 2000">
+                    </label>
+                </div>
+            </div>
+        </aside>
+
+        <section class="produtos" id="listaProdutos">
 
         <div class="card">
             <span class="selo-promo">-20%</span>
@@ -84,7 +118,7 @@
                 <span>TERNOS</span>
                 <h3>Ternos ARYN</h3>
                 <p class="preco-antigo">De R$ 1.500</p>
-                <h4>R$ 1.199</h4>
+                <h4>R$ 1.200</h4>
                 <p>100 em estoque</p>
 
                 <div class="acoes">
@@ -108,7 +142,7 @@
                 <span>BLAZERS</span>
                 <h3>Blazer ARYN</h3>
                 <p class="preco-antigo">De R$ 2.000</p>
-                <h4>R$ 1.599</h4>
+                <h4>R$ 1.600</h4>
                 <p>100 em estoque</p>
 
                 <div class="acoes">
@@ -132,7 +166,7 @@
                 <span>SMOKE</span>
                 <h3>Smokes ARYN</h3>
                 <p class="preco-antigo">De R$ 2.900</p>
-                <h4>R$ 2.099</h4>
+                <h4>R$ 2.088</h4>
                 <p>100 em estoque</p>
 
                 <div class="acoes">
@@ -155,7 +189,7 @@
                 <span>CAMISETA SOCIAL</span>
                 <h3>Camiseta Social ARYN</h3>
                 <p class="preco-antigo">De R$ 2.500</p>
-                <h4>R$ 1.999</h4>
+                <h4>R$ 2.000</h4>
                 <p>100 em estoque</p>
 
                 <div class="acoes">
@@ -178,7 +212,7 @@
                 <span>BLAZER FEMININO</span>
                 <h3>Blazer Feminino ARYN</h3>
                 <p class="preco-antigo">De R$ 1.600</p>
-                <h4>R$ 1.299</h4>
+                <h4>R$ 1.296</h4>
                 <p>100 em estoque</p>
 
                 <div class="acoes">
@@ -201,7 +235,7 @@
                 <span>TERNOS FEMININO</span>
                 <h3>Ternos Femininos ARYN</h3>
                 <p class="preco-antigo">De R$ 2.000</p>
-                <h4>R$ 1.599</h4>
+                <h4>R$ 1.600</h4>
                 <p>100 em estoque</p>
 
                 <div class="acoes">
@@ -212,6 +246,8 @@
         </div>
 
     </section>
+    </div>
+
 </main>
 
 <script src="../assets/js/autentificao.js"></script>
@@ -219,6 +255,7 @@
 <script src="../assets/js/estoque.js"></script>
 <script src="../assets/js/script.js"></script>
 <script src="../assets/js/curtida.js"></script>
+<script src="../assets/js/filtros.js"></script>
 <script src="../assets/js/tema.js"></script>
 
 <section class="contato" id="contato">
