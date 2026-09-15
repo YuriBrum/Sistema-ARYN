@@ -1,0 +1,28 @@
+CREATE TABLE pedidos (
+    id_pedido INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT UNSIGNED NOT NULL,
+    id_endereco INT UNSIGNED NOT NULL,
+    status ENUM(
+        'PENDENTE',
+        'PAGO',
+        'SEPARANDO',
+        'ENVIADO',
+        'ENTREGUE',
+        'CANCELADO'
+    ) NOT NULL DEFAULT 'PENDENTE',
+    subtotal DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    frete DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    desconto DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    total DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_pedidos_cliente
+        FOREIGN KEY (id_cliente)
+        REFERENCES clientes(id_cliente),
+
+    CONSTRAINT fk_pedidos_endereco
+        FOREIGN KEY (id_endereco)
+        REFERENCES enderecos(id_endereco)
+);

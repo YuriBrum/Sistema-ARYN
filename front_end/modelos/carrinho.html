@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARYN - Carrinho</title>
+
+    <link rel="stylesheet" href="../assets/styles/style.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="../assets/styles/carrinho.css">
+    <link rel="stylesheet" href="../assets/styles/tema.css">
+    <script src="../assets/js/autentificao.js"></script>
+    <script src="../assets/js/carrinho.js"></script>
+    <script src="../assets/js/estoque.js"></script>
+    <script src="../assets/js/tema.js"></script>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        <h1><span>A</span>RYN</h1>
+        <p>Vista sua essência</p>
+    </div>
+
+    <nav>
+        <a href="../../index.html">
+            <i class="fa-solid fa-house"></i>
+            Home
+        </a>
+
+        <a href="masculino.html">
+            <i class="fa-solid fa-person"></i>
+            Masculino
+        </a>
+
+        <a href="feminino.html">
+            <i class="fa-solid fa-person-dress"></i>
+            Feminino
+        </a>
+
+        <a href="promocoes.html">
+            <i class="fa-solid fa-tags"></i>
+            Promoções
+        </a>
+    </nav>
+
+    <nav>
+        <a href="../../index.html">
+            <i class="fa-solid fa-store"></i>
+            Loja
+        </a>
+
+        <a href="carrinho.html" class="active">
+            <i class="fa-solid fa-cart-shopping"></i>
+            Carrinho
+        </a>
+
+        <a href="curtidas.html">
+            <i class="fa-solid fa-heart"></i>
+            Curtidas
+        </a>
+
+        <a href="usuarios.html">
+            <i class="fa-solid fa-user"></i>
+            Usuários
+        </a>
+    </nav>
+</header>
+
+<main class="pagina">
+
+    <div class="cabecalho-pagina">
+        <small>ARYN</small>
+        <h2>Meu Carrinho</h2>
+        <p>Confira os produtos escolhidos antes de finalizar sua compra.</p>
+    </div>
+
+    <div class="carrinho-layout">
+
+        <section class="itens-carrinho">
+
+            <div id="itens-lista">
+                <!-- Itens do carrinho são gerados dinamicamente -->
+            </div>
+
+        </section>
+
+        <aside class="resumo">
+            <h3>Resumo da compra</h3>
+
+            <div class="linha-resumo">
+                <span>Subtotal</span>
+                <span id="subtotal">R$ 0,00</span>
+            </div>
+
+            <div class="linha-resumo">
+                <span>Frete</span>
+                <span>Grátis</span>
+            </div>
+
+            <div class="total-finalizar">
+                <span>Total</span>
+                <strong id="totalFinalizar">R$ 0,00</strong>
+            </div>
+
+            <button class="finalizar" onclick="finalizarCompra()">
+                Finalizar compra
+            </button>
+
+            <a href="../../index.html" class="continuar">
+                Continuar comprando
+            </a>
+        </aside>
+
+    </div>
+</main>
+
+<div class="modal-overlay" id="modalFinalizar" style="display:none;">
+    <div class="modal-finalizar">
+        <button type="button" class="modal-fechar" onclick="fecharModal()">&times;</button>
+        <h3>Finalizar compra</h3>
+        <p class="modal-sub">Preencha o endereço de entrega e escolha a forma de pagamento.</p>
+
+        <form id="formFinalizar" onsubmit="confirmarCompra(event)">
+            <div class="campo-modal">
+                <label for="checkEndereco">Endereço</label>
+                <input type="text" id="checkEndereco" placeholder="Rua Exemplo, 100" required>
+            </div>
+
+            <div class="campo-modal">
+                <label for="checkComplemento">Complemento</label>
+                <input type="text" id="checkComplemento" placeholder="Apartamento, bloco, referência...">
+            </div>
+
+            <div class="campo-modal">
+                <label for="checkCep">CEP</label>
+                <input type="text" id="checkCep" placeholder="00000-000" maxlength="9" required>
+            </div>
+
+            <div class="escolher-endereco">
+                <button type="button" class="btn-escolher-endereco" onclick="alternarListaEnderecos()">
+                    <i class="fa-solid fa-location-dot"></i> Escolher endereço salvo
+                </button>
+                <div class="lista-enderecos" id="listaEnderecos" style="display:none;"></div>
+            </div>
+
+            <div class="pagamento-opcoes">
+                <label class="opcao-pagamento">
+                    <input type="radio" name="pagamento" value="PIX" checked>
+                    <i class="fa-solid fa-qrcode"></i>
+                    <span>PIX</span>
+                </label>
+                <label class="opcao-pagamento">
+                    <input type="radio" name="pagamento" value="Cartão">
+                    <i class="fa-solid fa-credit-card"></i>
+                    <span>Cartão</span>
+                </label>
+            </div>
+
+            <div id="areaPix" class="area-pagamento">
+                <small>Chave PIX gerada (copie e pague)</small>
+                <div class="chave-pix" id="chavePix"></div>
+                <button type="button" class="btn-copiar" onclick="copiarChavePix()">
+                    <i class="fa-solid fa-copy"></i> Copiar chave
+                </button>
+            </div>
+
+            <div id="areaCartao" class="area-pagamento" style="display:none;">
+                <div class="campo-modal">
+                    <label for="checkNumero">Número do cartão</label>
+                    <input type="text" id="checkNumero" placeholder="0000 0000 0000 0000" maxlength="19">
+                </div>
+                <div class="campo-modal">
+                    <label for="checkNomeCartao">Nome no cartão</label>
+                    <input type="text" id="checkNomeCartao" placeholder="Como está impresso no cartão">
+                </div>
+                <div class="colunas-form">
+                    <div class="campo-modal">
+                        <label for="checkValidade">Validade</label>
+                        <input type="text" id="checkValidade" placeholder="MM/AA" maxlength="5">
+                    </div>
+                    <div class="campo-modal">
+                        <label for="checkCvv">CVV</label>
+                        <input type="text" id="checkCvv" placeholder="123" maxlength="4">
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-total">
+                <span>Total a pagar</span>
+                <strong id="modalTotal">R$ 0,00</strong>
+            </div>
+
+            <button type="submit" class="btn-pagar">Confirmar pagamento</button>
+            <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+        </form>
+    </div>
+</div>
+
+
+<section class="contato" id="contato">
+    <div class="contato-inner">
+        <h2>Fale com a gente</h2>
+        <p>Estamos à disposição para dúvidas, pedidos e parcerias.</p>
+
+        <div class="contato-itens">
+            <a href="https://instagram.com/" class="contato-item" target="_blank" rel="noopener">
+                <i class="fa-brands fa-instagram"></i>
+                <span>@seuinstagram</span>
+            </a>
+
+            <a href="mailto:contato@aryn.com.br" class="contato-item">
+                <i class="fa-solid fa-envelope"></i>
+                <span>contato@aryn.com.br</span>
+            </a>
+
+            <a href="https://wa.me/5511900000000" class="contato-item" target="_blank" rel="noopener">
+                <i class="fa-brands fa-whatsapp"></i>
+                <span>(11) 90000-0000</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

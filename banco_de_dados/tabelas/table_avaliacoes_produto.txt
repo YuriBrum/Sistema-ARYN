@@ -1,0 +1,28 @@
+CREATE TABLE avaliacoes_produto (
+    id_avaliacao INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT UNSIGNED NOT NULL,
+    id_produto INT UNSIGNED NOT NULL,
+    nota TINYINT UNSIGNED NOT NULL,
+    comentario VARCHAR(1000),
+    status ENUM(
+        'PENDENTE',
+        'APROVADA',
+        'REJEITADA'
+    ) NOT NULL DEFAULT 'PENDENTE',
+    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_avaliacoes_cliente
+        FOREIGN KEY (id_cliente)
+        REFERENCES clientes(id_cliente)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_avaliacoes_produto
+        FOREIGN KEY (id_produto)
+        REFERENCES produtos(id_produto)
+        ON DELETE CASCADE,
+
+    CONSTRAINT chk_avaliacao_nota
+        CHECK (nota BETWEEN 1 AND 5)
+);

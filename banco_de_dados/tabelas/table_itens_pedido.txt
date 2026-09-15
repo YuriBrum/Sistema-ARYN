@@ -1,0 +1,17 @@
+CREATE TABLE itens_pedido (
+    id_item INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_pedido INT UNSIGNED NOT NULL,
+    id_variacao INT UNSIGNED NOT NULL,
+    quantidade INT UNSIGNED NOT NULL,
+    preco_unitario DECIMAL(10,2) NOT NULL,
+    subtotal DECIMAL(10,2) NOT NULL,
+    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_itens_pedido_pedido
+        FOREIGN KEY (id_pedido)
+        REFERENCES pedidos(id_pedido),
+
+    CONSTRAINT fk_itens_pedido_variacao
+        FOREIGN KEY (id_variacao)
+        REFERENCES variacoes_produto(id_variacao)
+);

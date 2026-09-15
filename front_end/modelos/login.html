@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARYN - Login</title>
+
+    <link rel="stylesheet" href="../assets/styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/styles/login.css">
+    <link rel="stylesheet" href="../assets/styles/tema.css">
+    <script src="../assets/js/autentificao.js"></script>
+    <script src="../assets/js/carrinho.js"></script>
+    <script src="../assets/js/tema.js"></script>
+    <script>if (typeof bloquearSeLogado === 'function') bloquearSeLogado();</script>
+
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        <h1><span>A</span>RYN</h1>
+        <p>Vista sua essência</p>
+    </div>
+
+    <nav>
+        <a href="../../index.html">
+            <i class="fa-solid fa-house"></i>
+            Home
+        </a>
+
+        <a href="masculino.html">
+            <i class="fa-solid fa-person"></i>
+            Masculino
+        </a>
+
+        <a href="feminino.html">
+            <i class="fa-solid fa-person-dress"></i>
+            Feminino
+        </a>
+
+        <a href="promocoes.html">
+            <i class="fa-solid fa-tags"></i>
+            Promoções
+        </a>
+    </nav>
+
+    <nav>
+        <a href="../../index.html">
+            <i class="fa-solid fa-store"></i>
+            Loja
+        </a>
+
+        <a href="carrinho.html">
+            <i class="fa-solid fa-cart-shopping"></i>
+            Carrinho
+        </a>
+
+        <a href="curtidas.html">
+            <i class="fa-solid fa-heart"></i>
+            Curtidas
+        </a>
+
+        <a href="usuarios.html">
+            <i class="fa-solid fa-user"></i>
+            Usuários
+        </a>
+    </nav>
+</header>
+
+<main class="pagina">
+
+    <div class="cabecalho-pagina" style="text-align: center;">
+        <small>ARYN</small>
+        <h2>Bem-vindo</h2>
+        <p>Cadastre-se ou entre para continuar.</p>
+    </div>
+
+    <div class="login-wrapper">
+        <div class="login-card">
+
+            <h3>Crie sua conta</h3>
+            <p class="subtitulo">Primeiro, cadastre-se com seu e-mail. Se já tem conta, entre abaixo.</p>
+
+            <a href="cadastro.html" class="btn-criar">
+                <i class="fa-solid fa-user-plus"></i>
+                Cadastrar
+            </a>
+
+            <div class="divisor">ou entre na sua conta</div>
+
+            <div id="erro" class="erro-msg"></div>
+
+            <form class="formulario" onsubmit="fazerLogin(event)" novalidate>
+
+                <div class="campo">
+                    <label for="usuario">E-mail</label>
+                    <input type="email" id="usuario" name="usuario"
+                           placeholder="ex: cliente@hotmail.com"
+                           autocomplete="username" required>
+                </div>
+
+                <div class="campo campo-senha">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" name="senha"
+                           placeholder="Digite sua senha"
+                           autocomplete="current-password" required>
+                    <button type="button" class="toggle-senha" onclick="toggleSenha()" aria-label="Mostrar senha">
+                        <i id="iconeSenha" class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+
+                <div class="opcoes-login">
+                    <label>
+                        <input type="checkbox" id="lembrar">
+                        Lembrar-me
+                    </label>
+                    <a href="#" onclick="esqueceuSenha(event)">Esqueceu a senha?</a>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    Entrar
+                </button>
+
+            </form>
+
+            <p class="criar-conta">
+                <a href="../../index.html">Continuar como visitante</a>
+            </p>
+
+        </div>
+    </div>
+
+</main>
+
+<script src="../assets/js/login.js"></script>
+
+<section class="contato" id="contato">
+    <div class="contato-inner">
+        <h2>Fale com a gente</h2>
+        <p>Estamos à disposição para dúvidas, pedidos e parcerias.</p>
+
+        <div class="contato-itens">
+            <a href="https://instagram.com/" class="contato-item" target="_blank" rel="noopener">
+                <i class="fa-brands fa-instagram"></i>
+                <span>@seuinstagram</span>
+            </a>
+
+            <a href="mailto:contato@aryn.com.br" class="contato-item">
+                <i class="fa-solid fa-envelope"></i>
+                <span>contato@aryn.com.br</span>
+            </a>
+
+            <a href="https://wa.me/5511900000000" class="contato-item" target="_blank" rel="noopener">
+                <i class="fa-brands fa-whatsapp"></i>
+                <span>(11) 90000-0000</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>
