@@ -99,7 +99,11 @@ Nome do banco:
 aryn_database
 
 Arquivo SQL:
+<<<<<<< HEAD
 banco_de_dados/backups/aryn_database.sql
+=======
+banco_de_dados/aryn_database.sql
+>>>>>>> backend
 ```
 
 O banco armazena informações relacionadas a clientes, produtos, pedidos,
