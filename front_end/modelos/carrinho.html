@@ -10,9 +10,11 @@
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     
     <link rel="stylesheet" href="../assets/styles/carrinho.css">
+    <link rel="stylesheet" href="../assets/styles/tema.css">
     <script src="../assets/js/autentificao.js"></script>
     <script src="../assets/js/carrinho.js"></script>
     <script src="../assets/js/estoque.js"></script>
+    <script src="../assets/js/tema.js"></script>
 </head>
 
 <body>
@@ -37,6 +39,11 @@
         <a href="feminino.html">
             <i class="fa-solid fa-person-dress"></i>
             Feminino
+        </a>
+
+        <a href="promocoes.html">
+            <i class="fa-solid fa-tags"></i>
+            Promoções
         </a>
     </nav>
 
@@ -133,6 +140,13 @@
                 <input type="text" id="checkCep" placeholder="00000-000" maxlength="9" required>
             </div>
 
+            <div class="escolher-endereco">
+                <button type="button" class="btn-escolher-endereco" onclick="alternarListaEnderecos()">
+                    <i class="fa-solid fa-location-dot"></i> Escolher endereço salvo
+                </button>
+                <div class="lista-enderecos" id="listaEnderecos" style="display:none;"></div>
+            </div>
+
             <div class="pagamento-opcoes">
                 <label class="opcao-pagamento">
                     <input type="radio" name="pagamento" value="PIX" checked>
@@ -186,6 +200,30 @@
     </div>
 </div>
 
+
+<section class="contato" id="contato">
+    <div class="contato-inner">
+        <h2>Fale com a gente</h2>
+        <p>Estamos à disposição para dúvidas, pedidos e parcerias.</p>
+
+        <div class="contato-itens">
+            <a href="https://instagram.com/" class="contato-item" target="_blank" rel="noopener">
+                <i class="fa-brands fa-instagram"></i>
+                <span>@seuinstagram</span>
+            </a>
+
+            <a href="mailto:contato@aryn.com.br" class="contato-item">
+                <i class="fa-solid fa-envelope"></i>
+                <span>contato@aryn.com.br</span>
+            </a>
+
+            <a href="https://wa.me/5511900000000" class="contato-item" target="_blank" rel="noopener">
+                <i class="fa-brands fa-whatsapp"></i>
+                <span>(11) 90000-0000</span>
+            </a>
+        </div>
+    </div>
+</section>
 
 </body>
 </html>

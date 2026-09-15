@@ -6,6 +6,8 @@
 <title>ARYN - Feminina</title>
 <link rel="stylesheet" href="../assets/styles/style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link rel="stylesheet" href="../assets/styles/tema.css">
+<script src="../assets/js/tema.js"></script>
 </head>
 <body>
 
@@ -29,6 +31,11 @@
         <a href="feminino.html" class="active">
             <i class="fa-solid fa-person-dress"></i>
             Feminino
+        </a>
+
+        <a href="promocoes.html">
+            <i class="fa-solid fa-tags"></i>
+            Promoções
         </a>
     </nav>
 
@@ -93,35 +100,35 @@
     </section>
 </main>
 
-<script>
-document.querySelectorAll('.carrossel').forEach(carrossel => {
-    const imagens = carrossel.querySelectorAll('.imagem');
-    let atual = 0;
-    let intervalo = null;
-
-    if (imagens.length > 1) {
-        const avancar = () => {
-            imagens[atual].classList.remove('ativa');
-            atual = (atual + 1) % imagens.length;
-            imagens[atual].classList.add('ativa');
-        };
-        carrossel.addEventListener('mouseenter', () => {
-            if (!intervalo) intervalo = setInterval(avancar, 2500);
-        });
-        carrossel.addEventListener('mouseleave', () => {
-            if (intervalo) { clearInterval(intervalo); intervalo = null; }
-            imagens.forEach((img, i) => img.classList.toggle('ativa', i === 0));
-            atual = 0;
-        });
-    }
-});
-</script>
-
 <script src="../assets/js/autentificao.js"></script>
 <script src="../assets/js/carrinho.js"></script>
 <script src="../assets/js/estoque.js"></script>
 <script src="../assets/js/script.js"></script>
 <script src="../assets/js/curtida.js"></script>
+
+<section class="contato" id="contato">
+    <div class="contato-inner">
+        <h2>Fale com a gente</h2>
+        <p>Estamos à disposição para dúvidas, pedidos e parcerias.</p>
+
+        <div class="contato-itens">
+            <a href="https://instagram.com/" class="contato-item" target="_blank" rel="noopener">
+                <i class="fa-brands fa-instagram"></i>
+                <span>@seuinstagram</span>
+            </a>
+
+            <a href="mailto:contato@aryn.com.br" class="contato-item">
+                <i class="fa-solid fa-envelope"></i>
+                <span>contato@aryn.com.br</span>
+            </a>
+
+            <a href="https://wa.me/5511900000000" class="contato-item" target="_blank" rel="noopener">
+                <i class="fa-brands fa-whatsapp"></i>
+                <span>(11) 90000-0000</span>
+            </a>
+        </div>
+    </div>
+</section>
 
 </body>
 </html>

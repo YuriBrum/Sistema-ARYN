@@ -117,3 +117,26 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+document.querySelectorAll('.carrossel').forEach(carrossel => {
+    const imagens = carrossel.querySelectorAll('.imagem');
+    let atual = 0;
+    let intervalo = null;
+
+    if (imagens.length > 1) {
+        const avancar = () => {
+            imagens[atual].classList.remove('ativa');
+            atual = (atual + 1) % imagens.length;
+            imagens[atual].classList.add('ativa');
+        };
+        carrossel.addEventListener('mouseenter', () => {
+            if (!intervalo) intervalo = setInterval(avancar, 2500);
+        });
+        carrossel.addEventListener('mouseleave', () => {
+            if (intervalo) { clearInterval(intervalo); intervalo = null; }
+            imagens.forEach((img, i) => img.classList.toggle('ativa', i === 0));
+            atual = 0;
+        });
+    }
+});
+

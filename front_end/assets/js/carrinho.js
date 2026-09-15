@@ -287,6 +287,109 @@ const IMG_PADRAO_CARRINHO = "../assets/images/as_cb.jpg";
         el.value = el.value.replace(/\D/g, '').slice(0, 4).replace(/(\d{2})(?=\d)/, '$1/');
     }
 
+    function getUsuarioAtual() {
+        return (typeof isLoggedIn === 'function' && isLoggedIn())
+            ? getUsuarioLogado()
+            : 'anon';
+    }
+
+    function getEnderecosKey() {
+        return 'aryn_enderecos_' + getUsuarioAtual();
+    }
+
+    function carregarEnderecos() {
+        try {
+            const lista = JSON.parse(localStorage.getItem(getEnderecosKey()) || '[]');
+            return Array.isArray(lista) ? lista : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function migrarEnderecosAntigos() {
+        const lista = carregarEnderecos();
+        if (lista.length) return lista;
+        const chaveAntiga = 'aryn_endereco_entrega_' + getUsuarioAtual();
+        try {
+            const antigo = JSON.parse(localStorage.getItem(chaveAntiga) || '{}');
+            if (antigo && (antigo.checkEndereco || antigo.checkCep)) {
+                lista.push({
+                    endereco: antigo.checkEndereco || '',
+                    complemento: antigo.checkComplemento || '',
+                    cep: antigo.checkCep || ''
+                });
+                localStorage.setItem(getEnderecosKey(), JSON.stringify(lista));
+            }
+        } catch (e) { }
+        return lista;
+    }
+
+    function salvarEnderecoUtilizado(endereco, complemento, cep) {
+        const lista = carregarEnderecos();
+        const novo = { endereco: endereco, complemento: complemento, cep: cep };
+        const jaExiste = lista.some(a =>
+            a.endereco === novo.endereco &&
+            (a.complemento || '') === (novo.complemento || '') &&
+            a.cep === novo.cep
+        );
+        if (!jaExiste) {
+            lista.push(novo);
+            localStorage.setItem(getEnderecosKey(), JSON.stringify(lista));
+        }
+    }
+
+    function renderizarListaEnderecos() {
+        const box = document.getElementById("listaEnderecos");
+        if (!box) return;
+        const lista = migrarEnderecosAntigos();
+        if (!lista.length) {
+            box.innerHTML = '<p class="sem-enderecos">Nenhum endereço salvo ainda.</p>';
+            return;
+        }
+        box.innerHTML = lista.map((a, i) =>
+            '<div class="item-endereco">' +
+            '<button type="button" class="escolher" onclick="escolherEndereco(' + i + ')">' +
+            '<strong>' + a.endereco + '</strong>' +
+            '<span>' + (a.complemento ? a.complemento + ' &middot; ' : '') + 'CEP: ' + a.cep + '</span>' +
+            '</button>' +
+            '<button type="button" class="remover-endereco" onclick="excluirEndereco(' + i + ')" title="Excluir endereço" aria-label="Excluir endereço">' +
+            '<i class="fa-solid fa-trash-can"></i>' +
+            '</button>' +
+            '</div>'
+        ).join('');
+    }
+
+    function alternarListaEnderecos() {
+        const box = document.getElementById("listaEnderecos");
+        if (!box) return;
+        const visivel = box.style.display === "block";
+        if (visivel) {
+            box.style.display = "none";
+        } else {
+            renderizarListaEnderecos();
+            box.style.display = "block";
+        }
+    }
+
+    function escolherEndereco(idx) {
+        const lista = carregarEnderecos();
+        const a = lista[idx];
+        if (!a) return;
+        if (a.endereco) document.getElementById("checkEndereco").value = a.endereco;
+        if (a.complemento) document.getElementById("checkComplemento").value = a.complemento;
+        if (a.cep) document.getElementById("checkCep").value = a.cep;
+        const box = document.getElementById("listaEnderecos");
+        if (box) box.style.display = "none";
+    }
+
+    function excluirEndereco(idx) {
+        const lista = carregarEnderecos();
+        if (idx < 0 || idx >= lista.length) return;
+        lista.splice(idx, 1);
+        localStorage.setItem(getEnderecosKey(), JSON.stringify(lista));
+        renderizarListaEnderecos();
+    }
+
     function finalizarCompra() {
         const lista = carregarCarrinho();
         if (!lista || !lista.length) {
@@ -299,7 +402,7 @@ const IMG_PADRAO_CARRINHO = "../assets/images/as_cb.jpg";
         document.getElementById("chavePix").textContent = gerarChavePix();
         document.querySelector('input[name="pagamento"][value="PIX"]').checked = true;
         alternarPagamento();
-        ["checkNumero", "checkNomeCartao", "checkValidade", "checkCvv"].forEach(id => {
+        ["checkEndereco", "checkComplemento", "checkCep", "checkNumero", "checkNomeCartao", "checkValidade", "checkCvv"].forEach(id => {
             document.getElementById(id).value = "";
         });
 
@@ -341,6 +444,8 @@ const IMG_PADRAO_CARRINHO = "../assets/images/as_cb.jpg";
             alert("Preencha endereço e CEP.");
             return;
         }
+
+        salvarEnderecoUtilizado(endereco, complemento, cep);
 
         let detalhePagamento = pagamento;
         if (pagamento === "PIX") {

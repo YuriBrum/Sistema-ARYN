@@ -40,17 +40,32 @@ function salvarEstoque(estoque) {
     localStorage.setItem(ESTOQUE_KEY, JSON.stringify(estoque));
 }
 
+const NOMES_ESTOQUE = {
+    'Smokes ARYN': 'Smoke Terno ARYN',
+    'Smoking Terno ARYN': 'Smoke Terno ARYN',
+    'Smoke ARYN': 'Smoke Terno ARYN',
+    'Camisa Social ARYN': 'Camiseta Social ARYN',
+    'Camisa Social Feminina ARYN': 'Camiseta Social Feminina ARYN',
+    'Camisa Slim ARYN': 'Camisa Social Slim ARYN'
+};
+
+function nomeEstoque(nome) {
+    return NOMES_ESTOQUE[nome] || nome;
+}
+
 function obterEstoque(nome) {
     const estoque = carregarEstoque();
-    return estoque[nome] !== undefined ? estoque[nome] : 0;
+    const chave = nomeEstoque(nome);
+    return estoque[chave] !== undefined ? estoque[chave] : 0;
 }
 
 function reduzirEstoque(nome, qtd) {
     const estoque = carregarEstoque();
-    const atual = estoque[nome] !== undefined ? estoque[nome] : 0;
-    estoque[nome] = Math.max(0, atual - qtd);
+    const chave = nomeEstoque(nome);
+    const atual = estoque[chave] !== undefined ? estoque[chave] : 0;
+    estoque[chave] = Math.max(0, atual - qtd);
     salvarEstoque(estoque);
-    return estoque[nome];
+    return estoque[chave];
 }
 
 function renderizarEstoque() {
@@ -58,8 +73,13 @@ function renderizarEstoque() {
         const h3 = card.querySelector('h3');
         if (!h3) return;
         const nome = h3.textContent.trim();
-        const estoqueEl = card.querySelector('.info p');
+
+        let estoqueEl = null;
+        card.querySelectorAll('.info p').forEach(p => {
+            if (/em estoque|Estoque esgotado/.test(p.textContent)) estoqueEl = p;
+        });
         if (!estoqueEl) return;
+
         const qtd = obterEstoque(nome);
         if (qtd > 0) {
             estoqueEl.textContent = qtd + ' em estoque';

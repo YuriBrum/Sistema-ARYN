@@ -34,6 +34,7 @@ const PRODUTO_OPCOES = {
     'Ternos ARYN':                  { cores: ['Preto', 'Branco', 'Vermelho Vinho'],   tamanhos: ['P', 'M', 'G', 'GG'] },
     'Blazer ARYN':                  { cores: ['Preto', 'Branco', 'Vermelho Vinho'],   tamanhos: ['P', 'M', 'G', 'GG'] },
     'Smoke Terno ARYN':             { cores: ['Preto', 'Branco', 'Vermelho Vinho'],   tamanhos: ['P', 'M', 'G', 'GG'] },
+    'Smokes ARYN':                  { cores: ['Preto', 'Branco', 'Vermelho Vinho'],   tamanhos: ['P', 'M', 'G', 'GG'] },
     'Camiseta Social ARYN':         { cores: ['Preto', 'Branco', 'Vermelho Vinho'],   tamanhos: ['P', 'M', 'G', 'GG'] },
     'Camisa Social Slim ARYN':      { cores: ['Preto', 'Branco', 'Vermelho Vinho'],   tamanhos: ['P', 'M', 'G', 'GG'] },
     'Ternos Femininos ARYN':        { cores: ['Preto', 'Branco', 'Vermelho Vinho', 'Bege'], tamanhos: ['P', 'M', 'G'] },
@@ -137,7 +138,6 @@ botoesFavorito.forEach(botao => {
         }
 
         atualizarBotaoFavorito(botao);
-        alert('♥ Salvo nas suas curtidas!');
     });
 });
 
@@ -272,6 +272,60 @@ function renderizarProduto() {
             '<button class="btn-adicionar-carrinho" id="btnAdicionar" disabled>Selecione cor e tamanho</button>' +
         '</div>';
 
+    const galeriaImg = document.getElementById('galeriaCarrossel');
+    const imgsGaleria = galeriaImg ? galeriaImg.querySelectorAll('.imagem') : [];
+    let corGaleria = null;
+    let indiceImg = 0;
+    let intervaloImg = null;
+
+    function corDaImagem(img) {
+        const base = String(img.getAttribute('src') || img.src || '')
+            .split('/').pop().replace(/\.[^.?#]+$/, '').toLowerCase();
+        if (base.endsWith('bg')) return 'Bege';
+        const ult = base[base.length - 1];
+        if (ult === 'p') return 'Preto';
+        if (ult === 'b') return 'Branco';
+        if (ult === 'v') return 'Vermelho Vinho';
+        return null;
+    }
+
+    const imagensPorCor = {};
+    Array.prototype.forEach.call(imgsGaleria, img => {
+        const c = corDaImagem(img);
+        if (c) (imagensPorCor[c] = imagensPorCor[c] || []).push(img);
+    });
+
+    function grupoDeImagens() {
+        if (corGaleria && imagensPorCor[corGaleria] && imagensPorCor[corGaleria].length) {
+            return imagensPorCor[corGaleria];
+        }
+        return Array.prototype.slice.call(imgsGaleria);
+    }
+
+    function mostrarImagem(grupo, indice) {
+        grupo.forEach(img => img.classList.remove('ativa'));
+        if (grupo[indice]) grupo[indice].classList.add('ativa');
+    }
+
+    function aplicarCorGaleria() {
+        corGaleria = corSelecionada;
+        indiceImg = 0;
+        mostrarImagem(grupoDeImagens(), 0);
+    }
+
+    function resetarGaleria() {
+        corGaleria = null;
+        indiceImg = 0;
+        mostrarImagem(grupoDeImagens(), 0);
+    }
+
+    function obterImagemSelecionada() {
+        if (corSelecionada && imagensPorCor[corSelecionada] && imagensPorCor[corSelecionada].length) {
+            return imagensPorCor[corSelecionada][0].getAttribute('src') || imagensPorCor[corSelecionada][0].src || '';
+        }
+        return '';
+    }
+
     document.getElementById('opcoesCores').querySelectorAll('button').forEach(btn => {
         btn.addEventListener('click', () => {
             document.getElementById('opcoesCores').querySelectorAll('button').forEach(b => b.classList.remove('selecionado'));
@@ -279,6 +333,7 @@ function renderizarProduto() {
             corSelecionada = btn.dataset.cor;
             document.getElementById('corEscolhida').textContent = corSelecionada;
             verificarPronto();
+            aplicarCorGaleria();
         });
     });
 
@@ -300,7 +355,7 @@ function renderizarProduto() {
             nome: nome,
             preco: preco,
             qtd: 1,
-            img: imagens[0] || '',
+            img: obterImagemSelecionada() || imagens[0] || '',
             cor: corSelecionada,
             tamanho: tamanhoSelecionado
         };
@@ -318,23 +373,24 @@ function renderizarProduto() {
         }, 2000);
     });
 
-    if (imagens.length > 1) {
-        const carrossel = document.getElementById('galeriaCarrossel');
-        const imgs = carrossel.querySelectorAll('.imagem');
-        let atual = 0;
-        let intervalo = null;
+    if (imgsGaleria.length > 1) {
         const avancar = () => {
-            imgs[atual].classList.remove('ativa');
-            atual = (atual + 1) % imgs.length;
-            imgs[atual].classList.add('ativa');
+            const grupo = grupoDeImagens();
+            mostrarImagem(grupo, indiceImg);
+            indiceImg = (indiceImg + 1) % grupo.length;
+            mostrarImagem(grupo, indiceImg);
         };
-        carrossel.addEventListener('mouseenter', () => {
-            if (!intervalo) intervalo = setInterval(avancar, 2500);
+        galeriaImg.addEventListener('mouseenter', () => {
+            if (!intervaloImg) intervaloImg = setInterval(avancar, 2500);
         });
-        carrossel.addEventListener('mouseleave', () => {
-            if (intervalo) { clearInterval(intervalo); intervalo = null; }
-            imgs.forEach((img, i) => img.classList.toggle('ativa', i === 0));
-            atual = 0;
+        galeriaImg.addEventListener('mouseleave', () => {
+            if (intervaloImg) { clearInterval(intervaloImg); intervaloImg = null; }
+            if (corGaleria && imagensPorCor[corGaleria] && imagensPorCor[corGaleria].length) {
+                indiceImg = 0;
+                mostrarImagem(imagensPorCor[corGaleria], 0);
+            } else {
+                resetarGaleria();
+            }
         });
     }
 }
