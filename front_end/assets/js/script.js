@@ -14,9 +14,9 @@ function paginaProduto() {
         : 'front_end/modelos/produto.html';
 }
 
-function exigirLoginParaAcao() {
+function exigirLoginParaAcao(mensagem) {
     if (typeof isLoggedIn === 'function' && isLoggedIn()) return true;
-    alert('Faça login para continuar.');
+    alert(mensagem || 'Faça login para continuar.');
     window.location.href = paginaLogin();
     return false;
 }
@@ -53,16 +53,27 @@ function parsePreco(texto) {
     if (!s) return 0;
     const ultVirg = s.lastIndexOf(',');
     const ultPonto = s.lastIndexOf('.');
-    let num;
+
     if (ultVirg > -1 && ultPonto > -1) {
-        const sepDecimal = Math.max(ultVirg, ultPonto);
-        num = s.split('').map((c, i) => (c === ',' || c === '.') ? (i === sepDecimal ? '.' : '') : c).join('');
-    } else if (ultVirg > -1) {
-        num = (s.length - ultVirg - 1) === 3 ? s.replace(/,/g, '') : s.replace(',', '.');
-    } else {
-        num = s;
+        const idx = Math.max(ultVirg, ultPonto);
+        const inteiro = s.slice(0, idx).replace(/[.,]/g, '');
+        const decimal = s.slice(idx + 1);
+        return parseFloat((inteiro || '0') + '.' + decimal) || 0;
     }
-    return parseFloat(num) || 0;
+
+    if (ultVirg > -1) {
+        const dec = s.length - ultVirg - 1;
+        if (dec === 2) return parseFloat(s.replace(',', '.')) || 0;
+        return parseFloat(s.replace(/,/g, '')) || 0;
+    }
+
+    if (ultPonto > -1) {
+        const dec = s.length - ultPonto - 1;
+        if (dec === 2) return parseFloat(s) || 0;
+        return parseFloat(s.replace(/\./g, '')) || 0;
+    }
+
+    return parseFloat(s) || 0;
 }
 
 // --- FAVORITOS ---
@@ -143,6 +154,10 @@ botoesFavorito.forEach(atualizarBotaoFavorito);
 botoesFavorito.forEach(botao => {
     botao.addEventListener("click", (e) => {
         e.stopPropagation();
+
+        if (!exigirLoginParaAcao('Você precisa ter uma conta salva e logada para curtir produtos.')) {
+            return;
+        }
 
         const card = botao.closest('.card') || botao.closest('.item');
         const id = favoritoProdutoId(card);
@@ -265,17 +280,14 @@ function renderizarProduto() {
     const opcoes = PRODUTO_OPCOES[nome] || { cores: ['Preto', 'Branco', 'Azul'], tamanhos: ['P', 'M', 'G', 'GG'] };
     const estoque = typeof obterEstoque === 'function' ? obterEstoque(nome) : 0;
 
-    let coresDisponiveis = opcoes.cores;
-    let imagensFiltradas = imagens;
+    let coresDisponiveis = opcoes.cores.filter(cor => imagens.some(src => corDoSrc(src) === cor));
+    let imagensFiltradas = imagens.filter(src => {
+        const c = corDoSrc(src);
+        return c === null || coresDisponiveis.includes(c);
+    });
 
-    if (produtoData.promo) {
-        const femininos = ['Ternos Femininos ARYN', 'Blazer Feminino ARYN'];
-        const proibidas = femininos.includes(nome) ? ['Preto', 'Vermelho Vinho'] : ['Branco', 'Vermelho Vinho'];
-        coresDisponiveis = coresDisponiveis.filter(cor => !proibidas.includes(cor));
-        imagensFiltradas = imagens.filter(src => {
-            const c = corDoSrc(src);
-            return c === null || coresDisponiveis.includes(c);
-        });
+    if (coresDisponiveis.length === 0) {
+        coresDisponiveis = opcoes.cores;
     }
 
     corSelecionada = null;
@@ -304,15 +316,6 @@ function renderizarProduto() {
             '<a href="javascript:history.back()" class="voltar"><i class="fa-solid fa-arrow-left"></i> Voltar</a>' +
             '<div class="produto-galeria">' +
                 '<div class="carrossel" id="galeriaCarrossel">' + imgsHtml + '</div>' +
-                '<div class="avaliacoes" id="blocoAvaliacoes">' +
-                    '<h3 class="avaliacoes-titulo">Deixe sua avaliação</h3>' +
-                    '<div class="estrelas-input" id="estrelasInput">' +
-                        '<span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span>' +
-                    '</div>' +
-                    '<textarea id="textoAvaliacao" rows="3" placeholder="Escreva o que achou do produto..."></textarea>' +
-                    '<button type="button" class="btn-avaliacao" id="btnAvaliacao">Enviar avaliação</button>' +
-                    '<div class="lista-avaliacoes" id="listaAvaliacoes"></div>' +
-                '</div>' +
             '</div>' +
         '</div>' +
         '<div class="produto-info-detalhe">' +
@@ -329,6 +332,15 @@ function renderizarProduto() {
                 '<div class="opcoes-tamanhos-produto" id="opcoesTamanhos">' + tamanhosHtml + '</div>' +
             '</div>' +
             '<button class="btn-adicionar-carrinho" id="btnAdicionar" disabled>Selecione cor e tamanho</button>' +
+        '</div>' +
+        '<div class="avaliacoes" id="blocoAvaliacoes">' +
+            '<h3 class="avaliacoes-titulo">Deixe sua avaliação</h3>' +
+            '<div class="estrelas-input" id="estrelasInput">' +
+                '<span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span>' +
+            '</div>' +
+            '<textarea id="textoAvaliacao" rows="3" placeholder="Escreva o que achou do produto..."></textarea>' +
+            '<button type="button" class="btn-avaliacao" id="btnAvaliacao">Enviar avaliação</button>' +
+            '<div class="lista-avaliacoes" id="listaAvaliacoes"></div>' +
         '</div>';
 
     const galeriaImg = document.getElementById('galeriaCarrossel');
