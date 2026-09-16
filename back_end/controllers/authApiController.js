@@ -11,13 +11,17 @@ function tokenizar(usuario) {
 }
 
 async function cadastro(req, res) {
-  const { nome, email, senha } = req.body || {};
-  if (!nome || !email || !senha || senha.length < 6) {
-    return res.status(400).json({ success: false, message: 'Nome, e-mail e senha de pelo menos 6 caracteres são obrigatórios.' });
+  const { nome, email, senha, telefone = null, cpf = null, data_nascimento = null, termos } = req.body || {};
+  const nomeNormalizado = typeof nome === 'string' ? nome.trim().replace(/\s+/g, ' ') : '';
+  const emailNormalizado = typeof email === 'string' ? email.trim().toLowerCase() : '';
+  const senhaValida = typeof senha === 'string' && senha.length >= 6;
+  const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailNormalizado);
+
+  if (!nomeNormalizado || nomeNormalizado.length < 2 || !emailValido || !senhaValida || termos !== true) {
+    return res.status(400).json({ success: false, message: 'Informe nome, e-mail válido, senha de pelo menos 6 caracteres e aceite os termos.' });
   }
 
   try {
-    const emailNormalizado = email.trim().toLowerCase();
     const [existente] = await pool.query('SELECT id_usuario FROM usuarios WHERE email = ?', [emailNormalizado]);
     if (existente.length) return res.status(409).json({ success: false, message: 'Já existe um usuário cadastrado com este e-mail.' });
 
@@ -27,11 +31,14 @@ async function cadastro(req, res) {
       await connection.beginTransaction();
       const [usuario] = await connection.query(
         'INSERT INTO usuarios (nome, email, senha, tipo) VALUES (?, ?, ?, ?)',
-        [nome.trim(), emailNormalizado, senhaHash, 'CLIENTE']
+        [nomeNormalizado, emailNormalizado, senhaHash, 'CLIENTE']
       );
-      const [cliente] = await connection.query('INSERT INTO clientes (id_usuario) VALUES (?)', [usuario.insertId]);
+      const [cliente] = await connection.query(
+        'INSERT INTO clientes (id_usuario, telefone, cpf, data_nascimento) VALUES (?, ?, ?, ?)',
+        [usuario.insertId, telefone || null, cpf || null, data_nascimento || null]
+      );
       await connection.commit();
-      const dados = { id_usuario: usuario.insertId, id_cliente: cliente.insertId, nome: nome.trim(), email: emailNormalizado, tipo: 'CLIENTE' };
+      const dados = { id_usuario: usuario.insertId, id_cliente: cliente.insertId, nome: nomeNormalizado, email: emailNormalizado, tipo: 'CLIENTE' };
       return res.status(201).json({ success: true, message: 'Cliente cadastrado com sucesso.', data: { token: tokenizar(dados), usuario: dados } });
     } catch (error) {
       await connection.rollback();
@@ -40,6 +47,9 @@ async function cadastro(req, res) {
       connection.release();
     }
   } catch (error) {
+    if (error.code === 'ER_DUP_ENTRY') {
+      return res.status(409).json({ success: false, message: 'Este e-mail ou CPF já está cadastrado.' });
+    }
     console.error('Erro ao cadastrar cliente:', error.message);
     return res.status(500).json({ success: false, message: 'Não foi possível concluir o cadastro.' });
   }

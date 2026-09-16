@@ -1,170 +1,44 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARYN - Cadastro</title>
-
-    <link rel="stylesheet" href="../assets/styles/style.css">
-    <link rel="stylesheet" href="../assets/styles/responsive.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <link rel="stylesheet" href="../assets/styles/login.css">
-    <link rel="stylesheet" href="../assets/styles/tema.css">
-    <script src="../js/api.js"></script>
-    <script src="../assets/js/autentificao.js"></script>
-    <script src="../assets/js/carrinho.js"></script>
-    <script src="../assets/js/tema.js"></script>
-    <script>if (typeof bloquearSeLogado === 'function') bloquearSeLogado();</script>
-
-    <style>
-        .login-wrapper { max-width: 520px; margin: 0 auto; }
-        .login-card .formulario { grid-template-columns: 1fr 1fr; gap: 16px; }
-        .login-card .campo.completo { grid-column: 1 / -1; }
-        @media (max-width: 600px) { .login-card .formulario { grid-template-columns: 1fr; } .login-card .campo.completo { grid-column: auto; } }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="Crie sua conta ARYN e tenha acesso a uma experiência completa de moda masculina premium.">
+    <title>Criar Conta | ARYN</title>
+    <link rel="stylesheet" href="../assets/styles/cadastro.css">
+    <script src="../js/api.js" defer></script>
+    <script src="../assets/js/cadastro.js" defer></script>
 </head>
-
-<body>
-
-<header>
-    <div class="logo">
-        <h1><span>A</span>RYN</h1>
-        <p>Vista sua essência</p>
+<body class="cadastro-page">
+    <div class="cadastro-shell">
+        <header class="cadastro-header">
+            <a class="cadastro-logo" href="../../index.html" aria-label="ARYN, voltar para a loja">ARYN</a>
+            <a class="back-link" href="../../index.html">Voltar para a loja</a>
+        </header>
+        <main class="cadastro-main">
+            <section class="cadastro-card" aria-labelledby="cadastroTitle">
+                <div class="cadastro-heading">
+                    <p class="eyebrow">Experiência ARYN</p>
+                    <h1 class="cadastro-title" id="cadastroTitle">Criar sua conta</h1>
+                    <p class="cadastro-subtitle">Faça parte da ARYN e tenha uma experiência de compra completa.</p>
+                </div>
+                <p class="form-error" id="formError" role="alert" aria-live="polite"></p>
+                <form class="cadastro-form" id="cadastroForm" novalidate>
+                    <div class="field full"><label for="nome">Nome completo</label><input id="nome" name="nome" type="text" placeholder="Digite seu nome completo" autocomplete="name" required aria-describedby="nomeHint"><small id="nomeHint">Use seu nome real para facilitar o atendimento.</small></div>
+                    <div class="field full"><label for="email">E-mail</label><input id="email" name="email" type="email" placeholder="Digite seu melhor e-mail" autocomplete="email" required></div>
+                    <div class="field"><label for="senha">Senha</label><div class="password-wrap"><input id="senha" name="senha" type="password" placeholder="Crie uma senha segura" autocomplete="new-password" required><button class="password-toggle" type="button" data-toggle-password="senha" aria-label="Mostrar senha">◉</button></div><div class="strength"><span class="strength-track" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="strength-label" id="strengthLabel">Força da senha</span></div><ul class="requirements"><li data-requirement="length">Mínimo de 6 caracteres</li><li data-requirement="mix">Letras e números recomendados</li></ul></div>
+                    <div class="field"><label for="confirmarSenha">Confirmar senha</label><div class="password-wrap"><input id="confirmarSenha" name="confirmarSenha" type="password" placeholder="Digite a senha novamente" autocomplete="new-password" required><button class="password-toggle" type="button" data-toggle-password="confirmarSenha" aria-label="Mostrar confirmação de senha">◉</button></div></div>
+                    <div class="field"><label for="telefone">Telefone <span>(opcional)</span></label><input id="telefone" name="telefone" type="tel" placeholder="(00) 00000-0000" autocomplete="tel" inputmode="tel"></div>
+                    <div class="field"><label for="cpf">CPF <span>(opcional)</span></label><input id="cpf" name="cpf" type="text" placeholder="000.000.000-00" autocomplete="off" inputmode="numeric"></div>
+                    <div class="field full"><label class="optional"><input id="newsletter" name="newsletter" type="checkbox"> Quero receber novidades, lançamentos e ofertas da ARYN por e-mail.</label></div>
+                    <div class="field full"><label class="terms" for="termos"><input id="termos" name="termos" type="checkbox" required><span>Li e concordo com os <a href="termos.html">Termos de Uso</a> e a <a href="privacidade.html">Política de Privacidade</a>.</span></label></div>
+                    <button class="submit" id="submitCadastro" type="submit">CRIAR CONTA</button>
+                </form>
+                <p class="account-prompt">Já possui uma conta? <a class="account-link" href="login.html">ENTRAR</a></p>
+            </section>
+        </main>
+        <footer class="cadastro-footer">© 2026 ARYN. Todos os direitos reservados.</footer>
     </div>
-
-    <nav>
-        <a href="../../index.html"><i class="fa-solid fa-house"></i> Home</a>
-        <a href="masculino.html"><i class="fa-solid fa-person"></i> Masculino</a>
-        <a href="feminino.html"><i class="fa-solid fa-person-dress"></i> Feminino</a>
-        <a href="promocoes.html"><i class="fa-solid fa-tags"></i> Promoções</a>
-    </nav>
-
-    <nav>
-        <a href="../../index.html"><i class="fa-solid fa-store"></i> Loja</a>
-        <a href="carrinho.html"><i class="fa-solid fa-cart-shopping"></i> Carrinho</a>
-        <a href="curtidas.html"><i class="fa-solid fa-heart"></i> Curtidas</a>
-        <a href="usuarios.html"><i class="fa-solid fa-user"></i> Usuários</a>
-    </nav>
-</header>
-
-<main class="pagina">
-    <div class="cabecalho-pagina" style="text-align: center;">
-        <small>ARYN</small>
-        <h2>Crie sua conta</h2>
-        <p>Cadastre seu e-mail para começar a comprar.</p>
-    </div>
-
-    <div class="login-wrapper">
-        <div class="login-card">
-            <h3>Cadastro</h3>
-            <p class="subtitulo">Leva menos de 1 minuto. Carrinho de visitante será migrado.</p>
-
-            <div id="erro" class="erro-msg"></div>
-
-            <form class="formulario" onsubmit="fazerCadastro(event)" novalidate>
-                <div class="campo">
-                    <label for="nome">Nome</label>
-                    <input type="text" id="nome" placeholder="Seu nome" required>
-                </div>
-
-                <div class="campo">
-                    <label for="usuario">E-mail</label>
-                    <input type="email" id="usuario" placeholder="ex: cliente@hotmail.com" autocomplete="username" required>
-                </div>
-
-                <div class="campo">
-                    <label for="senha">Senha</label>
-                    <input type="password" id="senha" placeholder="Mín. 4 caracteres" autocomplete="new-password" required>
-                </div>
-
-                <div class="campo">
-                    <label for="confirmar">Confirmar senha</label>
-                    <input type="password" id="confirmar" placeholder="Repita a senha" required>
-                </div>
-
-                <div class="campo completo">
-                    <label style="display:flex;gap:6px;align-items:center;font-weight:normal;">
-                        <input type="checkbox" id="termos" required> Aceito os termos de uso
-                    </label>
-                </div>
-
-                <div class="campo completo">
-                    <button type="submit" class="btn-login"><i class="fa-solid fa-user-plus"></i> Criar conta</button>
-                </div>
-            </form>
-
-            <div class="divisor">ou</div>
-            <p class="criar-conta">Já tem conta? <a href="login.html">Entrar</a> · <a href="../../index.html">Continuar como visitante</a></p>
-        </div>
-    </div>
-</main>
-
-<script>
-    function validarEmail(v){
-        v=v.trim(); if(!v) return false;
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-    }
-    function mostrarErro(m){ const el=document.getElementById('erro'); el.textContent=m; el.classList.add('visivel'); }
-    function limparErro(){ const el=document.getElementById('erro'); el.textContent=''; el.classList.remove('visivel'); }
-
-    async function fazerCadastro(event){
-        event.preventDefault(); limparErro();
-        const nome=document.getElementById('nome').value.trim();
-        const email=document.getElementById('usuario').value.trim();
-        const senha=document.getElementById('senha').value;
-        const confirmar=document.getElementById('confirmar').value;
-        const termos=document.getElementById('termos').checked;
-
-        if(!nome || !email || !senha || !confirmar){ mostrarErro('Preencha todos os campos.'); return; }
-        if(!validarEmail(email)){ mostrarErro('Digite um e-mail válido (ex: usuario@hotmail.com).'); return; }
-        if(senha.length<4){ mostrarErro('Senha deve ter pelo menos 4 caracteres.'); return; }
-        if(senha!==confirmar){ mostrarErro('Senhas não conferem.'); return; }
-        if(!termos){ mostrarErro('Aceite os termos.'); return; }
-
-        const emailFinal = email.toLowerCase();
-        try {
-            const resposta = await apiRequest('/auth/register', {
-                method: 'POST',
-                body: { nome, email: emailFinal, senha, tipo: 'CLIENTE' }
-            });
-            const sessao = resposta.data || resposta;
-            const usuario = sessao.usuario || { nome, email: emailFinal };
-            const dadosUsuario = { nome, email: emailFinal, criadoEm: new Date().toISOString() };
-            localStorage.setItem('aryn_dados_' + emailFinal, JSON.stringify(dadosUsuario));
-            login(usuario, sessao.token, usuario);
-        } catch (error) {
-            mostrarErro(error.message || 'Não foi possível concluir o cadastro.');
-            return;
-        }
-        localStorage.setItem('aryn_nome', nome);
-        alert('Cadastro realizado com sucesso! Enviamos uma mensagem de confirmação para o seu e-mail (' + emailFinal + ').');
-        window.location.href = 'usuarios.html';
-    }
-</script>
-
-<section class="contato" id="contato">
-    <div class="contato-inner">
-        <h2>Fale com a gente</h2>
-        <p>Estamos à disposição para dúvidas, pedidos e parcerias.</p>
-
-        <div class="contato-itens">
-            <a href="https://instagram.com/" class="contato-item" target="_blank" rel="noopener">
-                <i class="fa-brands fa-instagram"></i>
-                <span>@seuinstagram</span>
-            </a>
-
-            <a href="mailto:contato@aryn.com.br" class="contato-item">
-                <i class="fa-solid fa-envelope"></i>
-                <span>contato@aryn.com.br</span>
-            </a>
-
-            <a href="https://wa.me/5511900000000" class="contato-item" target="_blank" rel="noopener">
-                <i class="fa-brands fa-whatsapp"></i>
-                <span>(11) 90000-0000</span>
-            </a>
-        </div>
-    </div>
-</section>
-
 </body>
 </html>
