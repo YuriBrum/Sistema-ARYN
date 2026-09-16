@@ -1,16 +1,7 @@
-function validarEmailOuTelefone(valor) {
+function validarEmail(valor) {
   valor = valor.trim();
   if (!valor) return false;
-
-  // Se contém @, valida como e-mail
-  if (valor.includes("@")) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor);
-  }
-
-  // Caso contrário, valida como telefone (aceita com máscara ou só dígitos)
-  const digitos = valor.replace(/\D/g, "");
-  // 10 dígitos (fixo) ou 11 (celular com 9)
-  return digitos.length >= 10 && digitos.length <= 11;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor);
 }
 
 function mostrarErro(msg) {
@@ -33,14 +24,12 @@ function fazerLogin(event) {
   const senha = document.getElementById("senha").value;
 
   if (!usuario || !senha) {
-    mostrarErro("Preencha e-mail/telefone e senha.");
+    mostrarErro("Preencha e-mail e senha.");
     return;
   }
 
-  if (!validarEmailOuTelefone(usuario)) {
-    mostrarErro(
-      "Digite um e-mail válido ou telefone com DDD (10 ou 11 dígitos)."
-    );
+  if (!validarEmail(usuario)) {
+    mostrarErro("Digite um e-mail válido (ex: usuario@hotmail.com).");
     return;
   }
 
@@ -50,7 +39,7 @@ function fazerLogin(event) {
   }
 
   // Sistema de sessão ARYN: deslogado usa localStorage, logado bloqueia login/cadastro
-  login(usuario);
+  login(usuario.toLowerCase());
   if (document.getElementById("lembrar").checked) {
     localStorage.setItem("aryn_lembrar", "1");
   } else {
@@ -76,11 +65,11 @@ function toggleSenha() {
 function esqueceuSenha(event) {
   event.preventDefault();
   const usuario = prompt(
-    "Digite seu e-mail ou telefone para recuperar a senha:"
+    "Digite seu e-mail para recuperar a senha:"
   );
   if (usuario === null) return;
-  if (!validarEmailOuTelefone(usuario.trim())) {
-    alert("Digite um e-mail ou telefone válido.");
+  if (!validarEmail(usuario.trim())) {
+    alert("Digite um e-mail válido.");
     return;
   }
   alert("Link de recuperação enviado para: " + usuario.trim());

@@ -99,7 +99,7 @@ Nome do banco:
 aryn_database
 
 Arquivo SQL:
-banco_de_dados/aryn_database.sql
+banco_de_dados/backups/aryn_database.sql
 ```
 
 O banco armazena informações relacionadas a clientes, produtos, pedidos,
