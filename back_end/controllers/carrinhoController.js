@@ -9,13 +9,12 @@ async function listarCarrinho(req, res) {
     }
 
     const [rows] = await pool.query(`
-      SELECT ic.*, vp.id_produto, vp.estoque, p.nome AS nome_produto, p.preco
+      SELECT ic.*, p.nome AS nome_produto, p.imagem, ic.preco_unitario
       FROM carrinhos c
-      INNER JOIN itens_carrinho ic ON ic.id_carrinho = c.id_carrinho
-      INNER JOIN variacoes_produto vp ON vp.id_variacao = ic.id_variacao
-      INNER JOIN produtos p ON p.id_produto = vp.id_produto
+      INNER JOIN carrinho_itens ic ON ic.id_carrinho = c.id_carrinho
+      INNER JOIN produtos p ON p.id_produto = ic.id_produto
       WHERE c.id_cliente = ?
-      ORDER BY ic.adicionado_em DESC
+      ORDER BY ic.criado_em DESC
     `, [usuarioId]);
 
     res.json({ success: true, data: rows });
@@ -26,10 +25,10 @@ async function listarCarrinho(req, res) {
 
 async function adicionarItemCarrinho(req, res) {
   try {
-    const { id_cliente, id_variacao, quantidade = 1 } = req.body;
+    const { id_cliente, id_produto, quantidade = 1 } = req.body;
 
-    if (!id_cliente || !id_variacao) {
-      return res.status(400).json({ success: false, message: 'Cliente e variação são obrigatórios.' });
+    if (!id_cliente || !id_produto || !Number.isInteger(Number(quantidade)) || Number(quantidade) < 1) {
+      return res.status(400).json({ success: false, message: 'Cliente, produto e quantidade válida são obrigatórios.' });
     }
 
     let [carrinho] = await pool.query('SELECT id_carrinho FROM carrinhos WHERE id_cliente = ?', [id_cliente]);
@@ -42,22 +41,27 @@ async function adicionarItemCarrinho(req, res) {
     const idCarrinho = carrinho[0].id_carrinho;
 
     const [itemExistente] = await pool.query(
-      'SELECT id_item_carrinho, quantidade FROM itens_carrinho WHERE id_carrinho = ? AND id_variacao = ?',
-      [idCarrinho, id_variacao]
+      'SELECT id_item, quantidade FROM carrinho_itens WHERE id_carrinho = ? AND id_produto = ?',
+      [idCarrinho, id_produto]
     );
 
     if (itemExistente.length) {
       const novaQuantidade = itemExistente[0].quantidade + Number(quantidade);
       await pool.query(
-        'UPDATE itens_carrinho SET quantidade = ? WHERE id_item_carrinho = ?',
-        [novaQuantidade, itemExistente[0].id_item_carrinho]
+        'UPDATE carrinho_itens SET quantidade = ? WHERE id_item = ?',
+        [novaQuantidade, itemExistente[0].id_item]
       );
       return res.json({ success: true, message: 'Quantidade do item atualizada no carrinho.' });
     }
 
+    const [produto] = await pool.query('SELECT preco FROM produtos WHERE id_produto = ? AND status = 1', [id_produto]);
+    if (!produto.length) {
+      return res.status(404).json({ success: false, message: 'Produto não encontrado ou inativo.' });
+    }
+
     await pool.query(
-      'INSERT INTO itens_carrinho (id_carrinho, id_variacao, quantidade) VALUES (?, ?, ?)',
-      [idCarrinho, id_variacao, quantidade]
+      'INSERT INTO carrinho_itens (id_carrinho, id_produto, quantidade, preco_unitario) VALUES (?, ?, ?, ?)',
+      [idCarrinho, id_produto, quantidade, produto[0].preco]
     );
 
     res.status(201).json({ success: true, message: 'Item adicionado ao carrinho.' });
@@ -68,8 +72,8 @@ async function adicionarItemCarrinho(req, res) {
 
 async function removerItemCarrinho(req, res) {
   try {
-    const { id_item_carrinho } = req.params;
-    const [result] = await pool.query('DELETE FROM itens_carrinho WHERE id_item_carrinho = ?', [id_item_carrinho]);
+    const { id_item } = req.params;
+    const [result] = await pool.query('DELETE FROM carrinho_itens WHERE id_item = ?', [id_item]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ success: false, message: 'Item do carrinho não encontrado.' });

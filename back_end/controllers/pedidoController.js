@@ -36,16 +36,16 @@ async function buscarPedidoPorId(req, res) {
 
 async function criarPedido(req, res) {
   try {
-    const { id_cliente, id_endereco, subtotal, frete = 0, desconto = 0, total } = req.body;
+    const { id_cliente, id_endereco = null, subtotal = 0, frete = 0, desconto = 0, valor_total = 0 } = req.body;
 
-    if (!id_cliente || !id_endereco || !subtotal || !total) {
-      return res.status(400).json({ success: false, message: 'Dados do pedido incompletos.' });
+    if (!id_cliente) {
+      return res.status(400).json({ success: false, message: 'O cliente é obrigatório.' });
     }
 
     const [result] = await pool.query(
-      `INSERT INTO pedidos (id_cliente, id_endereco, subtotal, frete, desconto, total)
+      `INSERT INTO pedidos (id_cliente, id_endereco, subtotal, frete, desconto, valor_total)
        VALUES (?, ?, ?, ?, ?, ?)`,
-      [id_cliente, id_endereco, subtotal, frete, desconto, total]
+      [id_cliente, id_endereco, subtotal, frete, desconto, valor_total]
     );
 
     res.status(201).json({ success: true, message: 'Pedido criado com sucesso.', id: result.insertId });

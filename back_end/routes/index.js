@@ -7,18 +7,19 @@ const { listarProdutos, buscarProdutoPorId, criarProduto, atualizarProduto, remo
 const { listarUsuarios, buscarUsuarioPorId, cadastrarUsuario, loginUsuario } = require('../controllers/usuarioController');
 const { listarPedidos, buscarPedidoPorId, criarPedido } = require('../controllers/pedidoController');
 const { listarCarrinho, adicionarItemCarrinho, removerItemCarrinho } = require('../controllers/carrinhoController');
+const { autenticar, autorizar } = require('../src/middlewares/authMiddleware');
 
 router.get('/status', getStatus);
 
 router.get('/categorias', listarCategorias);
 router.get('/categorias/:id', buscarCategoriaPorId);
-router.post('/categorias', cadastrarCategoria);
+router.post('/categorias', autenticar, autorizar('ADMIN'), cadastrarCategoria);
 
 router.get('/produtos', listarProdutos);
 router.get('/produtos/:id', buscarProdutoPorId);
-router.post('/produtos', criarProduto);
-router.put('/produtos/:id', atualizarProduto);
-router.delete('/produtos/:id', removerProduto);
+router.post('/produtos', autenticar, autorizar('ADMIN'), criarProduto);
+router.put('/produtos/:id', autenticar, autorizar('ADMIN'), atualizarProduto);
+router.delete('/produtos/:id', autenticar, autorizar('ADMIN'), removerProduto);
 
 router.get('/usuarios', listarUsuarios);
 router.get('/usuarios/:id', buscarUsuarioPorId);
@@ -31,6 +32,6 @@ router.post('/pedidos', criarPedido);
 
 router.get('/carrinho', listarCarrinho);
 router.post('/carrinho', adicionarItemCarrinho);
-router.delete('/carrinho/:id_item_carrinho', removerItemCarrinho);
+router.delete('/carrinho/:id_item', removerItemCarrinho);
 
 module.exports = router;

@@ -2,15 +2,49 @@ const { pool } = require('../config/database');
 
 async function listarProdutos(req, res) {
   try {
+    const { categoria, busca, precoMin, precoMax, estoque, ordenar = 'recentes', limite = 24, pagina = 1 } = req.query;
+    const filtros = ['p.status = 1'];
+    const valores = [];
+
+    if (categoria) {
+      filtros.push('p.id_categoria = ?');
+      valores.push(Number(categoria));
+    }
+    if (busca) {
+      filtros.push('(p.nome LIKE ? OR p.descricao LIKE ? OR c.nome LIKE ?)');
+      const termo = `%${busca}%`;
+      valores.push(termo, termo, termo);
+    }
+    if (precoMin !== undefined && precoMin !== '') {
+      filtros.push('p.preco >= ?');
+      valores.push(Number(precoMin));
+    }
+    if (precoMax !== undefined && precoMax !== '') {
+      filtros.push('p.preco <= ?');
+      valores.push(Number(precoMax));
+    }
+    if (estoque === '1') filtros.push('p.estoque > 0');
+
+    const ordenacoes = {
+      recentes: 'p.criado_em DESC',
+      'menor-preco': 'p.preco ASC',
+      'maior-preco': 'p.preco DESC',
+      nome: 'p.nome ASC'
+    };
+    const limiteSeguro = Math.min(Math.max(Number(limite) || 24, 1), 100);
+    const offset = Math.max((Number(pagina) - 1) * limiteSeguro, 0);
+    valores.push(limiteSeguro, offset);
+
     const [rows] = await pool.query(`
       SELECT p.*, c.nome AS categoria_nome
       FROM produtos p
       LEFT JOIN categorias c ON c.id_categoria = p.id_categoria
-      WHERE p.status = 1
-      ORDER BY p.id_produto DESC
-    `);
+      WHERE ${filtros.join(' AND ')}
+      ORDER BY ${ordenacoes[ordenar] || ordenacoes.recentes}
+      LIMIT ? OFFSET ?
+    `, valores);
 
-    res.json({ success: true, data: rows });
+    res.json({ success: true, data: rows, meta: { pagina: Number(pagina) || 1, limite: limiteSeguro } });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Erro ao listar produtos.', details: error.message });
   }

@@ -1,85 +1,100 @@
-function validarEmail(valor) {
-  valor = valor.trim();
-  if (!valor) return false;
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor);
-}
+(() => {
+    const form = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('senha');
+    const rememberInput = document.getElementById('lembrar');
+    const passwordToggle = document.getElementById('passwordToggle');
+    const submitButton = document.getElementById('loginSubmit');
+    const errorMessage = document.getElementById('loginError');
 
-function mostrarErro(msg) {
-  const el = document.getElementById("erro");
-  el.textContent = msg;
-  el.classList.add("visivel");
-}
+    if (!form || !emailInput || !passwordInput || !submitButton || typeof requestApi !== 'function') return;
 
-function limparErro() {
-  const el = document.getElementById("erro");
-  el.textContent = "";
-  el.classList.remove("visivel");
-}
+    function setError(message) {
+        errorMessage.textContent = message;
+        errorMessage.classList.toggle('is-visible', Boolean(message));
+    }
 
-function fazerLogin(event) {
-  event.preventDefault();
-  limparErro();
+    function setLoading(loading) {
+        submitButton.disabled = loading;
+        submitButton.textContent = loading ? 'ENTRANDO...' : 'ENTRAR';
+    }
 
-  const usuario = document.getElementById("usuario").value.trim();
-  const senha = document.getElementById("senha").value;
+    function validEmail(value) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
 
-  if (!usuario || !senha) {
-    mostrarErro("Preencha e-mail e senha.");
-    return;
-  }
+    function saveSession(session) {
+        const usuario = session.usuario || {};
+        localStorage.setItem('aryn_auth', JSON.stringify({
+            usuario: usuario.email,
+            id_usuario: usuario.id_usuario || null,
+            id_cliente: usuario.id_cliente || null,
+            tipo: usuario.tipo || 'CLIENTE',
+            token: session.token,
+            logado: true,
+            loginAt: Date.now()
+        }));
 
-  if (!validarEmail(usuario)) {
-    mostrarErro("Digite um e-mail válido (ex: usuario@hotmail.com).");
-    return;
-  }
+        if (rememberInput.checked) localStorage.setItem('aryn_usuario', usuario.email);
+        else localStorage.removeItem('aryn_usuario');
+    }
 
-  if (senha.length < 4) {
-    mostrarErro("A senha deve ter pelo menos 4 caracteres.");
-    return;
-  }
+    passwordToggle?.addEventListener('click', () => {
+        const visible = passwordInput.type === 'text';
+        passwordInput.type = visible ? 'password' : 'text';
+        passwordToggle.setAttribute('aria-label', visible ? 'Mostrar senha' : 'Ocultar senha');
+        passwordToggle.textContent = visible ? '◉' : '◌';
+    });
 
-  // Sistema de sessão ARYN: deslogado usa localStorage, logado bloqueia login/cadastro
-  login(usuario.toLowerCase());
-  if (document.getElementById("lembrar").checked) {
-    localStorage.setItem("aryn_lembrar", "1");
-  } else {
-    localStorage.removeItem("aryn_lembrar");
-  }
+    form.addEventListener('submit', async event => {
+        event.preventDefault();
+        setError('');
 
-  alert(
-    "Login realizado com sucesso! Carrinho agora será salvo no BANCO (" +
-      ondeCarrinhoEstaSalvo() +
-      ")"
-  );
-  window.location.href = "usuarios.html";
-}
+        const email = emailInput.value.trim().toLowerCase();
+        const senha = passwordInput.value;
 
-function toggleSenha() {
-  const input = document.getElementById("senha");
-  const icone = document.getElementById("iconeSenha");
-  const isPassword = input.type === "password";
-  input.type = isPassword ? "text" : "password";
-  icone.className = isPassword ? "fa-solid fa-eye-slash" : "fa-solid fa-eye";
-}
+        if (!email) {
+            setError('Digite seu e-mail.');
+            emailInput.focus();
+            return;
+        }
+        if (!validEmail(email)) {
+            setError('Digite um e-mail válido.');
+            emailInput.focus();
+            return;
+        }
+        if (!senha) {
+            setError('Digite sua senha.');
+            passwordInput.focus();
+            return;
+        }
 
-function esqueceuSenha(event) {
-  event.preventDefault();
-  const usuario = prompt(
-    "Digite seu e-mail para recuperar a senha:"
-  );
-  if (usuario === null) return;
-  if (!validarEmail(usuario.trim())) {
-    alert("Digite um e-mail válido.");
-    return;
-  }
-  alert("Link de recuperação enviado para: " + usuario.trim());
-}
+        setLoading(true);
+        try {
+            const response = await requestApi('/auth/login', {
+                method: 'POST',
+                body: { email, senha }
+            });
+            const session = response.data || response;
 
-// Pré-preenche se lembrar estava ativo
-window.addEventListener("DOMContentLoaded", () => {
-  const salvo = localStorage.getItem("aryn_usuario");
-  if (salvo && localStorage.getItem("aryn_lembrar") === "1") {
-    document.getElementById("usuario").value = salvo;
-    document.getElementById("lembrar").checked = true;
-  }
-});
+            if (!session.token || !session.usuario) {
+                throw new Error('Resposta de autenticação inválida.');
+            }
+
+            saveSession(session);
+            window.location.assign('../../index.html');
+        } catch (error) {
+            if (error.status === 401) setError('E-mail ou senha incorretos.');
+            else if (error.status === 403) setError('Você não possui permissão para acessar este recurso.');
+            else if (error.status === 404) setError('Usuário não encontrado.');
+            else setError(error.message || 'Não foi possível realizar o login. Tente novamente.');
+            setLoading(false);
+        }
+    });
+
+    const rememberedEmail = localStorage.getItem('aryn_usuario');
+    if (rememberedEmail) {
+        emailInput.value = rememberedEmail;
+        rememberInput.checked = true;
+    }
+})();

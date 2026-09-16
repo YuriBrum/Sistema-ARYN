@@ -1,4 +1,5 @@
 const { pool } = require('../config/database');
+const bcrypt = require('bcrypt');
 
 async function listarUsuarios(req, res) {
   try {
@@ -37,12 +38,23 @@ async function cadastrarUsuario(req, res) {
       return res.status(409).json({ success: false, message: 'Já existe um usuário cadastrado com este e-mail.' });
     }
 
+    const senhaHash = await bcrypt.hash(senha, 10);
+
     const [result] = await pool.query(
       'INSERT INTO usuarios (nome, email, senha, tipo) VALUES (?, ?, ?, ?)',
-      [nome, email, senha, tipo]
+      [nome, email, senhaHash, tipo]
     );
 
-    res.status(201).json({ success: true, message: 'Usuário cadastrado com sucesso.', id: result.insertId });
+    let id_cliente = null;
+    if (tipo === 'CLIENTE') {
+      const [cliente] = await pool.query(
+        'INSERT INTO clientes (id_usuario) VALUES (?)',
+        [result.insertId]
+      );
+      id_cliente = cliente.insertId;
+    }
+
+    res.status(201).json({ success: true, message: 'Usuário cadastrado com sucesso.', id: result.insertId, id_cliente });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Erro ao cadastrar usuário.', details: error.message });
   }
@@ -57,8 +69,18 @@ async function loginUsuario(req, res) {
     }
 
     const [rows] = await pool.query(
-      'SELECT id_usuario, nome, email, tipo, status FROM usuarios WHERE email = ? AND senha = ?',
-      [email, senha]
+      `SELECT
+        u.id_usuario,
+        u.nome,
+        u.email,
+        u.senha,
+        u.tipo,
+        u.status,
+        c.id_cliente
+       FROM usuarios u
+       LEFT JOIN clientes c ON c.id_usuario = u.id_usuario
+       WHERE u.email = ?`,
+      [email]
     );
 
     if (!rows.length) {
@@ -66,6 +88,13 @@ async function loginUsuario(req, res) {
     }
 
     const usuario = rows[0];
+    const senhaValida = await bcrypt.compare(senha, usuario.senha);
+
+    if (!senhaValida || !usuario.status) {
+      return res.status(401).json({ success: false, message: 'Credenciais inválidas.' });
+    }
+
+    delete usuario.senha;
     res.json({ success: true, message: 'Login realizado com sucesso.', usuario });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Erro ao realizar login.', details: error.message });

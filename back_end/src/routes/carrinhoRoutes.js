@@ -3,7 +3,7 @@ const express = require('express');
 const router =
     express.Router();
 
-const autenticar =
+const { autenticar } =
     require('../middlewares/authMiddleware');
 
 const carrinhoController =

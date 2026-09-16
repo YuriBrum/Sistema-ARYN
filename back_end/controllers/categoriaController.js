@@ -2,7 +2,13 @@ const { pool } = require('../config/database');
 
 async function listarCategorias(req, res) {
   try {
-    const [rows] = await pool.query('SELECT * FROM categorias ORDER BY id_categoria ASC');
+    const [rows] = await pool.query(`
+      SELECT c.*, COUNT(p.id_produto) AS quantidade_produtos
+      FROM categorias c
+      LEFT JOIN produtos p ON p.id_categoria = c.id_categoria AND p.status = 1
+      GROUP BY c.id_categoria
+      ORDER BY c.id_categoria ASC
+    `);
     res.json({ success: true, data: rows });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Erro ao listar categorias.', details: error.message });

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore as categorias ARYN e encontre ternos, blazers, camisas, sapatos e acessórios masculinos premium.">
+    <title>Categorias | ARYN</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="front_end/assets/styles/categorias.css">
+    <script src="front_end/js/api.js" defer></script>
+    <script src="front_end/assets/js/categorias.js" defer></script>
+</head>
+<body>
+<header class="site-header">
+    <a class="brand" href="index.html" aria-label="ARYN, início">ARYN</a>
+    <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="siteNav">Menu</button>
+    <nav class="site-nav" id="siteNav" aria-label="Navegação principal">
+        <a href="index.html">Início</a><a class="active" href="categorias.html">Categorias</a><a href="categorias.html?ordem=recentes">Novidades</a><a href="categorias.html?ordem=mais-vendidos">Mais vendidos</a><a href="categorias.html?ordem=ofertas">Ofertas</a>
+    </nav>
+    <div class="header-actions">
+        <form class="search-form" role="search" action="categorias.html"><label class="sr-only" for="headerSearch">Buscar produtos</label><input id="headerSearch" name="busca" type="search" placeholder="Buscar produtos..."><button type="submit">Buscar</button></form>
+        <a class="header-link" id="accountLink" href="front_end/modelos/login.html">Entrar</a><a class="header-link" href="categorias.html#produtos">Favoritos</a><a class="cart-link" href="categorias.html#produtos">Carrinho <span id="cartCount">0</span></a>
+    </div>
+</header>
+<main class="page-main">
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">Início</a><span>/</span><strong>Categorias</strong></nav>
+    <section class="category-hero"><div><p class="eyebrow">ARYN / CATÁLOGO</p><h1>Categorias</h1></div><p>Encontre peças que traduzem seu estilo. Explore roupas e acessórios criados para diferentes momentos.</p></section>
+    <section class="section" aria-labelledby="featuredTitle"><div class="section-heading"><div><p class="eyebrow">EXPLORE A ARYN</p><h2 id="featuredTitle">Escolha seu momento</h2></div><p>Uma curadoria objetiva para você chegar ao produto certo mais rápido.</p></div><div class="featured-grid" id="featuredCategories"><p class="state">Carregando categorias...</p></div></section>
+    <section class="section" aria-labelledby="allCategoriesTitle"><div class="section-heading"><div><p class="eyebrow">NAVEGAÇÃO RÁPIDA</p><h2 id="allCategoriesTitle">Todas as categorias</h2></div></div><div id="allCategories" class="category-list"><p class="state">Carregando categorias...</p></div></section>
+    <section class="section" id="produtos" aria-labelledby="productsTitle">
+        <div class="section-heading"><div><p class="eyebrow">CATÁLOGO ARYN</p><h2 id="productsTitle">Produtos</h2></div><p class="result-count" id="resultCount">Carregando...</p></div>
+        <form id="filterForm" class="catalog-toolbar">
+            <div class="catalog-search"><label class="sr-only" for="productSearch">Buscar produtos</label><input id="productSearch" type="search" placeholder="Buscar produtos por nome, categoria ou descrição"><button type="submit">Buscar</button></div>
+            <select id="categoryFilter" aria-label="Filtrar por categoria"><option value="">Todas as categorias</option></select>
+            <select id="sortProducts" aria-label="Ordenar produtos"><option value="recentes">Mais recentes</option><option value="menor-preco">Menor preço</option><option value="maior-preco">Maior preço</option><option value="nome">Nome</option></select>
+            <button class="filter-button" id="filterToggle" type="button">Filtros</button>
+        </form>
+        <div class="catalog-layout">
+            <aside class="filters" id="filters" aria-label="Filtros de produtos"><h3>Filtrar produtos</h3><div class="filter-group"><h4>Preço</h4><div class="price-fields"><input id="priceMin" type="number" min="0" placeholder="Mínimo" aria-label="Preço mínimo"><input id="priceMax" type="number" min="0" placeholder="Máximo" aria-label="Preço máximo"></div></div><div class="filter-group"><h4>Disponibilidade</h4><label><input id="stockOnly" type="checkbox"> Em estoque</label></div><button class="clear-filters" id="clearFilters" type="button">Limpar filtros</button></aside>
+            <div><div class="product-grid" id="productGrid" aria-live="polite"><p class="state">Carregando produtos...</p></div><div class="pagination"><button id="loadMore" type="button" hidden>Carregar mais</button></div></div>
+        </div>
+    </section>
+    <section class="newsletter" aria-labelledby="newsletterTitle"><div><p class="eyebrow">FAÇA PARTE DA ARYN</p><h2 id="newsletterTitle">Fique por dentro.</h2><p>Receba novidades, lançamentos e condições especiais diretamente no seu e-mail.</p></div><form class="newsletter-form" id="newsletterForm"><label class="sr-only" for="newsletterEmail">Seu melhor e-mail</label><input id="newsletterEmail" type="email" placeholder="Digite seu melhor e-mail" required><button type="submit">Cadastrar</button><p class="form-message" id="newsletterMessage" role="status"></p></form></section>
+</main>
+<footer class="site-footer"><div class="footer-grid"><div><a class="brand" href="index.html">ARYN</a><p>Moda masculina elegante para quem valoriza presença.</p></div><div><h3>ARYN</h3><a href="index.html">Início</a><a href="categorias.html">Categorias</a><a href="front_end/modelos/login.html">Contato</a></div><div><h3>Atendimento</h3><a href="mailto:contato@aryn.com.br">Central de ajuda</a><a href="#newsletterTitle">Trocas e devoluções</a><a href="#newsletterTitle">Entrega</a></div><div><h3>Minha conta</h3><a href="front_end/modelos/login.html">Entrar</a><a href="#produtos">Favoritos</a><a href="#produtos">Carrinho</a></div></div><div class="footer-bottom"><span>© 2026 ARYN. Todos os direitos reservados.</span><span>Preto, branco e vermelho.</span></div></footer>
+</body>
+</html>
