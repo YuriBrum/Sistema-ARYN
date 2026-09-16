@@ -81,7 +81,6 @@ const UsuarioController = {
                 status
             } = req.body;
 
-            // Validação dos campos obrigatórios
             if (!nome || !email || !senha) {
 
                 return res.status(400).json({
@@ -91,8 +90,8 @@ const UsuarioController = {
 
             }
 
-            // Verifica se o email já está cadastrado
-            const usuarioExistente = await Usuario.buscarPorEmail(email);
+            const usuarioExistente =
+                await Usuario.buscarPorEmail(email);
 
             if (usuarioExistente) {
 
@@ -103,10 +102,8 @@ const UsuarioController = {
 
             }
 
-            // Criptografa a senha
             const senhaHash = await bcrypt.hash(senha, 10);
 
-            // Cria o usuário no banco
             const usuario = await Usuario.criar({
                 nome,
                 email,
