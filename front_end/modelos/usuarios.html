@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ARYN - Usuário</title>
 
+<<<<<<< HEAD
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../assets/styles/usuario.css">
     <link rel="stylesheet"
@@ -12,6 +13,22 @@
 
     <script src="../assets/js/autentificao.js"></script>
     <script src="../assets/js/carrinho.js"></script>
+=======
+<<<<<<< HEAD
+    <link rel="stylesheet" href="../assets/styles/style.css">
+    <link rel="stylesheet" href="../assets/styles/usuario.css">
+=======
+    <link rel="stylesheet" href="front_end/assets/styles/usuario.css">
+>>>>>>> backend
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link rel="stylesheet" href="../assets/styles/tema.css">
+
+    <script src="../assets/js/autentificao.js"></script>
+    <script src="../assets/js/carrinho.js"></script>
+    <script src="../assets/js/tema.js"></script>
+>>>>>>> origin/frontend
 </head>
 
 <body>
@@ -36,6 +53,11 @@
         <a href="feminino.html">
             <i class="fa-solid fa-person-dress"></i>
             Feminino
+        </a>
+
+        <a href="promocoes.html">
+            <i class="fa-solid fa-tags"></i>
+            Promoções
         </a>
     </nav>
 
@@ -86,7 +108,7 @@
                     Meus dados
                 </a>
 
-                <a href="#pedidos">
+                <a href="pedidos.html">
                     <i class="fa-solid fa-box"></i>
                     Meus pedidos
                 </a>
@@ -135,6 +157,7 @@
                     <div class="campo">
                         <label for="cpf">CPF</label>
                         <input type="text" id="cpf" placeholder="000.000.000-00">
+<<<<<<< HEAD
                     </div>
 
                     <div class="campo completo">
@@ -160,6 +183,8 @@
                     <div class="campo">
                         <label for="confirmar">Confirmar senha</label>
                         <input type="password" id="confirmar" placeholder="Confirme a nova senha">
+=======
+>>>>>>> origin/frontend
                     </div>
 
                     <div class="campo completo">
@@ -192,12 +217,29 @@
     function salvarDados(event) {
         event.preventDefault();
 
-        const senha = document.getElementById("senha").value;
-        const confirmar = document.getElementById("confirmar").value;
+        // Captura todos os campos do formulário
+        const valores = {};
+        ["nome", "email", "telefone", "cpf"].forEach(id => {
+            const el = document.getElementById(id);
+            valores[id] = el ? el.value.trim() : "";
+        });
 
-        if (senha !== confirmar) {
-            alert("As senhas não são iguais.");
-            return;
+        if (isLoggedIn()) {
+            const usuario = getUsuarioLogado();
+            const dados = carregarDadosUsuario(usuario) || { email: usuario, criadoEm: new Date().toISOString() };
+
+            // Mantém o e-mail da conta mesmo se o campo for esvaziado
+            dados.nome = valores.nome || dados.nome || "";
+            dados.email = valores.email || usuario;
+            ["telefone", "cpf", "endereco"].forEach(id => {
+                dados[id] = valores[id];
+            });
+
+            localStorage.setItem('aryn_dados_' + usuario, JSON.stringify(dados));
+            localStorage.setItem('aryn_nome', dados.nome);
+
+            const perfilNome = document.getElementById("perfilNome");
+            if (perfilNome) perfilNome.textContent = dados.nome || dados.email;
         }
 
         // Captura todos os campos do formulário
@@ -242,7 +284,10 @@
         const perfilEmail = document.getElementById("perfilEmail");
         const aviso = document.getElementById("avisoVisitante");
         const dados = document.getElementById("dados");
+<<<<<<< HEAD
         const pedidos = document.getElementById("pedidos");
+=======
+>>>>>>> origin/frontend
 
         if (typeof isLoggedIn === 'function' && isLoggedIn()) {
             // Logado: mostra os dados e preenche com o que foi salvo
@@ -254,17 +299,24 @@
             if (perfilEmail) perfilEmail.textContent = email;
             if (aviso) aviso.style.display = "none";
             if (dados) dados.style.display = "";
+<<<<<<< HEAD
             if (pedidos) pedidos.style.display = "";
+=======
+>>>>>>> origin/frontend
 
             // Preenche o formulário com tudo que foi salvo
             const preencher = {
                 nome: nome,
                 email: email,
                 telefone: (salvo && salvo.telefone) || "",
+<<<<<<< HEAD
                 cpf: (salvo && salvo.cpf) || "",
                 endereco: (salvo && salvo.endereco) || "",
                 cidade: (salvo && salvo.cidade) || "",
                 cep: (salvo && salvo.cep) || ""
+=======
+                cpf: (salvo && salvo.cpf) || ""
+>>>>>>> origin/frontend
             };
             Object.keys(preencher).forEach(id => {
                 const el = document.getElementById(id);
@@ -276,10 +328,37 @@
             if (perfilEmail) perfilEmail.textContent = "";
             if (aviso) aviso.style.display = "";
             if (dados) dados.style.display = "none";
+<<<<<<< HEAD
             if (pedidos) pedidos.style.display = "none";
+=======
+>>>>>>> origin/frontend
         }
     });
 </script>
+
+<section class="contato" id="contato">
+    <div class="contato-inner">
+        <h2>Fale com a gente</h2>
+        <p>Estamos à disposição para dúvidas, pedidos e parcerias.</p>
+
+        <div class="contato-itens">
+            <a href="https://instagram.com/" class="contato-item" target="_blank" rel="noopener">
+                <i class="fa-brands fa-instagram"></i>
+                <span>@seuinstagram</span>
+            </a>
+
+            <a href="mailto:contato@aryn.com.br" class="contato-item">
+                <i class="fa-solid fa-envelope"></i>
+                <span>contato@aryn.com.br</span>
+            </a>
+
+            <a href="https://wa.me/5511900000000" class="contato-item" target="_blank" rel="noopener">
+                <i class="fa-brands fa-whatsapp"></i>
+                <span>(11) 90000-0000</span>
+            </a>
+        </div>
+    </div>
+</section>
 
 </body>
 </html>

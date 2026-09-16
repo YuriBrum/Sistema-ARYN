@@ -52,7 +52,7 @@ function logout() {
 function bloquearSeLogado() {
     if (isLoggedIn()) {
         alert('Você já está logado como ' + getUsuarioLogado() + '. Redirecionando para a loja.');
-        window.location.href = '../index.html';
+        window.location.href = '../../index.html';
         return true;
     }
     return false;

@@ -159,12 +159,32 @@ O banco contém informações sobre:
 
 ## 7. REQUISITOS DO SISTEMA
 
+<<<<<<< HEAD
 Antes de iniciar o projeto, verifique se o ambiente possui:
 - Node.js
 - npm
 - MySQL Server
 - Navegador web
 - Git (opcional, mas recomendado)
+=======
+```
+Nome do banco:
+aryn_database
+
+Arquivo SQL:
+<<<<<<< HEAD
+banco_de_dados/backups/aryn_database.sql
+=======
+banco_de_dados/aryn_database.sql
+>>>>>>> backend
+```
+
+O banco armazena informações relacionadas a clientes, produtos, pedidos,
+itens dos pedidos, avaliações e estoque.
+
+O arquivo SQL deve ser atualizado sempre que houver alterações importantes
+na estrutura do banco.
+>>>>>>> origin/frontend
 
 --------------------------------------------------------------------------
 
