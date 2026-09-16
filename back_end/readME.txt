@@ -1,16 +1,2 @@
-INSTALAÇÃO DO EXPRESS
-
-    npm install express
-
-
-EXECUTAR O BACK-END
-
-    node server.js
-
-
-Instalção MySql12
-
-    npm install mysql2 dotenv
-    npm list mysql2 dotenv (Confirmar Instalação)
-
-    
+Criação do back-end feita, faltando apenas configurar conexão MySQL e ambiente, implementar rotas e controllers da 
+API, validar execução e conexão do servidor

@@ -1,0 +1,28 @@
+{
+  "name": "aryn-backend",
+  "version": "1.0.0",
+  "description": "Back-end do sistema ARYN com conexão ao MySQL",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "aryn",
+    "express",
+    "mysql",
+    "ecommerce"
+  ],
+  "author": "ARYN",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.4.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
