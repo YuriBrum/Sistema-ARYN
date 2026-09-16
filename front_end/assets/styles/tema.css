@@ -12,7 +12,7 @@
     cursor: pointer;
 
     background: #d91d1d;
-    color: #fff;
+    color: #fffefe;
     font-size: 22px;
 
     display: flex;
@@ -43,7 +43,8 @@ html[data-tema="escuro"] .vazio,
 html[data-tema="escuro"] .curtidas-cartao,
 html[data-tema="escuro"] .aviso-visitante,
 html[data-tema="escuro"] .login-card,
-html[data-tema="escuro"] .modal-finalizar {
+html[data-tema="escuro"] .modal-finalizar,
+html[data-tema="escuro"] .avaliacoes {
     background: #1e1e1e;
     color: #eee;
     box-shadow: 0 5px 20px rgba(0, 0, 0, .35);
@@ -108,6 +109,11 @@ html[data-tema="escuro"] .opcao-pagamento:has(input:checked) { border-color: #d9
 
 /* Página do produto */
 html[data-tema="escuro"] .produto-detalhe { color: #eee; }
+html[data-tema="escuro"] .avaliacoes-titulo { color: #eee; }
+html[data-tema="escuro"] .avaliacao-item {
+    background: #2a2a2a;
+    border-color: #333;
+}
 html[data-tema="escuro"] .opcoes-tamanhos-produto button {
     background: #111;
     color: #eee;
@@ -141,9 +147,70 @@ html[data-tema="claro"] header {
     border-bottom: 1px solid #e5e5e5;
 }
 
-html[data-tema="claro"] nav a { color: #333; }
-html[data-tema="claro"] nav a.active { background: #d91d1d; color: #fff; }
-html[data-tema="claro"] nav a:hover { background: #d91d1d; color: #fff; }
+/* Botões do menu principal em vermelho SOMENTE no tema claro
+   Home, Masculino, Feminino, Promoções, Loja, Carrinho, Curtidas e Usuários */
+html[data-tema="claro"] header nav a {
+    background: #d91d1d;
+    color: #fff;
+    border-color: #d91d1d;
+}
+
+html[data-tema="claro"] header nav a.active,
+html[data-tema="claro"] header nav a:hover {
+    background: #b01313;
+    color: #fff;
+    border-color: #b01313;
+}
+
+/* Logo em vermelho no tema claro (header continua escuro - fica visível) */
+html[data-tema="claro"] header .logo h1 { color: #111 !important; }
+html[data-tema="claro"] header .logo h1 span {
+    color: #d91d1d !important;
+    background: transparent !important;
+}
+  html[data-tema="claro"] header .logo p { color: #111; }
+  
+/* Botões das telas em vermelho SOMENTE no tema claro */
+html[data-tema="claro"] .btn-adicionar-carrinho,
+html[data-tema="claro"] .btn-criar,
+html[data-tema="claro"] .btn-login,
+html[data-tema="claro"] .btn-avaliacao,
+html[data-tema="claro"] .btn-escolher-endereco,
+html[data-tema="claro"] .btn-cancelar,
+html[data-tema="claro"] .remover-curtida,
+html[data-tema="claro"] .salvar,
+html[data-tema="claro"] .finalizar,
+html[data-tema="claro"] .limpar-filtros,
+html[data-tema="claro"] .aviso-visitante a.link-login,
+html[data-tema="claro"] .vazio a.continuar {
+    background: #d91d1d;
+    color: #fff;
+    border-color: #d91d1d;
+}
+
+html[data-tema="claro"] .btn-adicionar-carrinho:hover,
+html[data-tema="claro"] .btn-criar:hover,
+html[data-tema="claro"] .btn-login:hover,
+html[data-tema="claro"] .btn-avaliacao:hover,
+html[data-tema="claro"] .btn-escolher-endereco:hover,
+html[data-tema="claro"] .btn-cancelar:hover,
+html[data-tema="claro"] .remover-curtida:hover,
+html[data-tema="claro"] .salvar:hover,
+html[data-tema="claro"] .finalizar:hover,
+html[data-tema="claro"] .limpar-filtros:hover,
+html[data-tema="claro"] .aviso-visitante a.link-login:hover,
+html[data-tema="claro"] .vazio a.continuar:hover {
+    background: #b01313;
+    color: #fff;
+    border-color: #b01313;
+}
+
+/* Botões de quantidade permanecem claros no tema claro */
+html[data-tema="claro"] .quantidade button {
+    background: #fff;
+    color: #111;
+    border-color: #ddd;
+}
 
 html[data-tema="claro"] .card {
     background: #fff;
@@ -154,7 +221,7 @@ html[data-tema="claro"] .card {
 html[data-tema="claro"] .info h3,
 html[data-tema="claro"] .info h4 { color: #111; }
 
-html[data-tema="claro"] .favorito { background: #f2f2f2; color: #333; }
+html[data-tema="claro"] .favorito { background: #ff0000; color: #333; }
 html[data-tema="claro"] .favorito.curtido { background: #fdeaea; }
 
 html[data-tema="claro"] .contato { background: #171717; color: #fff; }

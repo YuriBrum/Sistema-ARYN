@@ -14,17 +14,26 @@
         return el ? el.textContent.trim() : '';
     }
 
+    function coresDoCard(card) {
+        const nome = lerNome(card);
+        const base = (typeof PRODUTO_OPCOES !== 'undefined' && PRODUTO_OPCOES[nome]) || { cores: [], tamanhos: [] };
+        const ordem = base.cores || [];
+
+        const coresVistas = new Set();
+        card.querySelectorAll('.carrossel .imagem').forEach(img => {
+            const fonte = img.src || img.getAttribute('src');
+            const c = (typeof corDoSrc === 'function') ? corDoSrc(fonte) : null;
+            if (c) coresVistas.add(c);
+        });
+
+        const cores = ordem.filter(cor => coresVistas.has(cor));
+        return cores.length ? cores : ordem;
+    }
+
     function opcoesDoCard(card) {
         const nome = lerNome(card);
         const base = (typeof PRODUTO_OPCOES !== 'undefined' && PRODUTO_OPCOES[nome]) || { cores: [], tamanhos: [] };
-        const ehPromo = !!(card.querySelector('.selo-promo') || card.querySelector('.preco-antigo'));
-        let cores = base.cores || [];
-        if (ehPromo) {
-            const femininos = ['Ternos Femininos ARYN', 'Blazer Feminino ARYN'];
-            const proibidas = femininos.includes(nome) ? ['Preto', 'Vermelho Vinho'] : ['Branco', 'Vermelho Vinho'];
-            cores = cores.filter(c => !proibidas.includes(c));
-        }
-        return { cores: cores, tamanhos: base.tamanhos || [] };
+        return { cores: coresDoCard(card), tamanhos: base.tamanhos || [] };
     }
 
     function precoDoCard(card) {
@@ -54,6 +63,7 @@
     let minRating = 0;
     let minValor = null;
     let maxValor = null;
+    let pintarEstrelasFiltro = null;
 
     // Contador de resultados
     let contadorEl = null;
@@ -103,7 +113,7 @@
             input.type = 'checkbox';
             input.value = t;
             label.appendChild(input);
-            label.appendChild(document.createTextNode(' Tam. ' + t));
+            label.appendChild(document.createTextNode('  ' + t));
             input.addEventListener('change', () => {
                 if (input.checked) selTamanhos.add(t); else selTamanhos.delete(t);
                 aplicar();
@@ -134,25 +144,49 @@
         });
     }
 
-    // Avaliação (Todas / 3+ / 4+)
+    // Avaliação (Todas / escolha 1 a 5 estrelas)
     if (elAva) {
-        const opcoesAva = [
-            { v: 0, rotulo: 'Todas' },
-            { v: 3, rotulo: '3★ ou mais' },
-            { v: 4, rotulo: '4★ ou mais' }
-        ];
-        opcoesAva.forEach(op => {
-            const label = document.createElement('label');
-            const input = document.createElement('input');
-            input.type = 'radio';
-            input.name = 'filtroAva';
-            input.value = String(op.v);
-            if (op.v === 0) input.checked = true;
-            label.appendChild(input);
-            label.appendChild(document.createTextNode(' ' + op.rotulo));
-            input.addEventListener('change', () => { minRating = op.v; aplicar(); });
-            elAva.appendChild(label);
+        const labelTodas = document.createElement('label');
+        const inputTodas = document.createElement('input');
+        inputTodas.type = 'radio';
+        inputTodas.name = 'filtroAva';
+        inputTodas.value = '0';
+        inputTodas.checked = true;
+        labelTodas.appendChild(inputTodas);
+        labelTodas.appendChild(document.createTextNode(' Todas as avaliações'));
+        elAva.appendChild(labelTodas);
+
+        const estrelasBox = document.createElement('div');
+        estrelasBox.className = 'estrelas-filtro';
+        const botoesEstrelas = [];
+        for (let n = 1; n <= 5; n++) {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'estrela-filtro';
+            b.dataset.val = String(n);
+            b.textContent = '★';
+            b.title = n + ' estrela(s) ou mais';
+            b.addEventListener('click', () => {
+                minRating = n;
+                inputTodas.checked = false;
+                pintarEstrelas(n);
+                aplicar();
+            });
+            estrelasBox.appendChild(b);
+            botoesEstrelas.push(b);
+        }
+        elAva.appendChild(estrelasBox);
+
+        inputTodas.addEventListener('change', () => {
+            minRating = 0;
+            pintarEstrelas(0);
+            aplicar();
         });
+
+        function pintarEstrelas(n) {
+            botoesEstrelas.forEach((b, i) => b.classList.toggle('ativa', i < n));
+        }
+        pintarEstrelasFiltro = pintarEstrelas;
     }
 
     // Valor
@@ -174,6 +208,7 @@
         maxValor = null;
         painel.querySelectorAll('input[type="checkbox"]').forEach(i => { i.checked = false; });
         painel.querySelectorAll('input[type="radio"]').forEach(i => { i.checked = (i.value === '0' || !i.value); });
+        if (typeof pintarEstrelasFiltro === 'function') pintarEstrelasFiltro(0);
         if (elValorMin) elValorMin.value = '';
         if (elValorMax) elValorMax.value = '';
         aplicar();

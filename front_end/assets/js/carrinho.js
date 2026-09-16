@@ -59,6 +59,11 @@ async function salvarCarrinho(carrinho) {
 }
 
 async function adicionarAoCarrinho(produto) {
+    // Exige conta logada para poder adicionar ao carrinho
+    if (!exigirLoginParaAcao('Para adicionar ao carrinho é preciso ter uma conta ARYN salva e logada.')) {
+        return null;
+    }
+
     // produto: {id, nome, preco, qtd, img}
     const carrinho = carregarCarrinho();
     const existente = carrinho.find(p => p.id === produto.id);
