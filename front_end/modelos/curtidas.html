@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARYN - Curtidas</title>
+
+    <link rel="stylesheet" href="../assets/styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/styles/curtidas.css">
+    <link rel="stylesheet" href="../assets/styles/tema.css">
+    <script src="../js/api.js"></script>
+    <script src="../assets/js/autentificao.js"></script>
+    <script src="../assets/js/carrinho.js"></script>
+    <script src="../assets/js/curtida.js"></script>
+    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/tema.js"></script>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        <h1><span>A</span>RYN</h1>
+        <p>Vista sua essência</p>
+    </div>
+
+    <nav>
+        <a href="../../index.html">
+            <i class="fa-solid fa-house"></i>
+            Home
+        </a>
+
+        <a href="masculino.html">
+            <i class="fa-solid fa-person"></i>
+            Masculino
+        </a>
+
+        <a href="feminino.html">
+            <i class="fa-solid fa-person-dress"></i>
+            Feminino
+        </a>
+        <a href="promocoes.html">
+            <i class="fa-solid fa-tags"></i>
+            Promoções
+        </a>
+    </nav>
+
+    <nav>
+        <a href="../../index.html">
+            <i class="fa-solid fa-store"></i>
+            Loja
+        </a>
+
+        <a href="carrinho.html">
+            <i class="fa-solid fa-cart-shopping"></i>
+            Carrinho
+        </a>
+
+        <a href="curtidas.html" class="active">
+            <i class="fa-solid fa-heart"></i>
+            Curtidas
+        </a>
+
+        <a href="usuarios.html">
+            <i class="fa-solid fa-user"></i>
+            Usuários
+        </a>
+    </nav>
+</header>
+
+<main class="pagina">
+
+    <div class="cabecalho-pagina">
+        <small>ARYN</small>
+        <h2>Minhas Curtidas</h2>
+        <p>Produtos que você curtiu. Clique no coração para parar de curtir.</p>
+    </div>
+
+    <div id="avisoVisitante" class="aviso-visitante" style="display:none;">
+        <i class="fa-solid fa-heart"></i>
+        <h3>Você está como visitante</h3>
+        <p>Crie uma conta ou entre para curtir produtos.</p>
+        <a href="login.html">Entrar</a>
+        <a href="cadastro.html" class="link-login">Criar conta</a>
+    </div>
+
+    <section class="curtidas-cartao">
+        <div id="lista-curtidas">
+            <!-- Produtos curtidos aparecem aqui -->
+        </div>
+    </section>
+
+</main>
+
+<section class="contato" id="contato">
+    <div class="contato-inner">
+        <h2>Fale com a gente</h2>
+        <p>Estamos à disposição para dúvidas, pedidos e parcerias.</p>
+
+        <div class="contato-itens">
+            <a href="https://instagram.com/" class="contato-item" target="_blank" rel="noopener">
+                <i class="fa-brands fa-instagram"></i>
+                <span>@seuinstagram</span>
+            </a>
+
+            <a href="mailto:contato@aryn.com.br" class="contato-item">
+                <i class="fa-solid fa-envelope"></i>
+                <span>contato@aryn.com.br</span>
+            </a>
+
+            <a href="https://wa.me/5511900000000" class="contato-item" target="_blank" rel="noopener">
+                <i class="fa-brands fa-whatsapp"></i>
+                <span>(11) 90000-0000</span>
+            </a>
+        </div>
+    </div>
+</section>
+</body>
+</html>
