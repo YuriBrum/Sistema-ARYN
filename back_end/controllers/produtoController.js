@@ -2,9 +2,11 @@ const { pool } = require('../config/database');
 
 async function listarProdutos(req, res) {
   try {
-    const { categoria, busca, precoMin, precoMax, estoque, ordenar = 'recentes', limite = 24, pagina = 1 } = req.query;
+    const { categoria, busca, precoMin, precoMax, estoque, ordenar = 'recentes', limite = 24, pagina = 1, novidades } = req.query;
     const filtros = ['p.status = 1'];
     const valores = [];
+
+    if (novidades === '1') filtros.push('p.criado_em >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 90 DAY)');
 
     if (categoria) {
       filtros.push('p.id_categoria = ?');
@@ -47,6 +49,69 @@ async function listarProdutos(req, res) {
     res.json({ success: true, data: rows, meta: { pagina: Number(pagina) || 1, limite: limiteSeguro } });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Erro ao listar produtos.', details: error.message });
+  }
+}
+
+async function listarNovidades(req, res) {
+  req.query.novidades = '1';
+  return listarProdutos(req, res);
+}
+
+async function listarOfertas(req, res) {
+  try {
+    const [columns] = await pool.query("SHOW COLUMNS FROM produtos WHERE Field = 'preco_promocional'");
+
+    if (!columns.length) {
+      return res.json({
+        success: true,
+        message: 'Nenhuma oferta ativa encontrada.',
+        data: [],
+        meta: { pagina: 1, limite: 0, total: 0 }
+      });
+    }
+
+    const { categoria, busca, precoMin, precoMax, estoque, descontoMin, ordenar = 'maior-desconto', limite = 24, pagina = 1 } = req.query;
+    const filtros = ['p.status = 1', 'p.preco_promocional IS NOT NULL', 'p.preco_promocional < p.preco'];
+    const valores = [];
+
+    if (categoria) { filtros.push('p.id_categoria = ?'); valores.push(Number(categoria)); }
+    if (busca) {
+      filtros.push('(p.nome LIKE ? OR p.descricao LIKE ? OR c.nome LIKE ?)');
+      const termo = `%${busca}%`;
+      valores.push(termo, termo, termo);
+    }
+    if (precoMin !== undefined && precoMin !== '') { filtros.push('p.preco_promocional >= ?'); valores.push(Number(precoMin)); }
+    if (precoMax !== undefined && precoMax !== '') { filtros.push('p.preco_promocional <= ?'); valores.push(Number(precoMax)); }
+    if (estoque === '1') filtros.push('p.estoque > 0');
+    if (descontoMin !== undefined && descontoMin !== '') filtros.push('((p.preco - p.preco_promocional) / p.preco) * 100 >= ' + Number(descontoMin));
+
+    const ordenacoes = {
+      relevantes: 'desconto_percentual DESC, p.criado_em DESC',
+      'maior-desconto': 'desconto_percentual DESC',
+      'menor-preco': 'p.preco_promocional ASC',
+      'maior-preco': 'p.preco_promocional DESC',
+      recentes: 'p.criado_em DESC'
+    };
+    const limiteSeguro = Math.min(Math.max(Number(limite) || 24, 1), 100);
+    const paginaSegura = Math.max(Number(pagina) || 1, 1);
+    const offset = (paginaSegura - 1) * limiteSeguro;
+    valores.push(limiteSeguro, offset);
+
+    const [rows] = await pool.query(`
+      SELECT p.*, c.nome AS categoria_nome,
+        p.preco AS preco_original,
+        p.preco_promocional,
+        ROUND(((p.preco - p.preco_promocional) / p.preco) * 100, 0) AS desconto_percentual
+      FROM produtos p
+      LEFT JOIN categorias c ON c.id_categoria = p.id_categoria
+      WHERE ${filtros.join(' AND ')}
+      ORDER BY ${ordenacoes[ordenar] || ordenacoes['maior-desconto']}
+      LIMIT ? OFFSET ?
+    `, valores);
+
+    res.json({ success: true, message: 'Ofertas carregadas com sucesso.', data: rows, meta: { pagina: paginaSegura, limite: limiteSeguro } });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Não foi possível carregar as ofertas.' });
   }
 }
 
@@ -139,6 +204,8 @@ async function removerProduto(req, res) {
 
 module.exports = {
   listarProdutos,
+  listarNovidades,
+  listarOfertas,
   buscarProdutoPorId,
   criarProduto,
   atualizarProduto,
