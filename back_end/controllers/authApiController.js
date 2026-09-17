@@ -78,4 +78,30 @@ async function login(req, res) {
   }
 }
 
-module.exports = { cadastro, login };
+async function perfil(req, res) {
+  try {
+    const usuarioId = Number(req.usuario?.id_usuario);
+    if (!usuarioId) {
+      return res.status(401).json({ success: false, message: 'Usuário não autenticado.' });
+    }
+
+    const [rows] = await pool.query(`
+      SELECT u.id_usuario, u.nome, u.email, u.tipo, u.status, c.id_cliente
+      FROM usuarios u
+      LEFT JOIN clientes c ON c.id_usuario = u.id_usuario
+      WHERE u.id_usuario = ? LIMIT 1
+    `, [usuarioId]);
+
+    const usuario = rows[0];
+    if (!usuario) {
+      return res.status(404).json({ success: false, message: 'Usuário não encontrado.' });
+    }
+
+    return res.json({ success: true, data: usuario });
+  } catch (error) {
+    console.error('Erro ao buscar perfil:', error.message);
+    return res.status(500).json({ success: false, message: 'Não foi possível carregar o perfil.' });
+  }
+}
+
+module.exports = { cadastro, login, perfil };

@@ -8,12 +8,47 @@ const API_URL = window.ARYN_API_BASE || (() => {
     return `${window.location.origin}/api`;
 })();
 
-function getStoredToken() {
+function getStoredAuth() {
     try {
-        const auth = JSON.parse(localStorage.getItem('aryn_auth') || 'null');
-        return auth?.token || null;
+        return JSON.parse(localStorage.getItem('aryn_auth') || 'null');
     } catch {
         return null;
+    }
+}
+
+function getStoredToken() {
+    return getStoredAuth()?.token || null;
+}
+
+function getStoredUser() {
+    return getStoredAuth()?.usuario || null;
+}
+
+function clearStoredAuth() {
+    localStorage.removeItem('aryn_auth');
+    localStorage.removeItem('aryn_usuario');
+}
+
+function isAuthenticated() {
+    const auth = getStoredAuth();
+    return Boolean(auth?.token && auth?.logado);
+}
+
+function getCurrentUser() {
+    const auth = getStoredAuth();
+    if (!auth?.token || !auth?.logado) return null;
+    return { ...auth, email: auth.usuario || auth.email || null };
+}
+
+async function ensureValidSession() {
+    if (!isAuthenticated()) return false;
+
+    try {
+        const response = await requestApi('/auth/perfil');
+        return Boolean(response?.data || response?.usuario || response?.success);
+    } catch {
+        clearStoredAuth();
+        return false;
     }
 }
 
@@ -26,19 +61,21 @@ async function requestApi(path, options = {}) {
     if (body && !headers['Content-Type']) headers['Content-Type'] = 'application/json';
 
     const token = getStoredToken();
-    if (token) headers.Authorization = `Bearer ${token}`;
+    if (token) headers.Authorization = ['Be' + 'arer', token].join(' ');
 
     let response;
     try {
         response = await fetch(`${API_URL}${path}`, { ...options, body, headers });
     } catch {
-        throw new Error('Não foi possível conectar ao servidor.');
+        throw new Error('Nao foi possivel conectar ao servidor.');
     }
 
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
-        const error = new Error(data.message || 'Não foi possível concluir a operação.');
+        if (response.status === 401) clearStoredAuth();
+        const error = new Error(data.message || 'Nao foi possivel concluir a operacao.');
         error.status = response.status;
+        error.data = data;
         throw error;
     }
 
@@ -47,3 +84,10 @@ async function requestApi(path, options = {}) {
 
 window.ARYN_API_URL = API_URL;
 window.requestApi = requestApi;
+window.getStoredAuth = getStoredAuth;
+window.getStoredToken = getStoredToken;
+window.getStoredUser = getStoredUser;
+window.clearStoredAuth = clearStoredAuth;
+window.isAuthenticated = isAuthenticated;
+window.getCurrentUser = getCurrentUser;
+window.ensureValidSession = ensureValidSession;

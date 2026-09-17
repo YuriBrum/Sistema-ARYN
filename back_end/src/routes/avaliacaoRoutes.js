@@ -9,11 +9,11 @@ const {
     validarBody,
     validarCamposObrigatorios,
     validarPaginacao
-} = require('../middleware/validationMiddleware');
+} = require('../middlewares/validationMiddleware');
 
 const {
     autenticar
-} = require('../middleware/authMiddleware');
+} = require('../middlewares/authMiddleware');
 
 
 // GET /api/avaliacoes

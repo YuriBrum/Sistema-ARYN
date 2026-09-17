@@ -31,7 +31,7 @@
         try {
             const auth = JSON.parse(localStorage.getItem('aryn_auth') || 'null');
             const link = document.getElementById('accountLink');
-            if (auth?.token) { link.textContent = auth.tipo === 'ADMIN' ? 'Painel administrativo' : 'Minha conta'; link.href = auth.tipo === 'ADMIN' ? 'front_end/admin/dashboard.html' : 'front_end/modelos/usuarios.html'; }
+            if (auth?.token) { link.textContent = auth.tipo === 'ADMIN' ? 'Painel administrativo' : 'Minha conta'; link.href = auth.tipo === 'ADMIN' ? 'front_end/admin/dashboard.html' : 'front_end/modelos/conta.html'; }
             const items = JSON.parse(localStorage.getItem(auth?.usuario ? `aryn_carrinho_db_${auth.usuario}` : 'aryn_carrinho_guest') || '[]');
             cartCount.textContent = items.reduce((total, item) => total + Number(item.qtd || item.quantidade || 0), 0);
         } catch { cartCount.textContent = '0'; }

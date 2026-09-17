@@ -4,6 +4,9 @@ const cors = require('cors');
 const produtoRoutes = require('./routes/produtoRoutes');
 const categoriaRoutes = require('./routes/categoriaRoutes');
 const usuarioRoutes = require('./routes/usuarioRoutes');
+const authRoutes = require('./routes/authRoutes');
+const carrinhoRoutes = require('./routes/carrinhoRoutes');
+const favoritoRoutes = require('./routes/favoritoRoutes');
 
 const app = express();
 
@@ -11,18 +14,17 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-
     res.json({
         success: true,
         message: 'API ARYN funcionando!'
     });
-
 });
 
+app.use('/api/auth', authRoutes);
+app.use('/api/carrinho', carrinhoRoutes);
+app.use('/api/favoritos', favoritoRoutes);
 app.use('/api/produtos', produtoRoutes);
-
 app.use('/api/categorias', categoriaRoutes);
-
 app.use('/api/usuarios', usuarioRoutes);
 
 module.exports = app;

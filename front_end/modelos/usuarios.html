@@ -208,24 +208,27 @@
         }
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
+        if (typeof checkAuth === 'function') {
+            const isValid = await checkAuth({ redirectOnInvalid: true, loginPage: 'login.html' });
+            if (!isValid) return;
+        }
+
         const perfilNome = document.getElementById("perfilNome");
         const perfilEmail = document.getElementById("perfilEmail");
         const aviso = document.getElementById("avisoVisitante");
         const dados = document.getElementById("dados");
 
         if (typeof isLoggedIn === 'function' && isLoggedIn()) {
-            // Logado: mostra os dados e preenche com o que foi salvo
             const email = getUsuarioLogado();
             const salvo = carregarDadosUsuario(email);
-            const nome = (salvo && salvo.nome) || localStorage.getItem('aryn_nome') || "";
+            const nome = (salvo && salvo.nome) || getAuth()?.nome || localStorage.getItem('aryn_nome') || "";
 
             if (perfilNome) perfilNome.textContent = nome || email;
             if (perfilEmail) perfilEmail.textContent = email;
             if (aviso) aviso.style.display = "none";
             if (dados) dados.style.display = "";
 
-            // Preenche o formulário com tudo que foi salvo
             const preencher = {
                 nome: nome,
                 email: email,
@@ -237,7 +240,6 @@
                 if (el) el.value = preencher[id] || "";
             });
         } else {
-            // Visitante: não mostra nada dos dados
             if (perfilNome) perfilNome.textContent = "Visitante";
             if (perfilEmail) perfilEmail.textContent = "";
             if (aviso) aviso.style.display = "";

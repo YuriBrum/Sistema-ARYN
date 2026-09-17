@@ -37,6 +37,24 @@ function salvarCurtidas(lista) {
     localStorage.setItem(chaveCurtidas(), JSON.stringify(lista));
 }
 
+async function carregarCurtidasDaApi() {
+    if (!(typeof isLoggedIn === 'function' && isLoggedIn()) || typeof apiRequest !== 'function') return;
+
+    try {
+        const response = await apiRequest('/favoritos');
+        const favoritos = response.favoritos || response.data || [];
+        const lista = favoritos.map(item => ({
+            id: item.id_produto,
+            nome: item.nome || 'Produto ARYN',
+            preco: Number(item.preco || 0),
+            img: item.imagem || ''
+        }));
+        salvarCurtidas(lista);
+    } catch (error) {
+        console.error('Não foi possível carregar os favoritos da API:', error);
+    }
+}
+
 function renderizarCurtidas() {
     const container = document.getElementById("lista-curtidas");
     if (!container) return;
@@ -82,7 +100,8 @@ function renderizarCurtidas() {
     }).join("");
 }
 
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", async () => {
+    await carregarCurtidasDaApi();
     renderizarCurtidas();
 
     const container = document.getElementById("lista-curtidas");
@@ -97,6 +116,14 @@ window.addEventListener("DOMContentLoaded", () => {
         let lista = carregarCurtidas();
 
         if (botao.classList.contains("remover-curtida")) {
+            if (typeof apiRequest === 'function' && isLoggedIn()) {
+                try {
+                    await apiRequest(`/favoritos/${encodeURIComponent(id)}`, { method: 'DELETE' });
+                } catch (error) {
+                    console.error('Não foi possível remover o favorito:', error);
+                    return;
+                }
+            }
             salvarCurtidas(lista.filter(p => String(p.id) !== String(id)));
             renderizarCurtidas();
         } else if (botao.classList.contains("adicionar-carrinho")) {
@@ -138,4 +165,3 @@ document.querySelectorAll('.carrossel').forEach(carrossel => {
             });
         }
     });
-

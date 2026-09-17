@@ -120,7 +120,7 @@
             if (!auth?.token) return;
 
             accountLink.textContent = auth.tipo === 'ADMIN' ? 'Painel administrativo' : 'Minha conta';
-            accountLink.href = auth.tipo === 'ADMIN' ? 'front_end/admin/dashboard.html' : 'front_end/modelos/usuarios.html';
+            accountLink.href = auth.tipo === 'ADMIN' ? 'front_end/admin/dashboard.html' : 'front_end/modelos/conta.html';
 
             const response = await window.requestApi('/carrinho');
             const items = response.data?.itens || [];

@@ -150,6 +150,21 @@
         newsletterMessage.textContent = 'Cadastro preparado. A newsletter será conectada à API quando o endpoint estiver disponível.';
     });
 
+    function syncAccountState() {
+        if (typeof updateAccountLink === 'function') {
+            updateAccountLink({
+                linkId: 'accountLink',
+                loginHref: 'front_end/modelos/login.html',
+                accountHref: 'front_end/modelos/conta.html',
+                adminHref: 'front_end/admin/dashboard.html'
+            });
+        }
+        if (typeof window.ensureValidSession === 'function') {
+            window.ensureValidSession();
+        }
+    }
+
     updateCartCount();
+    syncAccountState();
     loadProducts();
 })();

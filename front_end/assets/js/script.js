@@ -620,16 +620,28 @@ function normalizarImg(src) {
     return src;
 }
 
-function renderizarPedidos() {
+async function renderizarPedidos() {
     const aviso = document.getElementById("avisoVisitante");
     const container = document.getElementById("lista-pedidos");
     if (!container) return;
 
     const logado = typeof isLoggedIn === 'function' && isLoggedIn();
-    const pedidosKey = logado ? 'aryn_pedidos_' + getUsuarioLogado() : 'aryn_pedidos_anon';
-    const raw = localStorage.getItem(pedidosKey);
     let pedidos = [];
-    try { pedidos = raw ? JSON.parse(raw) : []; } catch (e) { pedidos = []; }
+
+    if (logado && typeof apiRequest === 'function') {
+        try {
+            const response = await apiRequest('/pedidos/me');
+            pedidos = Array.isArray(response.data) ? response.data : [];
+        } catch (error) {
+            console.error('Não foi possível carregar os pedidos da API:', error);
+        }
+    }
+
+    if (!pedidos.length) {
+        const pedidosKey = logado ? 'aryn_pedidos_' + getUsuarioLogado() : 'aryn_pedidos_anon';
+        const raw = localStorage.getItem(pedidosKey);
+        try { pedidos = raw ? JSON.parse(raw) : []; } catch (e) { pedidos = []; }
+    }
 
     if (!pedidos.length) {
         if (aviso) aviso.style.display = logado ? "none" : "";

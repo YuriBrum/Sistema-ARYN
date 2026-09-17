@@ -107,6 +107,36 @@ async function carregarCarrinhoDaApi() {
     }
 }
 
+async function sincronizarCarrinhoLocalComApi() {
+    const auth = typeof getAuth === 'function' ? getAuth() : null;
+    if (!auth?.token || typeof apiRequest !== 'function') return;
+
+    const localItems = carregarCarrinho();
+    if (!localItems.length) {
+        await carregarCarrinhoDaApi();
+        return;
+    }
+
+    try {
+        const resposta = await apiRequest('/carrinho');
+        const apiItems = resposta.data?.itens || [];
+        const apiProductIds = new Set(apiItems.map(item => String(item.id_produto)));
+
+        for (const item of localItems) {
+            const productId = item.id_produto || item.id;
+            if (!productId || apiProductIds.has(String(productId))) continue;
+            await apiRequest('/carrinho/itens', {
+                method: 'POST',
+                body: { id_produto: Number(productId), quantidade: Math.max(1, Number(item.qtd) || 1) }
+            });
+        }
+
+        await carregarCarrinhoDaApi();
+    } catch (error) {
+        console.error('Não foi possível sincronizar o carrinho com a API:', error);
+    }
+}
+
 async function removerDoCarrinho(id) {
     let carrinho = carregarCarrinho();
     const item = carrinho.find(p => String(p.id_item) === String(id) || String(p.id) === String(id));
@@ -478,7 +508,7 @@ const IMG_PADRAO_CARRINHO = "../assets/images/as_cb.jpg";
         if (modal) modal.style.display = "none";
     }
 
-    function confirmarCompra(event) {
+    async function confirmarCompra(event) {
         event.preventDefault();
 
         const endereco = document.getElementById("checkEndereco").value.trim();
@@ -511,6 +541,24 @@ const IMG_PADRAO_CARRINHO = "../assets/images/as_cb.jpg";
 
         const itensComprados = carregarCarrinho();
         let semEstoque = [];
+
+        if (typeof isLoggedIn === 'function' && isLoggedIn() && typeof apiRequest === 'function') {
+            try {
+                await apiRequest('/pedidos', {
+                    method: 'POST',
+                    body: {
+                        subtotal: calcularTotal(),
+                        frete: 0,
+                        desconto: 0,
+                        valor_total: calcularTotal()
+                    }
+                });
+                await apiRequest('/carrinho', { method: 'DELETE' });
+            } catch (error) {
+                alert(error.message || 'Não foi possível finalizar o pedido. Tente novamente.');
+                return;
+            }
+        }
 
         if (typeof reduzirEstoque === 'function') {
             itensComprados.forEach(item => {
@@ -569,4 +617,7 @@ const IMG_PADRAO_CARRINHO = "../assets/images/as_cb.jpg";
         });
     }
 
-    window.addEventListener("DOMContentLoaded", renderizarCarrinho);
+    window.addEventListener("DOMContentLoaded", async () => {
+        await sincronizarCarrinhoLocalComApi();
+        renderizarCarrinho();
+    });

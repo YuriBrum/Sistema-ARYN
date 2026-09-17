@@ -9,19 +9,19 @@ const {
     validarBody,
     validarCamposObrigatorios,
     validarPaginacao
-} = require('../middleware/validationMiddleware');
+} = require('../middlewares/validationMiddleware');
 
 const {
     autenticar,
     autorizar
-} = require('../middleware/authMiddleware');
+} = require('../middlewares/authMiddleware');
 
 
 // GET /api/pedidos
 router.get(
     '/',
     autenticar,
-    autorizar('admin'),
+    autorizar('ADMIN'),
     validarPaginacao,
     pedidoController.listarTodos
 );
@@ -62,7 +62,7 @@ router.put(
 router.delete(
     '/:id',
     autenticar,
-    autorizar('admin'),
+    autorizar('ADMIN'),
     validarId('id'),
     pedidoController.excluir
 );

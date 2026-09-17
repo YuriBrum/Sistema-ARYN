@@ -1,4 +1,6 @@
 (() => {
+    if (typeof bloquearSeLogado === 'function' && bloquearSeLogado()) return;
+
     const form = document.getElementById('loginForm');
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('senha');

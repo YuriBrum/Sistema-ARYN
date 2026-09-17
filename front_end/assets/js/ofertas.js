@@ -126,7 +126,7 @@
     }
 
     async function updateAccount() {
-        try { const auth = JSON.parse(localStorage.getItem('aryn_auth') || 'null'); const link = document.getElementById('accountLink'); if (auth?.token) { link.textContent = auth.tipo === 'ADMIN' ? 'Painel administrativo' : 'Minha conta'; link.href = auth.tipo === 'ADMIN' ? 'front_end/admin/dashboard.html' : 'front_end/modelos/usuarios.html'; const response = await window.requestApi('/carrinho'); cartCount.textContent = response.data?.itens?.reduce((total, item) => total + Number(item.quantidade || 0), 0) || 0; } else updateCartCount(); } catch { updateCartCount(); }
+        try { const auth = JSON.parse(localStorage.getItem('aryn_auth') || 'null'); const link = document.getElementById('accountLink'); if (auth?.token) { link.textContent = auth.tipo === 'ADMIN' ? 'Painel administrativo' : 'Minha conta'; link.href = auth.tipo === 'ADMIN' ? 'front_end/admin/dashboard.html' : 'front_end/modelos/conta.html'; const response = await window.requestApi('/carrinho'); cartCount.textContent = response.data?.itens?.reduce((total, item) => total + Number(item.quantidade || 0), 0) || 0; } else updateCartCount(); } catch { updateCartCount(); }
     }
 
     filterForm.addEventListener('submit', event => { event.preventDefault(); loadProducts(); });

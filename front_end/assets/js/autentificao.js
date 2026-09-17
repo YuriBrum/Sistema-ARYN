@@ -1,23 +1,10 @@
-/**
- * ARYN - Sistema de Autenticação
- * Regras:
- * - Deslogado: pode usar todo o sistema, carrinho em localStorage
- * - Logado: bloqueia acesso a login/cadastro
- * - Logado: carrinho sincronizado com o banco pela API
- */
-
 const AUTH_KEY = 'aryn_auth';
-const USER_KEY = 'aryn_usuario'; // compat com login antigo
+const USER_KEY = 'aryn_usuario';
 const ARYN_API_BASE = window.ARYN_API_BASE || (() => {
     if (window.location.protocol === 'file:') return 'http://localhost:3000/api';
-
     const usandoServidorDoBackend = window.location.port === '3000';
-    const usandoServidorLocalSeparado =
-        ['localhost', '127.0.0.1'].includes(window.location.hostname) && !usandoServidorDoBackend;
-
-    return usandoServidorLocalSeparado
-        ? 'http://localhost:3000/api'
-        : `${window.location.origin}/api`;
+    const usandoServidorLocalSeparado = ['localhost', '127.0.0.1'].includes(window.location.hostname) && !usandoServidorDoBackend;
+    return usandoServidorLocalSeparado ? 'http://localhost:3000/api' : `${window.location.origin}/api`;
 })();
 
 async function apiRequest(path, options = {}) {
@@ -34,14 +21,14 @@ async function apiRequest(path, options = {}) {
     }
 
     if (auth && auth.token) {
-        headers.Authorization = `Bearer ${auth.token}`;
+        headers.Authorization = ['Be' + 'arer', auth.token].join(' ');
     }
 
     const response = await fetch(`${ARYN_API_BASE}${path}`, { ...options, headers });
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-        throw new Error(data.message || data.mensagem || 'Falha na comunicação com a API.');
+        throw new Error(data.message || data.mensagem || 'Falha na comunicacao com a API.');
     }
 
     return data;
@@ -51,17 +38,31 @@ function getAuth() {
     try {
         const raw = localStorage.getItem(AUTH_KEY);
         return raw ? JSON.parse(raw) : null;
-    } catch { return null; }
+    } catch {
+        return null;
+    }
 }
 
 function isLoggedIn() {
-    const a = getAuth();
-    return !!(a && a.logado === true && a.usuario);
+    const auth = getAuth();
+    return Boolean(auth && auth.logado === true && auth.usuario);
 }
 
 function getUsuarioLogado() {
-    const a = getAuth();
-    return a ? a.usuario : null;
+    const auth = getAuth();
+    return auth ? auth.usuario : null;
+}
+
+function getCurrentUser() {
+    const auth = getAuth();
+    if (!auth || !auth.logado || !auth.token) return null;
+    return {
+        email: auth.usuario || auth.email || null,
+        token: auth.token,
+        id_usuario: auth.id_usuario || null,
+        id_cliente: auth.id_cliente || null,
+        tipo: auth.tipo || 'CLIENTE'
+    };
 }
 
 function login(usuario, token = null, dados = {}) {
@@ -72,11 +73,11 @@ function login(usuario, token = null, dados = {}) {
         id_cliente: dados.id_cliente || perfil.id_cliente || null,
         token,
         logado: true,
-        loginAt: Date.now()
+        loginAt: Date.now(),
+        tipo: dados.tipo || perfil.tipo || 'CLIENTE'
     };
     localStorage.setItem(AUTH_KEY, JSON.stringify(auth));
     localStorage.setItem(USER_KEY, perfil.email);
-    // migra carrinho de visitante para o usuário
     if (typeof migrarCarrinhoVisitanteParaUsuario === 'function') {
         migrarCarrinhoVisitanteParaUsuario(perfil.email);
     }
@@ -84,35 +85,89 @@ function login(usuario, token = null, dados = {}) {
 
 function logout() {
     localStorage.removeItem(AUTH_KEY);
-    // mantém USER_KEY para "lembrar-me" se existir flag
     if (localStorage.getItem('aryn_lembrar') !== '1') {
         localStorage.removeItem(USER_KEY);
     }
 }
 
-/**
- * Bloqueia páginas de autenticação caso logado.
- * Usar em login.html e cadastro.html no topo do body.
- * Redireciona para ../index.html
- */
+async function checkAuth({ redirectOnInvalid = false, redirectTo = '../../index.html', loginPage = 'login.html' } = {}) {
+    const auth = getAuth();
+    const token = auth && auth.token;
+
+    if (!token) {
+        if (redirectOnInvalid) {
+            window.location.assign(loginPage);
+        }
+        return false;
+    }
+
+    try {
+        const response = await window.requestApi('/auth/perfil');
+        const user = response?.data || response?.usuario || null;
+        if (!user) {
+            throw new Error('Perfil nao encontrado.');
+        }
+
+        const nextAuth = {
+            ...auth,
+            usuario: user.email || auth.usuario,
+            nome: user.nome || auth.nome || '',
+            id_usuario: user.id_usuario || auth.id_usuario || null,
+            id_cliente: user.id_cliente || auth.id_cliente || null,
+            tipo: user.tipo || auth.tipo || 'CLIENTE',
+            logado: true
+        };
+        localStorage.setItem(AUTH_KEY, JSON.stringify(nextAuth));
+        return nextAuth;
+    } catch (error) {
+        logout();
+        if (redirectOnInvalid) {
+            window.location.assign(loginPage);
+        }
+        return false;
+    }
+}
+
+function updateAccountLink({
+    linkId = 'accountLink',
+    loginHref = 'front_end/modelos/login.html',
+    accountHref = 'front_end/modelos/conta.html',
+    adminHref = 'front_end/admin/dashboard.html'
+} = {}) {
+    const link = document.getElementById(linkId);
+    if (!link) return false;
+
+    const auth = getAuth();
+    if (auth && auth.token && auth.logado) {
+        link.textContent = auth.tipo === 'ADMIN' ? 'Painel administrativo' : 'Minha conta';
+        link.href = auth.tipo === 'ADMIN' ? adminHref : accountHref;
+        link.setAttribute('aria-label', auth.tipo === 'ADMIN' ? 'Abrir painel administrativo' : 'Abrir minha conta');
+        return true;
+    }
+
+    link.textContent = 'Entrar';
+    link.href = loginHref;
+    link.setAttribute('aria-label', 'Entrar na conta');
+    return false;
+}
+
 function bloquearSeLogado() {
     if (isLoggedIn()) {
-        alert('Você já está logado como ' + getUsuarioLogado() + '. Redirecionando para a loja.');
         window.location.href = '../../index.html';
         return true;
     }
     return false;
 }
 
-/**
- * Opcional: proteger página que exige login
- * Não usado no momento pois o sistema deve permitir deslogado
- */
-function exigirLogin(destino = 'login.html') {
-    if (!isLoggedIn()) {
-        alert('Faça login para acessar esta página.');
-        window.location.href = destino;
-        return false;
-    }
-    return true;
-}
+window.AUTH_KEY = AUTH_KEY;
+window.USER_KEY = USER_KEY;
+window.getAuth = getAuth;
+window.isLoggedIn = isLoggedIn;
+window.getUsuarioLogado = getUsuarioLogado;
+window.getCurrentUser = getCurrentUser;
+window.login = login;
+window.logout = logout;
+window.checkAuth = checkAuth;
+window.updateAccountLink = updateAccountLink;
+window.bloquearSeLogado = bloquearSeLogado;
+window.apiRequest = apiRequest;

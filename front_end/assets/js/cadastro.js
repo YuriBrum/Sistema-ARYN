@@ -1,4 +1,6 @@
 (() => {
+    if (typeof bloquearSeLogado === 'function' && bloquearSeLogado()) return;
+
     const form = document.getElementById('cadastroForm');
     const error = document.getElementById('formError');
     const submit = document.getElementById('submitCadastro');
@@ -68,7 +70,7 @@
 
         setLoading(true);
         try {
-            const response = await requestApi('/auth/register', { method: 'POST', body: { nome, email, senha, telefone: telefone || null, cpf: cpf || null, termos: true } });
+            const response = await requestApi('/auth/cadastro', { method: 'POST', body: { nome, email, senha, telefone: telefone || null, cpf: cpf || null, termos: true } });
             const session = response.data || response;
             const usuario = session.usuario;
             localStorage.setItem('aryn_auth', JSON.stringify({ usuario: usuario.email, id_usuario: usuario.id_usuario, id_cliente: usuario.id_cliente, tipo: 'CLIENTE', token: session.token, logado: true, loginAt: Date.now() }));
